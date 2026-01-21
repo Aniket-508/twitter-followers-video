@@ -12,19 +12,17 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
 } from "../../types/constants";
-import { RenderControls } from "../components/RenderControls";
 import { Spacing } from "../components/Spacing";
-import { Tips } from "../components/Tips";
 import { Main } from "../remotion/MyComp/Main";
 
 const Home: NextPage = () => {
-  const [text, setText] = useState<string>(defaultMyCompProps.title);
+  const [followerCount, setFollowerCount] = useState<number>(defaultMyCompProps.followerCount);
 
   const inputProps: z.infer<typeof CompositionProps> = useMemo(() => {
     return {
-      title: text,
+      followerCount,
     };
-  }, [text]);
+  }, [followerCount]);
 
   return (
     <div>
@@ -38,8 +36,6 @@ const Home: NextPage = () => {
             compositionHeight={VIDEO_HEIGHT}
             compositionWidth={VIDEO_WIDTH}
             style={{
-              // Can't use tailwind class for width since player's default styles take presedence over tailwind's,
-              // but not over inline styles
               width: "100%",
             }}
             controls
@@ -47,16 +43,20 @@ const Home: NextPage = () => {
             loop
           />
         </div>
-        <RenderControls
-          text={text}
-          setText={setText}
-          inputProps={inputProps}
-        ></RenderControls>
-        <Spacing></Spacing>
-        <Spacing></Spacing>
-        <Spacing></Spacing>
-        <Spacing></Spacing>
-        <Tips></Tips>
+        <div className="flex flex-col gap-4 p-4">
+          <label className="flex flex-col gap-2">
+            <span className="text-sm font-medium">Follower Count</span>
+            <input
+              type="number"
+              value={followerCount}
+              onChange={(e) => setFollowerCount(Number(e.target.value) || 0)}
+              className="border rounded-md px-3 py-2 text-lg"
+              min={1}
+            />
+          </label>
+        </div>
+        <Spacing />
+        <Spacing />
       </div>
     </div>
   );
