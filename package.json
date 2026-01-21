@@ -1,11 +1,32 @@
 {
   "name": "twitter-followers-video",
-  "version": "0.1.0",
+  "version": "1.0.0",
+  "description": "Generate animated videos to celebrate and share your Twitter/X follower milestones",
   "private": true,
   "author": {
     "name": "Aniket Pawar",
     "email": "pawaraniket508@gmail.com",
     "url": "https://www.aniketpawar.com/"
+  },
+  "keywords": [
+    "twitter",
+    "x",
+    "followers",
+    "video",
+    "animation",
+    "remotion",
+    "react",
+    "nextjs",
+    "social-media",
+    "milestone"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/Aniket-508/twitter-followers-video"
+  },
+  "homepage": "https://twitter-followers-video.vercel.app",
+  "bugs": {
+    "url": "https://github.com/Aniket-508/twitter-followers-video/issues"
   },
   "dependencies": {
     "@remotion/bundler": "4.0.407",

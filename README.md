@@ -1,88 +1,93 @@
-<img src="https://github.com/remotion-dev/template-next/assets/1629785/9092db5f-7c0c-4d38-97c4-5f5a61f5cc098" />
-<br/>
-<br/>
+# Twitter Followers Video 🐦
 
-This is a Next.js template for building programmatic video apps, with [`@remotion/player`](https://remotion.dev/player) and [`@remotion/lambda`](https://remotion.dev/lambda) built in.
+_Generate animated videos to celebrate and share your Twitter/X follower milestones!_
 
-This template uses the Next.js App directory, with TailwindCSS. There is a [Non-TailwindCSS version](https://github.com/remotion-dev/template-next-app-dir), and a [Pages directory version](https://github.com/remotion-dev/template-next-pages-dir) of this template available.
+## 🎬 Example Output
 
-<img src="https://github.com/remotion-dev/template-next/assets/1629785/c9c2e5ca-2637-4ec8-8e40-a8feb5740d88" />
+The video shows:
+
+1. Avatars appearing one by one with spring animations
+2. Follower count incrementing through milestones
+3. Gradual zoom out effect as followers accumulate
+4. "Thank You!" celebration with zoom back in
+5. Marquee scroll effect at the end
+
+## 🛠️ Stack
+
+- [Remotion](https://www.remotion.dev/) to create the video (and [Remotion Lambda](https://www.remotion.dev/docs/lambda/api) to generate it in AWS)
+- [Next.js](https://nextjs.org) for the web application
+- [TailwindCSS](https://tailwindcss.com) for the styling
+- [Vercel](https://vercel.com) for hosting
 
 ## Getting Started
 
-[Use this template](https://github.com/new?template_name=template-next-app-dir-tailwind&template_owner=remotion-dev) to clone it into your GitHub account. Run
+### Prerequisites
 
-```
+- Node.js 22+ or Bun
+- AWS account (for Lambda rendering)
+
+### Installation
+
+```bash
+# Clone the repository
+git clone https://github.com/yourusername/twitter-followers-video.git
+cd twitter-followers-video
+
+# Install dependencies
 bun install
 ```
 
-afterwards. Alternatively, use this command to scaffold a project:
+### Development
 
-```
-npx create-video@latest --next-tailwind
-```
-
-## Commands
-
-Start the Next.js dev server:
-
-```
+```bash
+# Start the Next.js dev server
 bun run dev
+
+# Open Remotion Studio to preview animations
+bun run remotion
 ```
 
-Open the Remotion Studio:
+### Rendering
 
-```
-npx remotion studio
-```
-
-Render a video locally:
-
-```
+```bash
+# Render a video locally
 bunx remotion render
-```
 
-Upgrade Remotion:
-
-```
+# Upgrade Remotion
 bunx remotion upgrade
 ```
 
-The following script will set up your Remotion Bundle and Lambda function on AWS:
+## AWS Lambda Setup
 
-```
+This project supports rendering videos via [Remotion Lambda](https://remotion.dev/lambda) for serverless video generation.
+
+1. Copy `.env.example` to `.env` and fill in your AWS credentials
+2. Complete the [Lambda setup guide](https://www.remotion.dev/docs/lambda/setup)
+3. Edit `config.mjs` with your desired Lambda settings
+4. Deploy your Lambda function:
+
+```bash
 node deploy.mjs
 ```
 
-You should run this script after:
+Run the deploy script after:
 
-- changing the video template
-- changing `config.mjs`
-- upgrading Remotion to a newer version
+- Changing the video template
+- Modifying `config.mjs`
+- Upgrading Remotion
 
-## Set up rendering on AWS Lambda
+## Contributing
 
-This template supports rendering the videos via [Remotion Lambda](https://remotion.dev/lambda).
+If you want to suggest a feature or report a problem, feel free to open an issue or even a pull request 😉.
 
-1. Copy the `.env.example` file to `.env` and fill in the values.
-   Complete the [Lambda setup guide](https://www.remotion.dev/docs/lambda/setup) to get your AWS credentials.
+## Credits
 
-1. Edit the `config.mjs` file to your desired Lambda settings.
-
-1. Run `node deploy.mjs` to deploy your Lambda function and Remotion Bundle.
-
-## Docs
-
-Get started with Remotion by reading the [fundamentals page](https://www.remotion.dev/docs/the-fundamentals).
-
-## Help
-
-We provide help on our [Discord server](https://remotion.dev/discord).
-
-## Issues
-
-Found an issue with Remotion? [File an issue here](https://remotion.dev/issue).
+- Animation inspired from this [tweet](https://x.com/Jerrythe2d/status/2013269485210456335) by [Jerry](https://x.com/Jerrythe2d)
 
 ## License
 
-Note that for some entities a company license is needed. [Read the terms here](https://github.com/remotion-dev/remotion/blob/main/LICENSE.md).
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+---
+
+Made with ❤️ by [Aniket Pawar](https://www.aniketpawar.com) using [Remotion](https://remotion.dev)
