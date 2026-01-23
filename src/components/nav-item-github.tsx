@@ -14,7 +14,7 @@ const getStargazerCount = unstable_cache(
             Authorization: `Bearer ${process.env.GITHUB_API_TOKEN}`,
             "X-GitHub-Api-Version": "2022-11-28",
           },
-        }
+        },
       );
 
       if (!response.ok) {
@@ -28,7 +28,7 @@ const getStargazerCount = unstable_cache(
     }
   },
   ["github-stargazer-count"],
-  { revalidate: 86400 } // Cache for 1 day (86400 seconds)
+  { revalidate: 86400 }, // Cache for 1 day (86400 seconds)
 );
 
 export async function NavItemGitHub() {

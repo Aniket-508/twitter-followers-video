@@ -46,7 +46,7 @@ const SunIcon = forwardRef<SunIconHandle, SunIconProps>(
           onMouseEnter?.(e);
         }
       },
-      [controls, onMouseEnter]
+      [controls, onMouseEnter],
     );
 
     const handleMouseLeave = useCallback(
@@ -57,7 +57,7 @@ const SunIcon = forwardRef<SunIconHandle, SunIconProps>(
           onMouseLeave?.(e);
         }
       },
-      [controls, onMouseLeave]
+      [controls, onMouseLeave],
     );
 
     return (
@@ -100,7 +100,7 @@ const SunIcon = forwardRef<SunIconHandle, SunIconProps>(
         </svg>
       </div>
     );
-  }
+  },
 );
 
 SunIcon.displayName = "SunIcon";

@@ -80,6 +80,10 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
+    "lint:fix": "eslint --fix .",
+    "check-types": "tsc --noEmit --pretty",
+    "format:check": "prettier --check \"**/*.{ts,tsx,md,mdx}\" --cache",
+    "format:fix": "prettier --write \"**/*.{ts,tsx,md,mdx}\" --cache",
     "remotion": "remotionb studio",
     "render": "remotionb render",
     "deploy": "node deploy.mjs"

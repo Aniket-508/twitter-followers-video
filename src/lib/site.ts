@@ -12,12 +12,14 @@ export const SOURCE_CODE_GITHUB_URL = `https://github.com/Aniket-508/${SOURCE_CO
 
 export const SPONSORSHIP_URL = "https://github.com/sponsors/Aniket-508";
 
+export const SITE_URL = "https://twitter-followers-video.vercel.app";
+
 export const SITE = {
   name: "Twitter Followers Video",
   title: "Twitter Followers Video",
   description:
     "Generate beautiful animated videos to celebrate and share your Twitter/X follower milestones.",
-  url: "https://twitter-followers-video.vercel.app",
+  url: SITE_URL,
   author: AUTHOR,
   links: {
     github: SOURCE_CODE_GITHUB_URL,
@@ -36,5 +38,5 @@ export const SITE = {
 } as const;
 
 export const UTM_PARAMS = {
-  utm_source: urlToName(SITE.url),
+  utm_source: urlToName(SITE_URL),
 };

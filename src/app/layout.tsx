@@ -7,12 +7,24 @@ import { Providers } from "./providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 
+const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
+
+const playfairDisplay = Playfair_Display({
+  variable: "--font-serif",
+  subsets: ["latin"],
+  style: ["normal", "italic"],
+});
+
 export const metadata: Metadata = {
   title: SITE.title,
   description: SITE.description,
   keywords: [...SITE.keywords],
   authors: [{ name: SITE.author.name, url: SITE.author.url }],
   creator: SITE.author.name,
+  icons: {
+    icon: "/icon.svg",
+    apple: "/icon.svg",
+  },
   openGraph: {
     type: "website",
     locale: "en_US",
@@ -39,21 +51,13 @@ export const viewport: Viewport = {
   maximumScale: 1,
 };
 
-const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
-
-const playfairDisplay = Playfair_Display({
-  variable: "--font-playfair",
-  subsets: ["latin"],
-  style: ["normal", "italic"],
-});
-
 export default function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" suppressHydrationWarning>
+    <html lang="en" suppressHydrationWarning className={publicSans.variable}>
       <head>
         <Script id="clarity-tracking" strategy="afterInteractive">
           {`
@@ -65,9 +69,7 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body
-        className={`${publicSans.variable} ${playfairDisplay.variable} font-sans antialiased`}
-      >
+      <body className={`${playfairDisplay.variable} font-sans antialiased`}>
         <Providers>
           <SiteHeader />
           {children}

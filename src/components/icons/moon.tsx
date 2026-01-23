@@ -52,7 +52,7 @@ const MoonIcon = forwardRef<MoonIconHandle, MoonIconProps>(
           onMouseEnter?.(e);
         }
       },
-      [controls, onMouseEnter]
+      [controls, onMouseEnter],
     );
 
     const handleMouseLeave = useCallback(
@@ -63,7 +63,7 @@ const MoonIcon = forwardRef<MoonIconHandle, MoonIconProps>(
           onMouseLeave?.(e);
         }
       },
-      [controls, onMouseLeave]
+      [controls, onMouseLeave],
     );
     return (
       <div
@@ -90,7 +90,7 @@ const MoonIcon = forwardRef<MoonIconHandle, MoonIconProps>(
         </motion.svg>
       </div>
     );
-  }
+  },
 );
 
 MoonIcon.displayName = "MoonIcon";
