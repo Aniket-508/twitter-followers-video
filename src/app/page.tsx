@@ -1,122 +1,18 @@
-"use client";
-
-import { Player } from "@remotion/player";
-import { useMemo, useState } from "react";
-import { z } from "zod";
-import {
-  defaultMyCompProps,
-  CompositionProps,
-  DURATION_IN_FRAMES,
-  VIDEO_FPS,
-  VIDEO_HEIGHT,
-  VIDEO_WIDTH,
-  XTheme,
-} from "@/types/constants";
-import { Main } from "../remotion/MyComp/Main";
-import { Input } from "../components/ui/input";
-import { Label } from "@/components/ui/label";
-import { SITE } from "@/constants";
-import { Button } from "@/components/ui/button";
-
-const THEME_OPTIONS: { value: XTheme; label: string; description: string }[] = [
-  { value: "light", label: "Light", description: "White background" },
-  { value: "dim", label: "Dim", description: "Dark blue background" },
-  {
-    value: "lightsOut",
-    label: "Lights Out",
-    description: "Pure black background",
-  },
-];
+import { ConfigProvider } from "@/contexts/config-context";
+import { HeroSection } from "@/components/home/hero-section";
+import { ConfigurationSection } from "@/components/home/configuration-section";
+import { PreviewSection } from "@/components/home/preview-section";
 
 export default function Home() {
-  const [followerCount, setFollowerCount] = useState<number>(
-    defaultMyCompProps.followerCount,
-  );
-  const [theme, setTheme] = useState<XTheme>(defaultMyCompProps.theme);
-  const inputProps: z.infer<typeof CompositionProps> = useMemo(() => {
-    return {
-      followerCount,
-      theme,
-    };
-  }, [followerCount, theme]);
-
   return (
-    <main className="px-4 py-12">
-      <div className="space-y-2 mb-12 text-center sm:text-left">
-        <h1 className="text-4xl font-serif italic text-foreground">
-          {SITE.NAME}
-        </h1>
-        <p className="text-muted-foreground text-lg">
-          Generate animated videos to celebrate and share your X follower
-          milestones.
-        </p>
-      </div>
-
-      <div className="space-y-8">
-        {/* Inputs Section */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-            Configuration
-          </h2>
-          <div className="grid gap-6">
-            <div className="space-y-2">
-              <Label>Follower Count (Numeric)</Label>
-              <Input
-                type="number"
-                value={followerCount}
-                onChange={(e) => setFollowerCount(Number(e.target.value) || 0)}
-                min={1}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Theme</Label>
-              <div className="flex flex-wrap gap-2">
-                {THEME_OPTIONS.map((option) => (
-                  <Button
-                    key={option.value}
-                    variant={theme === option.value ? "default" : "outline"}
-                    onClick={() => setTheme(option.value)}
-                  >
-                    {option.label}
-                  </Button>
-                ))}
-              </div>
-            </div>
-          </div>
+    <ConfigProvider>
+      <main className="px-4 py-12">
+        <HeroSection />
+        <div className="space-y-8">
+          <ConfigurationSection />
+          <PreviewSection />
         </div>
-
-        {/* Preview Section */}
-        <div className="space-y-4">
-          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center justify-between">
-            <span>Preview</span>
-          </h2>
-
-          <div className="rounded-lg overflow-hidden border border-foreground/10 bg-muted/30 shadow-sm">
-            <div className="aspect-video w-full relative">
-              <Player
-                component={Main}
-                inputProps={inputProps}
-                durationInFrames={DURATION_IN_FRAMES}
-                fps={VIDEO_FPS}
-                compositionHeight={VIDEO_HEIGHT}
-                compositionWidth={VIDEO_WIDTH}
-                style={{
-                  width: "100%",
-                  height: "100%",
-                }}
-                controls
-                autoPlay
-                loop
-              />
-            </div>
-          </div>
-          {/* <div className="flex justify-end">
-            <DownloadButton /> - Needs update to be cleaner or integrated
-            Placeholder for download button if needed, or keep existing one but styled
-          </div> */}
-        </div>
-      </div>
-    </main>
+      </main>
+    </ConfigProvider>
   );
 }

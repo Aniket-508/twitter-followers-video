@@ -8,6 +8,14 @@ export type XTheme = z.infer<typeof XThemeSchema>;
 export const CompositionProps = z.object({
   followerCount: z.number(),
   theme: XThemeSchema,
+  followers: z
+    .array(
+      z.object({
+        name: z.string(),
+        image: z.string().optional(),
+      }),
+    )
+    .optional(),
 });
 
 export const defaultMyCompProps: z.infer<typeof CompositionProps> = {

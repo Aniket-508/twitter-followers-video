@@ -37,7 +37,7 @@ const OrganizationJsonLd = () => {
     founder: {
       "@type": "Person",
       name: SITE.AUTHOR.NAME,
-      url: LINK.TWITTER,
+      url: SITE.AUTHOR.URL,
     },
   };
 
@@ -52,20 +52,20 @@ const OrganizationJsonLd = () => {
 const FAQJsonLd = () => {
   const faqs = [
     {
-      question: "What is heroicons-animated?",
-      answer: `${SITE.NAME} is a free, open-source library of 316 beautifully crafted animated React icons. Built with Motion library and based on Heroicons.`,
+      question: `What is ${SITE.NAME}?`,
+      answer: `${SITE.NAME} is a free tool to generate beautiful animated videos to celebrate and share your Twitter/X follower milestones.`,
     },
     {
-      question: "How do I install heroicons-animated icons?",
-      answer: `You can install icons using npx shadcn@latest add "${SITE.URL}/r/{icon-name}.json". Replace {icon-name} with the desired icon name in kebab-case.`,
+      question: `How do I use ${SITE.NAME}?`,
+      answer: `Simply enter your follower count or upload a CSV with your followers' names and images, and we'll generate an animated video for you to download and share.`,
     },
     {
-      question: "Is heroicons-animated free to use?",
-      answer: `Yes! ${SITE.NAME} is completely free and open-source under the MIT license. You can use it for personal and commercial projects.`,
+      question: `Is ${SITE.NAME} free to use?`,
+      answer: `Yes! ${SITE.NAME} is completely free and open-source under the MIT license.`,
     },
     {
-      question: "What technologies are used in heroicons-animated?",
-      answer: `${SITE.NAME} icons are React components written in TypeScript. Animations are powered by Motion (formerly Framer Motion), and the icons are based on Heroicons.`,
+      question: "What technology is used?",
+      answer: `The videos are generated using Remotion, a framework for creating videos with React.`,
     },
   ];
 

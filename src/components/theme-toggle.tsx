@@ -6,8 +6,8 @@ import { useHotkeys } from "react-hotkeys-hook";
 
 import { useSound } from "@/hooks/use-sound";
 
-import { MoonIcon } from "./icons/moon";
-import { SunIcon } from "./icons/sun";
+import { MoonIcon } from "./animated-icons/moon";
+import { SunIcon } from "./animated-icons/sun";
 import {
   Tooltip,
   TooltipContent,

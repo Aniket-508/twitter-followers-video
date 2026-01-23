@@ -48,7 +48,7 @@ export default function RootLayout({
       <body className={`${playfairDisplay.variable} font-sans antialiased`}>
         <Providers>
           <div className="relative view-container">
-            <div className="bg-stripes absolute bottom-0 right-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
+            <div className="bg-stripes absolute bottom-0 left-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
             <div className="border-x">
               <SiteHeader />
               {children}

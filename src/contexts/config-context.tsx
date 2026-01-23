@@ -1,0 +1,161 @@
+"use client";
+
+import {
+  createContext,
+  useContext,
+  useMemo,
+  useState,
+  ChangeEvent,
+  ReactNode,
+  useCallback,
+} from "react";
+import { z } from "zod";
+import {
+  defaultMyCompProps,
+  CompositionProps,
+  XTheme,
+} from "@/types/constants";
+import { parseFollowersCSV } from "@/lib/csv-utils";
+import { RANDOM_NAMES } from "@/constants";
+
+export type DataSource = "manual" | "csv";
+
+export interface FollowerData {
+  name: string;
+  image?: string;
+}
+
+interface ConfigContextType {
+  followerCount: number;
+  setFollowerCount: (count: number) => void;
+  theme: XTheme;
+  setTheme: (theme: XTheme) => void;
+  dataSource: DataSource;
+  setDataSource: (source: DataSource) => void;
+  csvFollowers: FollowerData[];
+  isRandomizeEnabled: boolean;
+  setIsRandomizeEnabled: (enabled: boolean) => void;
+  handleFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+  inputProps: z.infer<typeof CompositionProps>;
+}
+
+const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
+
+/**
+ * Fisher-Yates shuffle algorithm to randomize an array.
+ */
+function shuffle<T>(array: T[]): T[] {
+  const shuffled = [...array];
+  for (let i = shuffled.length - 1; i > 0; i--) {
+    const j = Math.floor(Math.random() * (i + 1));
+    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
+  }
+  return shuffled;
+}
+
+export const ConfigProvider = ({ children }: { children: ReactNode }) => {
+  const [followerCount, setFollowerCount] = useState<number>(
+    defaultMyCompProps.followerCount,
+  );
+  const [theme, setTheme] = useState<XTheme>(defaultMyCompProps.theme);
+  const [dataSource, setDataSource] = useState<DataSource>("csv");
+  const [csvFollowers, setCsvFollowers] = useState<FollowerData[]>([]);
+  const [isRandomizeEnabled, setIsRandomizeEnabled] = useState(false);
+
+  const generateRandomFollowers = useCallback((count: number) => {
+    const shuffledNames = shuffle(RANDOM_NAMES);
+    return Array.from({ length: Math.min(count, 50) }).map((_, i) => ({
+      name: shuffledNames[i % shuffledNames.length],
+      image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + Math.random()}`,
+    }));
+  }, []);
+
+  const activeFollowers = useMemo(() => {
+    if (dataSource === "manual") {
+      return generateRandomFollowers(followerCount);
+    }
+
+    if (!isRandomizeEnabled || csvFollowers.length === 0) {
+      return csvFollowers.length > 0 ? csvFollowers : undefined;
+    }
+
+    const shuffledNames = shuffle(RANDOM_NAMES);
+    return csvFollowers.map((f, i) => ({
+      ...f,
+      name: shuffledNames[i % shuffledNames.length],
+    }));
+  }, [
+    dataSource,
+    csvFollowers,
+    isRandomizeEnabled,
+    followerCount,
+    generateRandomFollowers,
+  ]);
+
+  const inputProps = useMemo(
+    () => ({
+      followerCount: dataSource === "csv" ? csvFollowers.length : followerCount,
+      theme,
+      followers: activeFollowers,
+    }),
+    [followerCount, theme, activeFollowers, dataSource, csvFollowers.length],
+  );
+
+  const handleFileUpload = useCallback(
+    async (e: ChangeEvent<HTMLInputElement>) => {
+      const file = e.target.files?.[0];
+      if (!file) return;
+
+      const text = await file.text();
+      if (!text) return;
+
+      const { followers, error } = await parseFollowersCSV(text);
+
+      if (error) {
+        alert(error);
+        return;
+      }
+
+      setCsvFollowers(followers);
+      setFollowerCount(followers.length);
+    },
+    [],
+  );
+
+  const value = useMemo(
+    () => ({
+      followerCount,
+      setFollowerCount,
+      theme,
+      setTheme,
+      dataSource,
+      setDataSource,
+      csvFollowers,
+      isRandomizeEnabled,
+      setIsRandomizeEnabled,
+      handleFileUpload,
+      inputProps,
+    }),
+    [
+      followerCount,
+      theme,
+      dataSource,
+      csvFollowers,
+      isRandomizeEnabled,
+      handleFileUpload,
+      inputProps,
+    ],
+  );
+
+  return (
+    <ConfigContext.Provider value={value}>{children}</ConfigContext.Provider>
+  );
+};
+
+export const useConfig = () => {
+  const context = useContext(ConfigContext);
+  if (context === undefined) {
+    throw new Error("useConfig must be used within a ConfigProvider");
+  }
+  return context;
+};

@@ -6,9 +6,10 @@ import {
   spring,
   useCurrentFrame,
   useVideoConfig,
+  Img,
 } from "remotion";
 import { loadFont, fontFamily } from "@remotion/google-fonts/DMSans";
-import { User } from "lucide-react";
+import { useState } from "react";
 
 // Twitter/X verified badge SVG component
 const VerifiedBadge: React.FC<{ size?: number }> = ({ size = 24 }) => (
@@ -125,6 +126,7 @@ function generateMilestones(
   finalCount: number,
   frameWidth: number,
   fps: number,
+  followers?: { name: string; image?: string }[],
 ): Milestone[] {
   const maxAvatars = calculateMaxAvatars(frameWidth);
 
@@ -133,7 +135,10 @@ function generateMilestones(
   const startDelay = 0.3; // Small delay before first milestone
 
   // Names for milestones
-  const names = ["John", "Alex", "Sarah"];
+  const names =
+    followers && followers.length >= 4
+      ? followers.slice(0, 4).map((f) => f.name)
+      : ["John", "Alex", "Sarah", "Cheers"];
 
   // Calculate avatar counts for each milestone (progressive increase)
   // Milestone 1: ~20% of max, Milestone 2: ~50% of max, Milestone 3: ~80% of max
@@ -152,7 +157,7 @@ function generateMilestones(
     milestones.push({
       frame: currentFrame,
       name: names[i],
-      count: avatars,
+      count: avatars - 1,
       totalAvatars: avatars,
     });
     currentFrame += Math.round(milestoneInterval * fps);
@@ -164,8 +169,8 @@ function generateMilestones(
   // Final milestone (celebration) shows all avatars that fit
   milestones.push({
     frame: celebrationFrame,
-    name: "Cheers",
-    count: maxAvatars,
+    name: names[3],
+    count: maxAvatars - 1,
     totalAvatars: maxAvatars,
   });
 
@@ -241,6 +246,7 @@ interface AvatarProps {
   milestones: Milestone[];
   celebrationStart: number;
   theme: XTheme;
+  follower?: { name: string; image?: string };
 }
 
 const Avatar: React.FC<AvatarProps> = ({
@@ -249,10 +255,12 @@ const Avatar: React.FC<AvatarProps> = ({
   milestones,
   celebrationStart,
   theme,
+  follower,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
   const colors = THEMES[theme];
+  const [imageError, setImageError] = useState(false);
 
   const appearFrame = getAvatarAppearFrame(
     index,
@@ -276,6 +284,12 @@ const Avatar: React.FC<AvatarProps> = ({
   const clampedScale = animationFrame < 0 ? 0 : Math.min(scale, 1);
 
   const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
+
+  // Fallback to Dicebear if no image or image fails to load
+  const avatarUrl =
+    !follower?.image || imageError
+      ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower?.name || index}`
+      : follower.image;
 
   return (
     <div
@@ -302,7 +316,11 @@ const Avatar: React.FC<AvatarProps> = ({
           justifyContent: "center",
         }}
       >
-        <User style={{ width: 24, height: 24, color: "white" }} />
+        <Img
+          src={avatarUrl}
+          onError={() => setImageError(true)}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
       </div>
     </div>
   );
@@ -336,12 +354,12 @@ const FillerAvatar: React.FC<FillerAvatarProps> = ({ index, theme }) => {
           overflow: "hidden",
           boxShadow: colors.shadow,
           backgroundColor: avatarColor,
-          display: "flex",
-          alignItems: "center",
-          justifyContent: "center",
         }}
       >
-        <User style={{ width: 24, height: 24, color: "white" }} />
+        <Img
+          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=filler-${index}`}
+          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+        />
       </div>
     </div>
   );
@@ -355,6 +373,7 @@ interface AvatarStackProps {
   celebrationStart: number;
   fillerCount: number;
   theme: XTheme;
+  followers?: { name: string; image?: string }[];
 }
 
 const AvatarStack: React.FC<AvatarStackProps> = ({
@@ -364,6 +383,7 @@ const AvatarStack: React.FC<AvatarStackProps> = ({
   celebrationStart,
   fillerCount,
   theme,
+  followers,
 }) => {
   return (
     <div
@@ -384,6 +404,7 @@ const AvatarStack: React.FC<AvatarStackProps> = ({
           milestones={milestones}
           celebrationStart={celebrationStart}
           theme={theme}
+          follower={followers?.[index]}
         />
       ))}
       {/* Filler avatars to prevent white space during scroll */}
@@ -406,6 +427,7 @@ interface TextLabelProps {
   finalCount: number;
   milestones: Milestone[];
   theme: XTheme;
+  followers?: { name: string; image?: string }[];
 }
 
 const TextLabel: React.FC<TextLabelProps> = ({
@@ -414,6 +436,7 @@ const TextLabel: React.FC<TextLabelProps> = ({
   finalCount,
   milestones,
   theme,
+  followers,
 }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
@@ -432,7 +455,9 @@ const TextLabel: React.FC<TextLabelProps> = ({
   // Animate count for ALL milestones, matching avatar appearance speed
   if (currentMilestone && frame >= currentMilestone.frame) {
     const milestoneStart = currentMilestone.frame;
-    const previousCount = previousMilestone?.count ?? 1;
+    const previousOthers = previousMilestone
+      ? previousMilestone.totalAvatars - 1
+      : 0;
     const previousAvatars = previousMilestone?.totalAvatars ?? 1;
 
     // Check if this is the final milestone (celebration)
@@ -444,13 +469,12 @@ const TextLabel: React.FC<TextLabelProps> = ({
     const avatarAnimationDuration = newAvatars * staggerTime;
 
     if (isFinalMilestone) {
-      // Final milestone: animate from previous count to final follower count
-      // Use the avatar animation duration for the count to match
+      // Final milestone: animate from previous total to final follower count
       displayCount = Math.round(
         interpolate(
           frame,
           [milestoneStart, milestoneStart + avatarAnimationDuration],
-          [previousCount, finalCount],
+          [previousAvatars - 1, finalCount - 1],
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
@@ -463,7 +487,7 @@ const TextLabel: React.FC<TextLabelProps> = ({
         interpolate(
           frame,
           [milestoneStart, milestoneStart + avatarAnimationDuration],
-          [previousCount, currentMilestone.count],
+          [previousOthers, currentMilestone.totalAvatars - 1],
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
@@ -472,6 +496,10 @@ const TextLabel: React.FC<TextLabelProps> = ({
       );
     }
   }
+
+  // Dynamically pick the name based on the current animated count
+  // The person being named is the one "at the head", i.e., at index displayCount
+  const currentName = followers?.[displayCount]?.name || name;
 
   const formattedCount =
     displayCount >= 1000
@@ -495,24 +523,37 @@ const TextLabel: React.FC<TextLabelProps> = ({
           color: colors.text,
         }}
       >
-        {name}
+        {currentName}
       </span>
       <span style={{ marginLeft: 4, display: "inline-flex" }}>
         <VerifiedBadge size={24} />
       </span>
-      <span
-        style={{
-          fontSize: 24,
-          color: colors.textSecondary,
-          marginLeft: 8,
-        }}
-      >
-        and{" "}
-        <span style={{ fontWeight: 600, color: colors.text }}>
-          {formattedCount}
-        </span>{" "}
-        others followed you
-      </span>
+      {displayCount > 0 && (
+        <span
+          style={{
+            fontSize: 24,
+            color: colors.textSecondary,
+            marginLeft: 8,
+          }}
+        >
+          and{" "}
+          <span style={{ fontWeight: 600, color: colors.text }}>
+            {formattedCount}
+          </span>{" "}
+          others followed you
+        </span>
+      )}
+      {displayCount === 0 && (
+        <span
+          style={{
+            fontSize: 24,
+            color: colors.textSecondary,
+            marginLeft: 8,
+          }}
+        >
+          followed you
+        </span>
+      )}
     </div>
   );
 };
@@ -595,11 +636,13 @@ const Celebration: React.FC<CelebrationProps> = ({ theme, milestones }) => {
 export interface FollowerAccumulationProps {
   followerCount: number;
   theme?: XTheme;
+  followers?: { name: string; image?: string }[];
 }
 
 export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({
   followerCount,
   theme = "light",
+  followers,
 }) => {
   const frame = useCurrentFrame();
   const { fps, durationInFrames, width } = useVideoConfig();
@@ -607,8 +650,8 @@ export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({
 
   // Memoize milestones - only recalculate when dependencies change
   const milestones = useMemo(
-    () => generateMilestones(followerCount, width, fps),
-    [followerCount, width, fps],
+    () => generateMilestones(followerCount, width, fps, followers),
+    [followerCount, width, fps, followers],
   );
 
   // Get dynamic celebration frame from milestones
@@ -729,6 +772,7 @@ export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({
             celebrationStart={celebrationStart}
             fillerCount={fillerCount}
             theme={theme}
+            followers={followers}
           />
           <TextLabel
             name={currentMilestone.name}
@@ -736,6 +780,7 @@ export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({
             finalCount={followerCount}
             milestones={milestones}
             theme={theme}
+            followers={followers}
           />
         </div>
       </AbsoluteFill>

@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { LINK, SITE } from "@/constants";
+import { SITE } from "@/constants";
 
 type CreateMetadataOptions = {
   title?: string;
@@ -64,7 +64,7 @@ const baseMetadata: Metadata = {
         url: SITE.OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: `${SITE.NAME} - Animated Heroicons Library for React, Vue, and Svelte`,
+        alt: `${SITE.NAME} - Generate animated videos for your X follower milestones`,
       },
     ],
   },
@@ -75,17 +75,17 @@ const baseMetadata: Metadata = {
     capable: true,
   },
   title: {
-    default: `${SITE.NAME} | Free Animated Heroicons for React, Vue, and Svelte`,
+    default: SITE.NAME,
     template: `%s | ${SITE.NAME}`,
   },
   description: SITE.DESCRIPTION,
   keywords: [...SITE.KEYWORDS],
-  authors: [{ name: SITE.AUTHOR.NAME, url: LINK.TWITTER }],
+  authors: [{ name: SITE.AUTHOR.NAME, url: SITE.AUTHOR.URL }],
   creator: SITE.AUTHOR.NAME,
   publisher: SITE.AUTHOR.NAME,
   twitter: {
     card: "summary_large_image",
-    title: `${SITE.NAME} | Free Animated Heroicons for React, Vue, and Svelte`,
+    title: SITE.NAME,
     description: SITE.DESCRIPTION,
     creator: SITE.AUTHOR.TWITTER,
     site: SITE.AUTHOR.TWITTER,
@@ -94,7 +94,7 @@ const baseMetadata: Metadata = {
         url: SITE.OG_IMAGE,
         width: 1200,
         height: 630,
-        alt: `${SITE.NAME} - Animated Heroicons Library for React, Vue, and Svelte`,
+        alt: `${SITE.NAME} - Generate animated videos for your X follower milestones`,
       },
     ],
   },
