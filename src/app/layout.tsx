@@ -1,11 +1,12 @@
 import { Playfair_Display, Public_Sans } from "next/font/google";
 import Script from "next/script";
 import "../../styles/global.css";
-import { Metadata, Viewport } from "next";
-import { SITE } from "@/lib/site";
+import { Viewport } from "next";
 import { Providers } from "./providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
+import { JsonLdScripts } from "@/seo/json-ld";
+import { baseMetadata } from "@/seo/metadata";
 
 const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
@@ -15,40 +16,14 @@ const playfairDisplay = Playfair_Display({
   style: ["normal", "italic"],
 });
 
-export const metadata: Metadata = {
-  title: SITE.title,
-  description: SITE.description,
-  keywords: [...SITE.keywords],
-  authors: [{ name: SITE.author.name, url: SITE.author.url }],
-  creator: SITE.author.name,
-  icons: {
-    icon: "/icon.svg",
-    apple: "/icon.svg",
-  },
-  openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: SITE.url,
-    title: SITE.title,
-    description: SITE.description,
-    siteName: SITE.name,
-  },
-  twitter: {
-    card: "summary_large_image",
-    title: SITE.title,
-    description: SITE.description,
-    creator: SITE.author.twitter,
-  },
-  robots: {
-    index: true,
-    follow: true,
-  },
-};
+export const metadata = baseMetadata;
 
 export const viewport: Viewport = {
   width: "device-width",
   initialScale: 1,
+  userScalable: false,
   maximumScale: 1,
+  minimumScale: 1,
 };
 
 export default function RootLayout({
@@ -59,6 +34,7 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning className={publicSans.variable}>
       <head>
+        <JsonLdScripts />
         <Script id="clarity-tracking" strategy="afterInteractive">
           {`
             (function(c,l,a,r,i,t,y){
@@ -71,9 +47,15 @@ export default function RootLayout({
       </head>
       <body className={`${playfairDisplay.variable} font-sans antialiased`}>
         <Providers>
-          <SiteHeader />
-          {children}
-          <SiteFooter />
+          <div className="relative view-container">
+            <div className="bg-stripes absolute bottom-0 right-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
+            <div className="border-x">
+              <SiteHeader />
+              {children}
+              <SiteFooter />
+            </div>
+            <div className="bg-stripes absolute bottom-0 right-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
+          </div>
         </Providers>
       </body>
     </html>

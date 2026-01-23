@@ -1,7 +1,6 @@
 "use client";
 
 import { Player } from "@remotion/player";
-import type { NextPage } from "next";
 import { useMemo, useState } from "react";
 import { z } from "zod";
 import {
@@ -15,8 +14,9 @@ import {
 } from "@/types/constants";
 import { Main } from "../remotion/MyComp/Main";
 import { Input } from "../components/ui/input";
-import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
+import { SITE } from "@/constants";
+import { Button } from "@/components/ui/button";
 
 const THEME_OPTIONS: { value: XTheme; label: string; description: string }[] = [
   { value: "light", label: "Light", description: "White background" },
@@ -28,7 +28,7 @@ const THEME_OPTIONS: { value: XTheme; label: string; description: string }[] = [
   },
 ];
 
-const Home: NextPage = () => {
+export default function Home() {
   const [followerCount, setFollowerCount] = useState<number>(
     defaultMyCompProps.followerCount,
   );
@@ -41,10 +41,10 @@ const Home: NextPage = () => {
   }, [followerCount, theme]);
 
   return (
-    <main className="view-container py-12">
+    <main className="px-4 py-12">
       <div className="space-y-2 mb-12 text-center sm:text-left">
         <h1 className="text-4xl font-serif italic text-foreground">
-          Celebration Video
+          {SITE.NAME}
         </h1>
         <p className="text-muted-foreground text-lg">
           Generate animated videos to celebrate and share your X follower
@@ -54,12 +54,12 @@ const Home: NextPage = () => {
 
       <div className="space-y-8">
         {/* Inputs Section */}
-        <div className="space-y-6">
-          <div className="space-y-4">
-            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-              Configuration
-            </h2>
-            <div className="grid gap-6">
+        <div className="space-y-4">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+            Configuration
+          </h2>
+          <div className="grid gap-6">
+            <div className="space-y-2">
               <Label>Follower Count (Numeric)</Label>
               <Input
                 type="number"
@@ -67,29 +67,25 @@ const Home: NextPage = () => {
                 onChange={(e) => setFollowerCount(Number(e.target.value) || 0)}
                 min={1}
               />
+            </div>
 
-              <div className="space-y-2">
-                <Label>Theme</Label>
-                <div className="flex flex-wrap gap-2">
-                  {THEME_OPTIONS.map((option) => (
-                    <button
-                      key={option.value}
-                      onClick={() => setTheme(option.value)}
-                      className={cn(
-                        "px-3 py-1.5 text-sm rounded-md transition-colors border",
-                        theme === option.value
-                          ? "bg-foreground text-background border-foreground"
-                          : "bg-transparent text-foreground/70 border-foreground/20 hover:border-foreground/50",
-                      )}
-                    >
-                      {option.label}
-                    </button>
-                  ))}
-                </div>
+            <div className="space-y-2">
+              <Label>Theme</Label>
+              <div className="flex flex-wrap gap-2">
+                {THEME_OPTIONS.map((option) => (
+                  <Button
+                    key={option.value}
+                    variant={theme === option.value ? "default" : "outline"}
+                    onClick={() => setTheme(option.value)}
+                  >
+                    {option.label}
+                  </Button>
+                ))}
               </div>
             </div>
           </div>
         </div>
+
         {/* Preview Section */}
         <div className="space-y-4">
           <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center justify-between">
@@ -115,13 +111,12 @@ const Home: NextPage = () => {
               />
             </div>
           </div>
-          <div className="flex justify-end">
-            {/* <DownloadButton /> - Needs update to be cleaner or integrated */}
-            {/* Placeholder for download button if needed, or keep existing one but styled */}
-          </div>
+          {/* <div className="flex justify-end">
+            <DownloadButton /> - Needs update to be cleaner or integrated
+            Placeholder for download button if needed, or keep existing one but styled
+          </div> */}
         </div>
       </div>
     </main>
   );
-};
-export default Home;
+}
