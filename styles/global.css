@@ -124,7 +124,8 @@
   body {
     @apply bg-background text-foreground;
   }
-  .container {
-    @apply mx-auto w-full max-w-2xl px-4;
-  }
+}
+
+.view-container {
+  @apply mx-auto w-full max-w-2xl px-4;
 }

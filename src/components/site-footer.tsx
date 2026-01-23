@@ -2,7 +2,7 @@ import { Twitter } from "lucide-react";
 
 export function SiteFooter() {
   return (
-    <footer className="flex items-center justify-between py-6 text-xs text-muted-foreground border-t border-border">
+    <footer className="view-container flex items-center justify-between py-4 text-xs text-muted-foreground border-t border-border">
       <p>Not endorsed or affiliated by X</p>
       <a
         href="https://twitter.com/im_aniketpawar"

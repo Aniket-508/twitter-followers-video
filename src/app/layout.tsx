@@ -66,7 +66,7 @@ export default function RootLayout({
         </Script>
       </head>
       <body
-        className={`${publicSans.variable} ${playfairDisplay.variable} font-sans bg-background antialiased`}
+        className={`${publicSans.variable} ${playfairDisplay.variable} font-sans antialiased`}
       >
         <Providers>
           <SiteHeader />

@@ -41,7 +41,7 @@ const Home: NextPage = () => {
   }, [followerCount, theme]);
 
   return (
-    <main className="container mx-auto px-4 py-12 max-w-2xl">
+    <main className="view-container py-12">
       <div className="space-y-2 mb-12 text-center sm:text-left">
         <h1 className="text-4xl font-serif italic text-foreground">
           Celebration Video
