@@ -11,55 +11,117 @@ import {
   VIDEO_FPS,
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
-} from "../../types/constants";
-import { Spacing } from "../components/Spacing";
+  XTheme,
+} from "@/types/constants";
 import { Main } from "../remotion/MyComp/Main";
+import { Input } from "../components/ui/input";
+import { cn } from "@/lib/utils";
+import { Label } from "@/components/ui/label";
+
+const THEME_OPTIONS: { value: XTheme; label: string; description: string }[] = [
+  { value: "light", label: "Light", description: "White background" },
+  { value: "dim", label: "Dim", description: "Dark blue background" },
+  {
+    value: "lightsOut",
+    label: "Lights Out",
+    description: "Pure black background",
+  },
+];
 
 const Home: NextPage = () => {
-  const [followerCount, setFollowerCount] = useState<number>(defaultMyCompProps.followerCount);
-
+  const [followerCount, setFollowerCount] = useState<number>(
+    defaultMyCompProps.followerCount,
+  );
+  const [theme, setTheme] = useState<XTheme>(defaultMyCompProps.theme);
   const inputProps: z.infer<typeof CompositionProps> = useMemo(() => {
     return {
       followerCount,
+      theme,
     };
-  }, [followerCount]);
+  }, [followerCount, theme]);
 
   return (
-    <div>
-      <div className="max-w-screen-md m-auto mb-5">
-        <div className="overflow-hidden rounded-geist shadow-[0_0_200px_rgba(0,0,0,0.15)] mb-10 mt-16">
-          <Player
-            component={Main}
-            inputProps={inputProps}
-            durationInFrames={DURATION_IN_FRAMES}
-            fps={VIDEO_FPS}
-            compositionHeight={VIDEO_HEIGHT}
-            compositionWidth={VIDEO_WIDTH}
-            style={{
-              width: "100%",
-            }}
-            controls
-            autoPlay
-            loop
-          />
-        </div>
-        <div className="flex flex-col gap-4 p-4">
-          <label className="flex flex-col gap-2">
-            <span className="text-sm font-medium">Follower Count</span>
-            <input
-              type="number"
-              value={followerCount}
-              onChange={(e) => setFollowerCount(Number(e.target.value) || 0)}
-              className="border rounded-md px-3 py-2 text-lg"
-              min={1}
-            />
-          </label>
-        </div>
-        <Spacing />
-        <Spacing />
+    <main className="container mx-auto px-4 py-12 max-w-2xl">
+      <div className="space-y-2 mb-12 text-center sm:text-left">
+        <h1 className="text-4xl font-serif italic text-foreground">
+          Celebration Video
+        </h1>
+        <p className="text-muted-foreground text-lg">
+          Generate animated videos to celebrate and share your X follower
+          milestones.
+        </p>
       </div>
-    </div>
+
+      <div className="space-y-8">
+        {/* Inputs Section */}
+        <div className="space-y-6">
+          <div className="space-y-4">
+            <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
+              Configuration
+            </h2>
+            <div className="grid gap-6">
+              <Label>Follower Count (Numeric)</Label>
+              <Input
+                type="number"
+                value={followerCount}
+                onChange={(e) => setFollowerCount(Number(e.target.value) || 0)}
+                min={1}
+              />
+
+              <div className="space-y-2">
+                <Label>Theme</Label>
+                <div className="flex flex-wrap gap-2">
+                  {THEME_OPTIONS.map((option) => (
+                    <button
+                      key={option.value}
+                      onClick={() => setTheme(option.value)}
+                      className={cn(
+                        "px-3 py-1.5 text-sm rounded-md transition-colors border",
+                        theme === option.value
+                          ? "bg-foreground text-background border-foreground"
+                          : "bg-transparent text-foreground/70 border-foreground/20 hover:border-foreground/50",
+                      )}
+                    >
+                      {option.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {/* Preview Section */}
+        <div className="space-y-4">
+          <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider flex items-center justify-between">
+            <span>Preview</span>
+          </h2>
+
+          <div className="rounded-lg overflow-hidden border border-foreground/10 bg-muted/30 shadow-sm">
+            <div className="aspect-video w-full relative">
+              <Player
+                component={Main}
+                inputProps={inputProps}
+                durationInFrames={DURATION_IN_FRAMES}
+                fps={VIDEO_FPS}
+                compositionHeight={VIDEO_HEIGHT}
+                compositionWidth={VIDEO_WIDTH}
+                style={{
+                  width: "100%",
+                  height: "100%",
+                }}
+                controls
+                autoPlay
+                loop
+              />
+            </div>
+          </div>
+          <div className="flex justify-end">
+            {/* <DownloadButton /> - Needs update to be cleaner or integrated */}
+            {/* Placeholder for download button if needed, or keep existing one but styled */}
+          </div>
+        </div>
+      </div>
+    </main>
   );
 };
-
 export default Home;

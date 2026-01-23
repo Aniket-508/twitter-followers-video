@@ -1,3 +1,4 @@
+import React, { useMemo } from "react";
 import {
   AbsoluteFill,
   Easing,
@@ -6,21 +7,99 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { loadFont, fontFamily } from "@remotion/google-fonts/Inter";
-import { User, BadgeCheck } from "lucide-react";
+import { loadFont, fontFamily } from "@remotion/google-fonts/DMSans";
+import { User } from "lucide-react";
+
+// Twitter/X verified badge SVG component
+const VerifiedBadge: React.FC<{ size?: number }> = ({ size = 24 }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    viewBox="0 0 22 22"
+    width={size}
+    height={size}
+  >
+    <path
+      d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.704-1.086-1.245-1.44S11.647 1.62 11 1.604c-.646.017-1.273.213-1.813.568s-.969.854-1.24 1.44c-.608-.223-1.267-.272-1.902-.14-.635.13-1.22.436-1.69.882-.445.47-.749 1.055-.878 1.688-.13.633-.08 1.29.144 1.896-.587.274-1.087.705-1.443 1.245-.356.54-.555 1.17-.574 1.817.02.647.218 1.276.574 1.817.356.54.856.972 1.443 1.245-.224.606-.274 1.263-.144 1.896.13.634.433 1.218.877 1.688.47.443 1.054.747 1.687.878.633.132 1.29.084 1.897-.136.274.586.705 1.084 1.246 1.439.54.354 1.17.551 1.816.569.647-.016 1.276-.213 1.817-.567s.972-.854 1.245-1.44c.604.239 1.266.296 1.903.164.636-.132 1.22-.447 1.68-.907.46-.46.776-1.044.908-1.681s.075-1.299-.165-1.903c.586-.274 1.084-.705 1.439-1.246.354-.54.551-1.17.569-1.816zM9.662 14.85l-3.429-3.428 1.293-1.302 2.072 2.072 4.4-4.794 1.347 1.246z"
+      fill="#1d9bf0"
+    />
+  </svg>
+);
 
 loadFont("normal", {
   subsets: ["latin"],
   weights: ["400", "700"],
 });
 
+// X/Twitter theme configurations
+export type XTheme = "light" | "dim" | "lightsOut";
+
+const THEMES = {
+  light: {
+    background: "#ffffff",
+    text: "#0f1419",
+    textSecondary: "#536471",
+    avatarBorder: "#ffffff",
+    shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+    gradient: "white",
+  },
+  dim: {
+    background: "#15202b",
+    text: "#f7f9f9",
+    textSecondary: "#8b98a5",
+    avatarBorder: "#15202b",
+    shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.3)",
+    gradient: "#15202b",
+  },
+  lightsOut: {
+    background: "#000000",
+    text: "#e7e9ea",
+    textSecondary: "#71767b",
+    avatarBorder: "#000000",
+    shadow: "0 4px 6px -1px rgba(0, 0, 0, 0.5)",
+    gradient: "#000000",
+  },
+} as const;
+
 // Colors for avatar placeholders
 const AVATAR_COLORS = [
-  "#ef4444", "#f97316", "#f59e0b", "#eab308", "#84cc16",
-  "#22c55e", "#10b981", "#14b8a6", "#06b6d4", "#0ea5e9",
-  "#3b82f6", "#6366f1", "#8b5cf6", "#a855f7", "#d946ef",
-  "#ec4899", "#f43f5e", "#78716c", "#71717a", "#737373",
+  "#ef4444",
+  "#f97316",
+  "#f59e0b",
+  "#eab308",
+  "#84cc16",
+  "#22c55e",
+  "#10b981",
+  "#14b8a6",
+  "#06b6d4",
+  "#0ea5e9",
+  "#3b82f6",
+  "#6366f1",
+  "#8b5cf6",
+  "#a855f7",
+  "#d946ef",
+  "#ec4899",
+  "#f43f5e",
+  "#78716c",
+  "#71717a",
+  "#737373",
 ];
+
+// Spring configurations (from Remotion best practices)
+const SPRING_CONFIGS = {
+  smooth: { damping: 200 }, // Smooth, no bounce (subtle reveals)
+  snappy: { damping: 20, stiffness: 200 }, // Snappy, minimal bounce (UI elements)
+  bouncy: { damping: 8 }, // Bouncy entrance (playful animations)
+  heavy: { damping: 15, stiffness: 80, mass: 2 }, // Heavy, slow, small bounce
+} as const;
+
+// Timing constants (in seconds, will be converted to frames using fps)
+// Milestone timing is now dynamic based on follower count
+const TIMING = {
+  AVATAR_STAGGER: 0.066, // 2 frames at 30fps - time between avatar appearances
+  AVATAR_STAGGER_FAST: 0.033, // 1 frame at 30fps - faster stagger during celebration
+  COUNT_ANIMATION: 0.66, // 20 frames at 30fps
+  FADE_DURATION: 0.4, // 12 frames at 30fps
+} as const;
 
 // Milestone configuration
 interface Milestone {
@@ -30,38 +109,92 @@ interface Milestone {
   totalAvatars: number;
 }
 
-// Generate milestones based on final follower count
-function generateMilestones(finalCount: number): Milestone[] {
-  const milestones: Milestone[] = [
-    { frame: 0, name: "John", count: 1, totalAvatars: 2 },
+// Calculate max avatars that fit in frame width
+function calculateMaxAvatars(frameWidth: number): number {
+  const avatarWidth = 48;
+  const overlap = 16;
+  // First avatar takes full width, each additional takes (avatarWidth - overlap)
+  const remaining = frameWidth - avatarWidth;
+  const additionalAvatars = Math.floor(remaining / (avatarWidth - overlap));
+  return 1 + additionalAvatars;
+}
+
+// Generate milestones based on final follower count and frame width
+// Always creates exactly 3 milestones + celebration
+function generateMilestones(
+  finalCount: number,
+  frameWidth: number,
+  fps: number,
+): Milestone[] {
+  const maxAvatars = calculateMaxAvatars(frameWidth);
+
+  // Base interval between milestones (in seconds)
+  const milestoneInterval = 1.0; // 1 second between each milestone
+  const startDelay = 0.3; // Small delay before first milestone
+
+  // Names for milestones
+  const names = ["John", "Alex", "Sarah"];
+
+  // Calculate avatar counts for each milestone (progressive increase)
+  // Milestone 1: ~20% of max, Milestone 2: ~50% of max, Milestone 3: ~80% of max
+  const avatarCounts = [
+    Math.max(2, Math.round(maxAvatars * 0.2)),
+    Math.max(4, Math.round(maxAvatars * 0.5)),
+    Math.max(6, Math.round(maxAvatars * 0.8)),
   ];
 
-  if (finalCount >= 10) {
-    milestones.push({ frame: 40, name: "Alex", count: Math.floor(finalCount * 0.05), totalAvatars: 4 });
+  // Build exactly 3 milestones
+  const milestones: Milestone[] = [];
+  let currentFrame = Math.round(startDelay * fps);
+
+  for (let i = 0; i < 3; i++) {
+    const avatars = Math.min(avatarCounts[i], maxAvatars);
+    milestones.push({
+      frame: currentFrame,
+      name: names[i],
+      count: avatars,
+      totalAvatars: avatars,
+    });
+    currentFrame += Math.round(milestoneInterval * fps);
   }
-  if (finalCount >= 50) {
-    milestones.push({ frame: 70, name: "Kamal", count: Math.floor(finalCount * 0.15), totalAvatars: 11 });
-  }
-  if (finalCount >= 100) {
-    milestones.push({ frame: 100, name: "Sarah", count: Math.floor(finalCount * 0.4), totalAvatars: 20 });
-  }
-  
-  milestones.push({ frame: 130, name: "Cheers", count: finalCount, totalAvatars: 40 });
+
+  // Celebration happens 1 second after the last milestone
+  const celebrationFrame = currentFrame;
+
+  // Final milestone (celebration) shows all avatars that fit
+  milestones.push({
+    frame: celebrationFrame,
+    name: "Cheers",
+    count: maxAvatars,
+    totalAvatars: maxAvatars,
+  });
 
   return milestones;
 }
 
+// Helper to get the celebration frame from milestones
+function getCelebrationFrame(milestones: Milestone[]): number {
+  return milestones[milestones.length - 1].frame;
+}
+
 // Get current milestone based on frame
-function getCurrentMilestone(frame: number, milestones: Milestone[]): Milestone {
+function getCurrentMilestone(
+  frame: number,
+  milestones: Milestone[],
+): Milestone {
   return (
-    milestones.slice()
+    milestones
+      .slice()
       .reverse()
       .find((m) => frame >= m.frame) || milestones[0]
   );
 }
 
 // Get previous milestone for count animation
-function getPreviousMilestone(frame: number, milestones: Milestone[]): Milestone | null {
+function getPreviousMilestone(
+  frame: number,
+  milestones: Milestone[],
+): Milestone | null {
   for (let i = milestones.length - 1; i >= 0; i--) {
     if (frame >= milestones[i].frame) {
       return i > 0 ? milestones[i - 1] : null;
@@ -71,12 +204,30 @@ function getPreviousMilestone(frame: number, milestones: Milestone[]): Milestone
 }
 
 // Calculate when each avatar should appear based on milestones
-function getAvatarAppearFrame(index: number, milestones: Milestone[]): number {
+// During celebration, avatars appear faster in a continuous stream
+function getAvatarAppearFrame(
+  index: number,
+  milestones: Milestone[],
+  celebrationStart: number,
+  fps: number,
+): number {
   let previousAvatarCount = 0;
+
+  // Convert stagger timing to frames
+  const normalStagger = Math.round(TIMING.AVATAR_STAGGER * fps);
+  const fastStagger = Math.round(TIMING.AVATAR_STAGGER_FAST * fps);
+
   for (const milestone of milestones) {
     if (index < milestone.totalAvatars) {
       const positionInMilestone = index - previousAvatarCount;
-      return milestone.frame + positionInMilestone * 3;
+
+      // For the final milestone (celebration), avatars appear very quickly
+      if (milestone.frame >= celebrationStart) {
+        return celebrationStart + positionInMilestone * fastStagger;
+      }
+
+      // Normal milestones: avatars appear with normal stagger
+      return milestone.frame + positionInMilestone * normalStagger;
     }
     previousAvatarCount = milestone.totalAvatars;
   }
@@ -88,26 +239,42 @@ interface AvatarProps {
   index: number;
   isFirst: boolean;
   milestones: Milestone[];
+  celebrationStart: number;
+  theme: XTheme;
 }
 
-const Avatar: React.FC<AvatarProps> = ({ index, isFirst, milestones }) => {
+const Avatar: React.FC<AvatarProps> = ({
+  index,
+  isFirst,
+  milestones,
+  celebrationStart,
+  theme,
+}) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const colors = THEMES[theme];
 
-  const appearFrame = getAvatarAppearFrame(index, milestones);
+  const appearFrame = getAvatarAppearFrame(
+    index,
+    milestones,
+    celebrationStart,
+    fps,
+  );
   const animationFrame = frame - appearFrame;
+
+  // Use recommended spring configs: snappy for normal, even snappier for celebration
+  const isCelebrationAvatar = appearFrame >= celebrationStart;
 
   const scale = spring({
     frame: animationFrame,
     fps,
-    config: {
-      damping: 12,
-      stiffness: 200,
-      mass: 0.5,
-    },
+    config: isCelebrationAvatar
+      ? { ...SPRING_CONFIGS.snappy, stiffness: 300 } // Extra snappy for celebration
+      : SPRING_CONFIGS.snappy,
   });
 
   const clampedScale = animationFrame < 0 ? 0 : Math.min(scale, 1);
+
   const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
 
   return (
@@ -126,9 +293,9 @@ const Avatar: React.FC<AvatarProps> = ({ index, isFirst, milestones }) => {
           width: 48,
           height: 48,
           borderRadius: "50%",
-          border: "2px solid white",
+          border: `2px solid ${colors.avatarBorder}`,
           overflow: "hidden",
-          boxShadow: "0 4px 6px -1px rgba(0, 0, 0, 0.1)",
+          boxShadow: colors.shadow,
           backgroundColor: isFirst ? "#3b82f6" : avatarColor,
           display: "flex",
           alignItems: "center",
@@ -141,25 +308,93 @@ const Avatar: React.FC<AvatarProps> = ({ index, isFirst, milestones }) => {
   );
 };
 
-// AvatarStack component with marquee effect
+// Filler avatar component (no animation, just appears)
+interface FillerAvatarProps {
+  index: number;
+  theme: XTheme;
+}
+
+const FillerAvatar: React.FC<FillerAvatarProps> = ({ index, theme }) => {
+  const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
+  const colors = THEMES[theme];
+
+  return (
+    <div
+      style={{
+        position: "relative",
+        flexShrink: 0,
+        marginLeft: -16,
+        zIndex: 100 - index,
+      }}
+    >
+      <div
+        style={{
+          width: 48,
+          height: 48,
+          borderRadius: "50%",
+          border: `2px solid ${colors.avatarBorder}`,
+          overflow: "hidden",
+          boxShadow: colors.shadow,
+          backgroundColor: avatarColor,
+          display: "flex",
+          alignItems: "center",
+          justifyContent: "center",
+        }}
+      >
+        <User style={{ width: 24, height: 24, color: "white" }} />
+      </div>
+    </div>
+  );
+};
+
+// AvatarStack component with smooth scrolling
 interface AvatarStackProps {
   limit: number;
   marqueeOffset: number;
   milestones: Milestone[];
+  celebrationStart: number;
+  fillerCount: number;
+  theme: XTheme;
 }
 
-const AvatarStack: React.FC<AvatarStackProps> = ({ limit, marqueeOffset, milestones }) => {
+const AvatarStack: React.FC<AvatarStackProps> = ({
+  limit,
+  marqueeOffset,
+  milestones,
+  celebrationStart,
+  fillerCount,
+  theme,
+}) => {
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
+        justifyContent: "flex-start",
         transform: `translateX(${marqueeOffset}px)`,
+        width: "max-content",
       }}
     >
+      {/* Main avatars with animation */}
       {Array.from({ length: limit }).map((_, index) => (
-        <Avatar key={index} index={index} isFirst={index === 0} milestones={milestones} />
+        <Avatar
+          key={index}
+          index={index}
+          isFirst={index === 0}
+          milestones={milestones}
+          celebrationStart={celebrationStart}
+          theme={theme}
+        />
       ))}
+      {/* Filler avatars to prevent white space during scroll */}
+      {fillerCount > 0 &&
+        Array.from({ length: fillerCount }).map((_, index) => (
+          <FillerAvatar
+            key={`filler-${index}`}
+            index={limit + index}
+            theme={theme}
+          />
+        ))}
     </div>
   );
 };
@@ -170,31 +405,72 @@ interface TextLabelProps {
   count: number;
   finalCount: number;
   milestones: Milestone[];
+  theme: XTheme;
 }
 
-const TextLabel: React.FC<TextLabelProps> = ({ name, count, finalCount, milestones }) => {
+const TextLabel: React.FC<TextLabelProps> = ({
+  name,
+  count,
+  finalCount,
+  milestones,
+  theme,
+}) => {
   const frame = useCurrentFrame();
+  const { fps } = useVideoConfig();
+  const colors = THEMES[theme];
 
   const currentMilestone = getCurrentMilestone(frame, milestones);
   const previousMilestone = getPreviousMilestone(frame, milestones);
 
+  // Get dynamic celebration frame from milestones
+  const celebrationFrame = getCelebrationFrame(milestones);
+  const normalStagger = Math.round(TIMING.AVATAR_STAGGER * fps);
+  const fastStagger = Math.round(TIMING.AVATAR_STAGGER_FAST * fps);
+
   let displayCount = count;
 
-  if (currentMilestone.frame === 130 && frame >= 130) {
-    const countAnimationDuration = 15;
-    const previousCount = previousMilestone?.count ?? Math.floor(finalCount * 0.4);
+  // Animate count for ALL milestones, matching avatar appearance speed
+  if (currentMilestone && frame >= currentMilestone.frame) {
+    const milestoneStart = currentMilestone.frame;
+    const previousCount = previousMilestone?.count ?? 1;
+    const previousAvatars = previousMilestone?.totalAvatars ?? 1;
 
-    displayCount = Math.round(
-      interpolate(
-        frame,
-        [130, 130 + countAnimationDuration],
-        [previousCount, finalCount],
-        {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        }
-      )
-    );
+    // Check if this is the final milestone (celebration)
+    const isFinalMilestone = currentMilestone.frame === celebrationFrame;
+
+    // Calculate duration based on number of new avatars × stagger time
+    const newAvatars = currentMilestone.totalAvatars - previousAvatars;
+    const staggerTime = isFinalMilestone ? fastStagger : normalStagger;
+    const avatarAnimationDuration = newAvatars * staggerTime;
+
+    if (isFinalMilestone) {
+      // Final milestone: animate from previous count to final follower count
+      // Use the avatar animation duration for the count to match
+      displayCount = Math.round(
+        interpolate(
+          frame,
+          [milestoneStart, milestoneStart + avatarAnimationDuration],
+          [previousCount, finalCount],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          },
+        ),
+      );
+    } else {
+      // Regular milestones: animate count matching avatar appearance speed
+      displayCount = Math.round(
+        interpolate(
+          frame,
+          [milestoneStart, milestoneStart + avatarAnimationDuration],
+          [previousCount, currentMilestone.count],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          },
+        ),
+      );
+    }
   }
 
   const formattedCount =
@@ -216,29 +492,23 @@ const TextLabel: React.FC<TextLabelProps> = ({ name, count, finalCount, mileston
         style={{
           fontSize: 24,
           fontWeight: 600,
-          color: "#111827",
+          color: colors.text,
         }}
       >
         {name}
       </span>
-      <BadgeCheck
-        style={{
-          width: 24,
-          height: 24,
-          marginLeft: 4,
-          color: "#3b82f6",
-          fill: "#3b82f6",
-        }}
-      />
+      <span style={{ marginLeft: 4, display: "inline-flex" }}>
+        <VerifiedBadge size={24} />
+      </span>
       <span
         style={{
           fontSize: 24,
-          color: "#374151",
+          color: colors.textSecondary,
           marginLeft: 8,
         }}
       >
         and{" "}
-        <span style={{ fontWeight: 600, color: "#111827" }}>
+        <span style={{ fontWeight: 600, color: colors.text }}>
           {formattedCount}
         </span>{" "}
         others followed you
@@ -249,59 +519,73 @@ const TextLabel: React.FC<TextLabelProps> = ({ name, count, finalCount, mileston
 
 // Celebration component
 interface CelebrationProps {
+  theme: XTheme;
   finalCount: number;
+  milestones: Milestone[];
 }
 
-const Celebration: React.FC<CelebrationProps> = ({ finalCount }) => {
+const Celebration: React.FC<CelebrationProps> = ({ theme, milestones }) => {
   const frame = useCurrentFrame();
   const { fps } = useVideoConfig();
+  const colors = THEMES[theme];
 
-  const CELEBRATION_START = 130;
+  // Get dynamic celebration frame from milestones
+  const celebrationStart = getCelebrationFrame(milestones);
+  const fadeDuration = Math.round(TIMING.FADE_DURATION * fps);
 
-  if (frame < CELEBRATION_START) {
-    return null;
-  }
-
-  const scale = spring({
-    frame: frame - CELEBRATION_START,
+  // Slide up animation using recommended heavy spring for dramatic effect
+  const slideProgress = spring({
+    frame: Math.max(0, frame - celebrationStart),
     fps,
-    config: {
-      damping: 10,
-      stiffness: 120,
-    },
+    config: SPRING_CONFIGS.heavy,
   });
 
+  // Animate height from 0 to full height so it pushes content down
+  const maxHeight = 80; // Height of the text + margin
+  const height =
+    frame < celebrationStart
+      ? 0
+      : interpolate(slideProgress, [0, 1], [0, maxHeight]);
+
+  // Start 30px below and move up to final position
+  const translateY =
+    frame < celebrationStart ? 30 : interpolate(slideProgress, [0, 1], [30, 0]);
+
+  // Fade in as it slides up
   const opacity = interpolate(
     frame,
-    [CELEBRATION_START, CELEBRATION_START + 10],
+    [celebrationStart, celebrationStart + fadeDuration],
     [0, 1],
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-    }
+    },
   );
 
   return (
     <div
       style={{
-        position: "absolute",
-        top: -96,
-        left: "50%",
-        fontFamily,
-        transform: `translateX(-50%) scale(${scale})`,
-        opacity,
+        height,
+        overflow: "hidden",
+        display: "flex",
+        justifyContent: "center",
+        alignItems: "flex-end",
+        marginBottom: height > 0 ? 16 : 0,
       }}
     >
       <h1
         style={{
           fontSize: 60,
           fontWeight: 700,
-          color: "#3b82f6",
+          color: colors.text,
           whiteSpace: "nowrap",
           margin: 0,
+          fontFamily,
+          transform: `translateY(${translateY}px)`,
+          opacity,
         }}
       >
-        {finalCount >= 1000 ? "Thank You!" : `${finalCount.toLocaleString()} Followers!`}
+        Thank You!
       </h1>
     </div>
   );
@@ -310,59 +594,118 @@ const Celebration: React.FC<CelebrationProps> = ({ finalCount }) => {
 // Main FollowerAccumulation component
 export interface FollowerAccumulationProps {
   followerCount: number;
+  theme?: XTheme;
 }
 
-export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({ followerCount }) => {
+export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({
+  followerCount,
+  theme = "light",
+}) => {
   const frame = useCurrentFrame();
-  const { fps, durationInFrames } = useVideoConfig();
-  
-  const milestones = generateMilestones(followerCount);
-  const currentMilestone = getCurrentMilestone(frame, milestones);
+  const { fps, durationInFrames, width } = useVideoConfig();
+  const colors = THEMES[theme];
 
-  const CELEBRATION_START = 130;
-  const MARQUEE_START = 140;
+  // Memoize milestones - only recalculate when dependencies change
+  const milestones = useMemo(
+    () => generateMilestones(followerCount, width, fps),
+    [followerCount, width, fps],
+  );
+
+  // Get dynamic celebration frame from milestones
+  const celebrationStart = getCelebrationFrame(milestones);
+
+  // Calculate timing using fps (best practice: define timing in seconds)
+  const fastStagger = Math.round(TIMING.AVATAR_STAGGER_FAST * fps);
+  const springSettleTime = Math.round(0.33 * fps);
+
+  const currentMilestone = getCurrentMilestone(frame, milestones);
 
   let containerScale: number;
 
-  if (frame < CELEBRATION_START) {
-    containerScale = interpolate(frame, [0, CELEBRATION_START - 1], [1.5, 1.0], {
-      extrapolateLeft: "clamp",
-      extrapolateRight: "clamp",
-      easing: Easing.out(Easing.quad),
-    });
-  } else {
-    const springBack = spring({
-      frame: frame - CELEBRATION_START,
-      fps,
-      config: {
-        damping: 15,
-        stiffness: 80,
-      },
-    });
-    containerScale = interpolate(springBack, [0, 1], [1.0, 1.5]);
-  }
-
-  let marqueeOffset = 0;
-  if (frame >= MARQUEE_START) {
-    const totalAvatars = currentMilestone.totalAvatars;
-    const avatarWidth = 48;
-    const overlap = 16;
-    const totalWidth = avatarWidth + (totalAvatars - 1) * (avatarWidth - overlap);
-    
-    marqueeOffset = interpolate(
+  if (frame < celebrationStart) {
+    // Subtle zoom out from 1.15x to 1.0x using easing (best practice)
+    containerScale = interpolate(
       frame,
-      [MARQUEE_START, durationInFrames],
-      [0, -totalWidth * 0.5],
+      [0, celebrationStart - 1],
+      [1.15, 1.0],
       {
         extrapolateLeft: "clamp",
         extrapolateRight: "clamp",
-        easing: Easing.inOut(Easing.quad),
-      }
+        easing: Easing.out(Easing.cubic),
+      },
+    );
+  } else {
+    // Smooth spring back to 1.1x at celebration using recommended config
+    const springBack = spring({
+      frame: frame - celebrationStart,
+      fps,
+      config: SPRING_CONFIGS.heavy,
+    });
+    containerScale = interpolate(springBack, [0, 1], [1.0, 1.1]);
+  }
+
+  // Calculate when all avatars have finished appearing
+  const previousMilestoneAvatars =
+    milestones[milestones.length - 2]?.totalAvatars || 0;
+  const newAvatarsInCelebration =
+    currentMilestone.totalAvatars - previousMilestoneAvatars;
+  const lastAvatarAppearFrame =
+    celebrationStart + newAvatarsInCelebration * fastStagger;
+  const allAvatarsVisibleFrame = lastAvatarAppearFrame + springSettleTime;
+
+  // Smooth scroll left starting after all avatars are visible
+  let marqueeOffset = 0;
+  const totalScrollDistance = 100; // Gentle scroll distance
+
+  if (frame >= allAvatarsVisibleFrame) {
+    marqueeOffset = interpolate(
+      frame,
+      [allAvatarsVisibleFrame, durationInFrames],
+      [0, -totalScrollDistance],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+        easing: Easing.out(Easing.quad), // Smooth deceleration (best practice)
+      },
     );
   }
 
+  // Calculate filler avatars needed to prevent white space during scroll
+  // Only show fillers after all main avatars have appeared
+  const avatarEffectiveWidth = 32;
+  const fillerCount =
+    frame >= allAvatarsVisibleFrame
+      ? Math.ceil(totalScrollDistance / avatarEffectiveWidth) + 2 // Extra buffer
+      : 0;
+
   return (
-    <AbsoluteFill className="bg-white">
+    <AbsoluteFill style={{ backgroundColor: colors.background }}>
+      {/* Left fade gradient */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          left: 0,
+          width: 60,
+          background: `linear-gradient(to right, ${colors.gradient}, transparent)`,
+          zIndex: 10,
+          pointerEvents: "none",
+        }}
+      />
+      {/* Right fade gradient */}
+      <div
+        style={{
+          position: "absolute",
+          top: 0,
+          bottom: 0,
+          right: 0,
+          width: 60,
+          background: `linear-gradient(to left, ${colors.gradient}, transparent)`,
+          zIndex: 10,
+          pointerEvents: "none",
+        }}
+      />
       <AbsoluteFill className="justify-center items-center">
         <div
           style={{
@@ -374,17 +717,25 @@ export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({ foll
             transform: `scale(${containerScale})`,
           }}
         >
-          <Celebration finalCount={followerCount} />
-          <AvatarStack 
-            limit={currentMilestone.totalAvatars} 
-            marqueeOffset={marqueeOffset} 
+          <Celebration
+            finalCount={followerCount}
+            theme={theme}
             milestones={milestones}
           />
-          <TextLabel 
-            name={currentMilestone.name} 
-            count={currentMilestone.count} 
+          <AvatarStack
+            limit={currentMilestone.totalAvatars}
+            marqueeOffset={marqueeOffset}
+            milestones={milestones}
+            celebrationStart={celebrationStart}
+            fillerCount={fillerCount}
+            theme={theme}
+          />
+          <TextLabel
+            name={currentMilestone.name}
+            count={currentMilestone.count}
             finalCount={followerCount}
             milestones={milestones}
+            theme={theme}
           />
         </div>
       </AbsoluteFill>
