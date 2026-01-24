@@ -22,17 +22,17 @@ export const CSVConfig = memo(function CSVConfig() {
       <div className="space-y-2">
         <Label>Upload CSV File</Label>
         <Input type="file" accept=".csv" onChange={handleFileUpload} />
-        <Alert className="bg-blue-500/10 border-blue-500/20 text-blue-700 dark:text-blue-400">
+        <Alert variant="info">
           <Info className="h-4 w-4" />
           <AlertTitle>Followers CSV Export</AlertTitle>
-          <AlertDescription className="text-blue-600/80 dark:text-blue-400/80">
+          <AlertDescription>
             <p>
               Use the{" "}
               <a
                 href="https://chromewebstore.google.com/detail/twitter-exporter/lnklhjfbeicncichppfbhjijodjgaejm"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="font-medium underline underline-offset-4 hover:!text-blue-800 dark:hover:text-blue-300"
+                className="font-medium underline underline-offset-4 hover:!text-blue-800 dark:hover:!text-blue-300"
               >
                 Twitter Exporter
               </a>{" "}

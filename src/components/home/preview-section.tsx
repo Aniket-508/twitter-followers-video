@@ -10,6 +10,7 @@ import {
 } from "@/types/constants";
 import { memo } from "react";
 import dynamic from "next/dynamic";
+import { RenderButton } from "./render-button";
 
 // Dynamic import for Player to optimize bundle size (Vercel Best Practices: bundle-dynamic-imports)
 const Player = dynamic(
@@ -56,9 +57,7 @@ export const PreviewSection = memo(function PreviewSection() {
         </div>
       </div>
 
-      <p className="text-center text-[11px] text-muted-foreground font-medium italic opacity-70">
-        Preview updates in real-time as you adjust config
-      </p>
+      <RenderButton />
     </div>
   );
 });
