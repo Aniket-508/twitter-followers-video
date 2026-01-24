@@ -1,6 +1,20 @@
-# Twitter Followers Video 🐦
+<p align="center">
+  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 704 256'%3E%3Cpath fill='%23000' d='M0 0h192v128h-64v128H0v-64h64V64H0Zm256 0h192v64H320v64h96v64h-32v64H256Zm256 0h64v192h-64Zm128 0h64v192h-64Zm-64 192h64v64h-64Z'/%3E%3C/svg%3E" height="80" alt="Logo" />
+</p>
 
-_Generate animated videos to celebrate and share your Twitter/X follower milestones!_
+<h1 align="center"><a href="https://twitter-followers-video.vercel.app/" target="_blank">Twitter Followers Video</a></h1>
+
+<p align="center">
+  <strong>Generate animated videos to celebrate and share your Twitter/X follower milestones.</strong>
+</p>
+
+<div align="center">
+
+[![Stars](https://img.shields.io/github/stars/Aniket-508/twitter-followers-video?color=yellow&style=flat&label=%E2%AD%90%20Stars)](https://github.com/Aniket-508/twitter-followers-video/stargazers)
+[![License](https://img.shields.io/:license-MIT-green.svg?style=flat&label=License)](https://github.com/Aniket-508/twitter-followers-video/blob/main/LICENSE)
+[![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=❤&logo=GitHub&color=#fe8e86)](https://github.com/sponsors/Aniket-508)
+
+</div>
 
 ## 🎬 Example Output
 
@@ -87,7 +101,3 @@ If you want to suggest a feature or report a problem, feel free to open an issue
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
-
----
-
-Made with ❤️ by [Aniket Pawar](https://www.aniketpawar.com) using [Remotion](https://remotion.dev)

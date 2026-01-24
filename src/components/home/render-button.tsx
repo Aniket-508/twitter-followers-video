@@ -21,7 +21,7 @@ export function RenderButton() {
   const isDone = state.status === "done";
 
   return (
-    <div className="space-y-2">
+    <div className="relative z-[1] space-y-2">
       <Button
         onClick={isDone ? undefined : renderMedia}
         disabled={isLoading}
