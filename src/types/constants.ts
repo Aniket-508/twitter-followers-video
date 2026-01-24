@@ -12,7 +12,8 @@ export const CompositionProps = z.object({
     .array(
       z.object({
         name: z.string(),
-        image: z.string().optional(),
+        image: z.string(),
+        verified: z.boolean(),
       }),
     )
     .optional(),

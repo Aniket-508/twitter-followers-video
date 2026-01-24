@@ -22,7 +22,8 @@ export type DataSource = "manual" | "csv";
 
 export interface FollowerData {
   name: string;
-  image?: string;
+  image: string;
+  verified: boolean;
 }
 
 interface ConfigContextType {
@@ -67,6 +68,7 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     return Array.from({ length: Math.min(count, 50) }).map((_, i) => ({
       name: shuffledNames[i % shuffledNames.length],
       image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + Math.random()}`,
+      verified: true,
     }));
   }, []);
 

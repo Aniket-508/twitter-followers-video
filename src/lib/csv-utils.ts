@@ -32,6 +32,9 @@ export const parseFollowersCSV = async (
             lower.includes("img")
           );
         });
+        const verifiedField = headers.find((v) =>
+          v.toLowerCase().includes("is_blue_verified"),
+        );
 
         if (!nameField) {
           resolve({ followers: [], error: "CSV must have a 'name' column" });
@@ -40,12 +43,15 @@ export const parseFollowersCSV = async (
 
         const followers: FollowerData[] = (data as Record<string, string>[])
           .filter((row) => row[nameField])
-          .map((row) => ({
-            name: row[nameField],
-            image:
-              row[imgField || ""] ||
-              `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(row[nameField])}`,
-          }));
+          .map((row) => {
+            return {
+              name: row[nameField],
+              image:
+                row[imgField || ""] ||
+                `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(row[nameField])}`,
+              verified: row[verifiedField || ""] === "true",
+            };
+          });
 
         resolve({ followers });
       },

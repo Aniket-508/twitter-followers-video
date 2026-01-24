@@ -110,12 +110,12 @@ interface Milestone {
   totalAvatars: number;
 }
 
-// Calculate max avatars that fit in frame width
-function calculateMaxAvatars(frameWidth: number): number {
+// Calculate max avatars that fit in frame width (plus optional buffer)
+function calculateMaxAvatars(width: number): number {
   const avatarWidth = 48;
   const overlap = 16;
   // First avatar takes full width, each additional takes (avatarWidth - overlap)
-  const remaining = frameWidth - avatarWidth;
+  const remaining = width - avatarWidth;
   const additionalAvatars = Math.floor(remaining / (avatarWidth - overlap));
   return 1 + additionalAvatars;
 }
@@ -128,7 +128,14 @@ function generateMilestones(
   fps: number,
   followers?: { name: string; image?: string }[],
 ): Milestone[] {
-  const maxAvatars = calculateMaxAvatars(frameWidth);
+  // Calculate max avatars that fit in frame width (plus optional buffer)
+  // Use a slight buffer for the visual max to ensure we fill the screen edges
+  // The 100px buffer matches the scroll distance we'll use later
+  const scrollBuffer = 100;
+  const maxAvatarsWithScroll = calculateMaxAvatars(frameWidth + scrollBuffer);
+
+  // Determine the final visual target count (clamped by available space)
+  const celebrationCount = Math.min(finalCount, maxAvatarsWithScroll);
 
   // Base interval between milestones (in seconds)
   const milestoneInterval = 1.0; // 1 second between each milestone
@@ -141,24 +148,28 @@ function generateMilestones(
       : ["John", "Alex", "Sarah", "Cheers"];
 
   // Calculate avatar counts for each milestone (progressive increase)
-  // Milestone 1: ~20% of max, Milestone 2: ~50% of max, Milestone 3: ~80% of max
+  // Derive percentages from the ACTUAL target count (celebrationCount), not just screen width
+  // Ensure we don't exceed the final count and try to maintain at least 1 avatar difference if possible
   const avatarCounts = [
-    Math.max(2, Math.round(maxAvatars * 0.2)),
-    Math.max(4, Math.round(maxAvatars * 0.5)),
-    Math.max(6, Math.round(maxAvatars * 0.8)),
-  ];
+    Math.max(1, Math.floor(celebrationCount * 0.25)),
+    Math.max(2, Math.floor(celebrationCount * 0.5)),
+    Math.max(3, Math.floor(celebrationCount * 0.75)),
+  ].map((c) => Math.min(c, celebrationCount));
 
   // Build exactly 3 milestones
   const milestones: Milestone[] = [];
   let currentFrame = Math.round(startDelay * fps);
 
   for (let i = 0; i < 3; i++) {
-    const avatars = Math.min(avatarCounts[i], maxAvatars);
+    // Ensure strict monotonicity or equality, never exceed final
+    const idealCount = avatarCounts[i];
+    // If our total is extremely low (e.g. 2), intermediate steps might duplicate.
+    // That's acceptable visually, as long as it doesn't exceed celebrationCount.
     milestones.push({
       frame: currentFrame,
       name: names[i],
-      count: avatars - 1,
-      totalAvatars: avatars,
+      count: idealCount - 1,
+      totalAvatars: idealCount,
     });
     currentFrame += Math.round(milestoneInterval * fps);
   }
@@ -166,12 +177,12 @@ function generateMilestones(
   // Celebration happens 1 second after the last milestone
   const celebrationFrame = currentFrame;
 
-  // Final milestone (celebration) shows all avatars that fit
+  // Final milestone (celebration)
   milestones.push({
     frame: celebrationFrame,
     name: names[3],
-    count: maxAvatars - 1,
-    totalAvatars: maxAvatars,
+    count: celebrationCount - 1,
+    totalAvatars: celebrationCount,
   });
 
   return milestones;
@@ -270,6 +281,53 @@ const Avatar: React.FC<AvatarProps> = ({
   );
   const animationFrame = frame - appearFrame;
 
+  const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
+
+  // Fallback to Dicebear if no image or image fails to load
+  const avatarUrl =
+    !follower?.image || imageError
+      ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower?.name || index}`
+      : follower.image;
+
+  // For the very first avatar (index 0), we want it visible immediately (no scale animation)
+  // unless we're in the very first few frames where we might want a quick pop (optional),
+  // but requirements say "should be present by default initially".
+  if (index === 0) {
+    return (
+      <div
+        style={{
+          position: "relative",
+          flexShrink: 0,
+          marginLeft: 0,
+          zIndex: 100,
+          transform: "scale(1)",
+          opacity: 1,
+        }}
+      >
+        <div
+          style={{
+            width: 48,
+            height: 48,
+            borderRadius: "50%",
+            border: `2px solid ${colors.avatarBorder}`,
+            overflow: "hidden",
+            boxShadow: colors.shadow,
+            backgroundColor: "#3b82f6",
+            display: "flex",
+            alignItems: "center",
+            justifyContent: "center",
+          }}
+        >
+          <Img
+            src={avatarUrl}
+            onError={() => setImageError(true)}
+            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          />
+        </div>
+      </div>
+    );
+  }
+
   // Use recommended spring configs: snappy for normal, even snappier for celebration
   const isCelebrationAvatar = appearFrame >= celebrationStart;
 
@@ -282,14 +340,6 @@ const Avatar: React.FC<AvatarProps> = ({
   });
 
   const clampedScale = animationFrame < 0 ? 0 : Math.min(scale, 1);
-
-  const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
-
-  // Fallback to Dicebear if no image or image fails to load
-  const avatarUrl =
-    !follower?.image || imageError
-      ? `https://api.dicebear.com/7.x/avataaars/svg?seed=${follower?.name || index}`
-      : follower.image;
 
   return (
     <div
@@ -427,7 +477,7 @@ interface TextLabelProps {
   finalCount: number;
   milestones: Milestone[];
   theme: XTheme;
-  followers?: { name: string; image?: string }[];
+  followers?: { name: string; image: string; verified: boolean }[];
 }
 
 const TextLabel: React.FC<TextLabelProps> = ({
@@ -450,31 +500,40 @@ const TextLabel: React.FC<TextLabelProps> = ({
   const normalStagger = Math.round(TIMING.AVATAR_STAGGER * fps);
   const fastStagger = Math.round(TIMING.AVATAR_STAGGER_FAST * fps);
 
-  let displayCount = count;
+  // Default to 0 if before first milestone, otherwise use current milestone count
+  const firstMilestoneFrame = milestones[0]?.frame ?? 0;
+  let displayCount = frame < firstMilestoneFrame ? 0 : count;
 
   // Animate count for ALL milestones, matching avatar appearance speed
   if (currentMilestone && frame >= currentMilestone.frame) {
     const milestoneStart = currentMilestone.frame;
-    const previousOthers = previousMilestone
-      ? previousMilestone.totalAvatars - 1
-      : 0;
     const previousAvatars = previousMilestone?.totalAvatars ?? 1;
 
     // Check if this is the final milestone (celebration)
     const isFinalMilestone = currentMilestone.frame === celebrationFrame;
 
     // Calculate duration based on number of new avatars × stagger time
-    const newAvatars = currentMilestone.totalAvatars - previousAvatars;
+    // Ensure newAvatars is at least 0 to prevent negative duration (input range error)
+    const newAvatars = Math.max(
+      0,
+      currentMilestone.totalAvatars - previousAvatars,
+    );
     const staggerTime = isFinalMilestone ? fastStagger : normalStagger;
     const avatarAnimationDuration = newAvatars * staggerTime;
 
-    if (isFinalMilestone) {
+    if (avatarAnimationDuration === 0) {
+      // No animation needed if count hasn't changed
+      displayCount = currentMilestone.totalAvatars - 1;
+    } else if (isFinalMilestone) {
       // Final milestone: animate from previous total to final follower count
+      // Add a small delay (~3 frames) so text updates when avatar becomes visible (spring settle)
+      const springDelay = Math.round(0.1 * fps);
+      const delayedStart = milestoneStart + springDelay;
       displayCount = Math.round(
         interpolate(
           frame,
-          [milestoneStart, milestoneStart + avatarAnimationDuration],
-          [previousAvatars - 1, finalCount - 1],
+          [delayedStart, delayedStart + avatarAnimationDuration],
+          [previousAvatars, finalCount - 1],
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
@@ -483,11 +542,15 @@ const TextLabel: React.FC<TextLabelProps> = ({
       );
     } else {
       // Regular milestones: animate count matching avatar appearance speed
+      // Add a small delay so text updates when avatar becomes visible (spring settle)
+      const springDelay = Math.round(0.1 * fps);
+      const delayedStart = milestoneStart + springDelay;
+      const startIndex = previousMilestone ? previousMilestone.totalAvatars : 1;
       displayCount = Math.round(
         interpolate(
           frame,
-          [milestoneStart, milestoneStart + avatarAnimationDuration],
-          [previousOthers, currentMilestone.totalAvatars - 1],
+          [delayedStart, delayedStart + avatarAnimationDuration],
+          [startIndex, currentMilestone.totalAvatars - 1],
           {
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
@@ -496,10 +559,6 @@ const TextLabel: React.FC<TextLabelProps> = ({
       );
     }
   }
-
-  // Dynamically pick the name based on the current animated count
-  // The person being named is the one "at the head", i.e., at index displayCount
-  const currentName = followers?.[displayCount]?.name || name;
 
   const formattedCount =
     displayCount >= 1000
@@ -523,11 +582,13 @@ const TextLabel: React.FC<TextLabelProps> = ({
           color: colors.text,
         }}
       >
-        {currentName}
+        {followers?.[displayCount].name || name}
       </span>
-      <span style={{ marginLeft: 4, display: "inline-flex" }}>
-        <VerifiedBadge size={24} />
-      </span>
+      {followers?.[displayCount].verified && (
+        <span style={{ marginLeft: 4, display: "inline-flex" }}>
+          <VerifiedBadge size={24} />
+        </span>
+      )}
       {displayCount > 0 && (
         <span
           style={{
@@ -636,7 +697,7 @@ const Celebration: React.FC<CelebrationProps> = ({ theme, milestones }) => {
 export interface FollowerAccumulationProps {
   followerCount: number;
   theme?: XTheme;
-  followers?: { name: string; image?: string }[];
+  followers?: { name: string; image: string; verified: boolean }[];
 }
 
 export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({
@@ -714,11 +775,14 @@ export const FollowerAccumulation: React.FC<FollowerAccumulationProps> = ({
   }
 
   // Calculate filler avatars needed to prevent white space during scroll
-  // Only show fillers after all main avatars have appeared
-  const avatarEffectiveWidth = 32;
+  // Only show fillers if we don't have enough real avatars to cover the scroll
+  // We want to fill up to (screen width + 100px)
+  const maxNeeded = calculateMaxAvatars(width + totalScrollDistance);
+  const currentTotal = currentMilestone.totalAvatars;
+
   const fillerCount =
-    frame >= allAvatarsVisibleFrame
-      ? Math.ceil(totalScrollDistance / avatarEffectiveWidth) + 2 // Extra buffer
+    frame >= allAvatarsVisibleFrame && currentTotal < maxNeeded
+      ? maxNeeded - currentTotal + 2 // Extra buffer
       : 0;
 
   return (
