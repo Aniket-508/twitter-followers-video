@@ -1,6 +1,6 @@
-<p align="center">
-  <img src="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 704 256'%3E%3Cpath fill='%23000' d='M0 0h192v128h-64v128H0v-64h64V64H0Zm256 0h192v64H320v64h96v64h-32v64H256Zm256 0h64v192h-64Zm128 0h64v192h-64Zm-64 192h64v64h-64Z'/%3E%3C/svg%3E" height="80" alt="Logo" />
-</p>
+<div align="center">
+  <img src="./public/logo.png" height="80" alt="Logo" />
+</div>
 
 <h1 align="center"><a href="https://twitter-followers-video.vercel.app/" target="_blank">Twitter Followers Video</a></h1>
 
