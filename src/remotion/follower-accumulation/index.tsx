@@ -68,7 +68,7 @@ export const FollowerAccumulation = ({
   // Container scale animation
   const containerScale = useMemo(() => {
     if (frame < celebrationStart) {
-      return interpolate(frame, [0, Math.max(1, celebrationStart - 1)], [1.15, 1.0], {
+      return interpolate(frame, [0, Math.max(1, celebrationStart - 1)], [LAYOUT.ZOOM, 1.0], {
         extrapolateLeft: "clamp",
         extrapolateRight: "clamp",
         easing: Easing.out(Easing.cubic),
@@ -79,7 +79,7 @@ export const FollowerAccumulation = ({
         fps,
         config: SPRING_CONFIGS.heavy,
       });
-      return interpolate(springBack, [0, 1], [1.0, 1.1]);
+      return interpolate(springBack, [0, 1], [1.0, LAYOUT.ZOOM]);
     }
   }, [frame, celebrationStart, fps]);
 

@@ -39,10 +39,14 @@ export function sanitizeFollowerCount(count: number): number {
 /**
  * Calculate max avatars that fit in a given width.
  * First avatar takes full width, each additional takes (AVATAR.SIZE - AVATAR.OVERLAP).
+ * Accounts for zoom effect (LAYOUT.ZOOM) which reduces visible area.
  */
+
 export function calculateMaxAvatars(width: number): number {
   if (width <= 0) return 1;
-  const remaining = width - AVATAR.SIZE;
+  const visibleWidth = width / LAYOUT.ZOOM;
+  const totalWidth = visibleWidth + LAYOUT.SCROLL_DISTANCE;
+  const remaining = totalWidth - AVATAR.SIZE;
   const additionalAvatars = Math.floor(
     remaining / (AVATAR.SIZE - AVATAR.OVERLAP),
   );
@@ -68,9 +72,9 @@ export function generateMilestones(
   // Sanitize input
   const safeCount = sanitizeFollowerCount(finalCount);
 
-  // Calculate max avatars with scroll buffer
+  // Calculate max avatars with scroll distance
   const maxAvatarsWithScroll = calculateMaxAvatars(
-    frameWidth + LAYOUT.SCROLL_BUFFER,
+    frameWidth + LAYOUT.SCROLL_DISTANCE,
   );
 
   // Determine the final visual target count (clamped by available space)

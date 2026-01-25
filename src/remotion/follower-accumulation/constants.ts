@@ -10,10 +10,10 @@ export const AVATAR = {
 
 /** Layout constants */
 export const LAYOUT = {
+  ZOOM: 1.15,
   GRADIENT_WIDTH: 60,
   CELEBRATION_HEIGHT: 80,
   SCROLL_DISTANCE: 100,
-  SCROLL_BUFFER: 100,
 } as const;
 
 /** Theme color configurations for X's display modes */
