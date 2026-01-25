@@ -85,7 +85,7 @@ export const TextLabel: React.FC<TextLabelProps> = ({
       style={{
         display: "flex",
         alignItems: "center",
-        marginTop: 20,
+        marginTop: 10,
         whiteSpace: "nowrap",
       }}
     >

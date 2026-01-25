@@ -3,7 +3,7 @@ import type { ThemeColors } from "./types";
 
 /** Avatar dimensions and layout */
 export const AVATAR = {
-  SIZE: 48,
+  SIZE: 36,
   OVERLAP: 16,
   FIRST_COLOR: "#3b82f6",
 } as const;
