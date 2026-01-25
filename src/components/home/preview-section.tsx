@@ -1,7 +1,7 @@
 "use client";
 
 import { useConfig } from "@/contexts/config-context";
-import { Main } from "@/remotion/comp-main";
+import { FollowerAccumulation } from "@/remotion/follower-accumulation";
 import {
   DURATION_IN_FRAMES,
   VIDEO_FPS,
@@ -39,8 +39,8 @@ export const PreviewSection = memo(function PreviewSection() {
       <div className="group relative rounded-3xl overflow-hidden border border-muted-foreground/10 shadow-2xl transition-all hover:border-primary/20">
         <div className="aspect-video w-full">
           <Player
-            // @ts-expect-error - Player component prop has type mismatch with dynamically imported Main
-            component={Main}
+            // @ts-expect-error - Player component prop has type mismatch with dynamically imported FollowerAccumulation
+            component={FollowerAccumulation}
             inputProps={inputProps}
             durationInFrames={DURATION_IN_FRAMES}
             fps={VIDEO_FPS}

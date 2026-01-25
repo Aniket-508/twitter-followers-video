@@ -1,5 +1,5 @@
 import { Composition } from "remotion";
-import { Main } from "./comp-main";
+import { FollowerAccumulation } from "./follower-accumulation";
 import {
   COMP_NAME,
   defaultMyCompProps,
@@ -7,14 +7,14 @@ import {
   VIDEO_FPS,
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
-} from "@/types/constants";
+} from "../types/constants";
 
 export const RemotionRoot: React.FC = () => {
   return (
     <>
       <Composition
         id={COMP_NAME}
-        component={Main}
+        component={FollowerAccumulation}
         durationInFrames={DURATION_IN_FRAMES}
         fps={VIDEO_FPS}
         width={VIDEO_WIDTH}

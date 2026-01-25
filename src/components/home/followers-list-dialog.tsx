@@ -1,4 +1,4 @@
-import { FollowerData } from "@/contexts/config-context";
+import type { Follower } from "@/types/constants";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -12,7 +12,7 @@ import { ExternalLink } from "lucide-react";
 import { memo } from "react";
 
 interface FollowersListDialogProps {
-  followers: FollowerData[];
+  followers: Follower[];
 }
 
 export const FollowersListDialog = memo(function FollowersListDialog({

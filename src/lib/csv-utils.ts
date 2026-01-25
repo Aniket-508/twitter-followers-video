@@ -1,8 +1,9 @@
-import { FollowerData } from "@/contexts/config-context";
+import type { Follower } from "@/types/constants";
+import { getDicebearUrl } from "@/remotion/follower-accumulation/utils";
 import Papa from "papaparse";
 
 interface ParsedCSVResult {
-  followers: FollowerData[];
+  followers: Follower[];
   error?: string;
 }
 
@@ -41,14 +42,12 @@ export const parseFollowersCSV = async (
           return;
         }
 
-        const followers: FollowerData[] = (data as Record<string, string>[])
+        const followers: Follower[] = (data as Record<string, string>[])
           .filter((row) => row[nameField])
           .map((row) => {
             return {
               name: row[nameField],
-              image:
-                row[imgField || ""] ||
-                `https://api.dicebear.com/7.x/avataaars/svg?seed=${encodeURIComponent(row[nameField])}`,
+              image: row[imgField || ""] || getDicebearUrl(row[nameField]),
               verified: row[verifiedField || ""] === "true",
             };
           });

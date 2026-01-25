@@ -14,17 +14,13 @@ import {
   defaultMyCompProps,
   CompositionProps,
   XTheme,
+  Follower,
 } from "@/types/constants";
 import { parseFollowersCSV } from "@/lib/csv-utils";
+import { getDicebearUrl, shuffle } from "@/remotion/follower-accumulation/utils";
 import { RANDOM_NAMES } from "@/constants";
 
 export type DataSource = "manual" | "csv";
-
-export interface FollowerData {
-  name: string;
-  image: string;
-  verified: boolean;
-}
 
 interface ConfigContextType {
   followerCount: number;
@@ -33,7 +29,7 @@ interface ConfigContextType {
   setTheme: (theme: XTheme) => void;
   dataSource: DataSource;
   setDataSource: (source: DataSource) => void;
-  csvFollowers: FollowerData[];
+  csvFollowers: Follower[];
   isRandomizeEnabled: boolean;
   setIsRandomizeEnabled: (enabled: boolean) => void;
   handleFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -42,32 +38,20 @@ interface ConfigContextType {
 
 const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
-/**
- * Fisher-Yates shuffle algorithm to randomize an array.
- */
-function shuffle<T>(array: T[]): T[] {
-  const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
-  }
-  return shuffled;
-}
-
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [followerCount, setFollowerCount] = useState<number>(
     defaultMyCompProps.followerCount,
   );
   const [theme, setTheme] = useState<XTheme>(defaultMyCompProps.theme);
   const [dataSource, setDataSource] = useState<DataSource>("csv");
-  const [csvFollowers, setCsvFollowers] = useState<FollowerData[]>([]);
+  const [csvFollowers, setCsvFollowers] = useState<Follower[]>([]);
   const [isRandomizeEnabled, setIsRandomizeEnabled] = useState(false);
 
   const generateRandomFollowers = useCallback((count: number) => {
     const shuffledNames = shuffle(RANDOM_NAMES);
     return Array.from({ length: Math.min(count, 50) }).map((_, i) => ({
       name: shuffledNames[i % shuffledNames.length],
-      image: `https://api.dicebear.com/7.x/avataaars/svg?seed=${i + Math.random()}`,
+      image: getDicebearUrl(`${i}-${Math.random()}`),
       verified: true,
     }));
   }, []);
