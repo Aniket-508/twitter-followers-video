@@ -57,19 +57,20 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const activeFollowers = useMemo(() => {
-    if (dataSource === "manual") {
+    if ((dataSource === "csv" && !csvFollowers.length) || dataSource === "manual") {
       return generateRandomFollowers(followerCount);
     }
 
-    if (!isRandomizeEnabled || csvFollowers.length === 0) {
-      return csvFollowers.length > 0 ? csvFollowers : undefined;
+    // CSV mode with uploaded data
+    if (isRandomizeEnabled) {
+      const shuffledNames = shuffle(RANDOM_NAMES);
+      return csvFollowers.map((f, i) => ({
+        ...f,
+        name: shuffledNames[i % shuffledNames.length],
+      }));
     }
 
-    const shuffledNames = shuffle(RANDOM_NAMES);
-    return csvFollowers.map((f, i) => ({
-      ...f,
-      name: shuffledNames[i % shuffledNames.length],
-    }));
+    return csvFollowers;
   }, [
     dataSource,
     csvFollowers,
@@ -80,11 +81,11 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
 
   const inputProps = useMemo(
     () => ({
-      followerCount: dataSource === "csv" ? csvFollowers.length : followerCount,
+      followerCount,
       theme,
       followers: activeFollowers,
     }),
-    [followerCount, theme, activeFollowers, dataSource, csvFollowers.length],
+    [followerCount, theme, activeFollowers],
   );
 
   const handleFileUpload = useCallback(
