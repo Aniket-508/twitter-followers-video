@@ -16,17 +16,11 @@
 
 </div>
 
-## 🎬 Example Output
+## Example Output
 
-The video shows:
+![Example Output](./public/sample.mp4)
 
-1. Avatars appearing one by one with spring animations
-2. Follower count incrementing through milestones
-3. Gradual zoom out effect as followers accumulate
-4. "Thank You!" celebration with zoom back in
-5. Marquee scroll effect at the end
-
-## 🛠️ Stack
+## Stack
 
 - [Remotion](https://www.remotion.dev/) to create the video (and [Remotion Lambda](https://www.remotion.dev/docs/lambda/api) to generate it in AWS)
 - [Next.js](https://nextjs.org) for the web application
