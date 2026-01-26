@@ -18,7 +18,7 @@
 
 ## Example Output
 
-![Example Output](./public/sample.mp4)
+https://github.com/user-attachments/assets/0840d4b8-1fd0-4dfd-bf75-0a0287a734ec
 
 ## Stack
 
