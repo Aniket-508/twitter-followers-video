@@ -12,6 +12,8 @@ import {
 } from "../../../../../config.mjs";
 import { RenderRequest } from "@/types/schema";
 import { executeApi } from "@/helpers/api-response";
+import { cookies } from "next/headers";
+import { COOKIE_NAME, COOLDOWN_SECONDS } from "@/types/constants";
 
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,
@@ -33,6 +35,14 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       );
     }
 
+    const cookieStore = await cookies();
+    const cooldownCookie = cookieStore.get(COOKIE_NAME);
+    if (cooldownCookie) {
+      throw new Error(
+        "You recently rendered a video. Please wait a few minutes before rendering another one.",
+      );
+    }
+
     const result = await renderMediaOnLambda({
       codec: "h264",
       functionName: speculateFunctionName({
@@ -49,6 +59,13 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
         type: "download",
         fileName: "video.mp4",
       },
+    });
+
+    cookieStore.set(COOKIE_NAME, "true", {
+      maxAge: COOLDOWN_SECONDS,
+      path: "/",
+      httpOnly: true,
+      sameSite: "strict",
     });
 
     return result;

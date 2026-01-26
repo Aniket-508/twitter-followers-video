@@ -58,6 +58,7 @@
     "@remotion/player": "4.0.407",
     "@remotion/shapes": "4.0.407",
     "@remotion/tailwind-v4": "4.0.407",
+    "@upstash/ratelimit": "^2.0.8",
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "lucide-react": "^0.562.0",

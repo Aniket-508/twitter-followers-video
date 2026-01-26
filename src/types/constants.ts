@@ -23,7 +23,10 @@ export const defaultMyCompProps: z.infer<typeof CompositionProps> = {
   theme: "light",
 };
 
-export const DURATION_IN_FRAMES = 210; // 7 seconds at 30fps
+export const DURATION_IN_FRAMES = 210; // 7 seconds
 export const VIDEO_WIDTH = 640;
 export const VIDEO_HEIGHT = 360;
 export const VIDEO_FPS = 30;
+
+export const COOLDOWN_SECONDS = 60; // 1 minute
+export const COOKIE_NAME = "render-cooldown";
