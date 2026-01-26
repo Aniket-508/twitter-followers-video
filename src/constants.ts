@@ -4,7 +4,7 @@ export const SOURCE_CODE_GITHUB_REPO = "Aniket-508/twitter-followers-video";
 
 export const SITE = {
   NAME: "Twitter Followers Video",
-  URL: "https://twitter-followers-video.vercel.app",
+  URL: "https://followers.video",
   OG_IMAGE: "/og.png",
   DESCRIPTION:
     "Generate animated videos to celebrate & share your Twitter/X follower milestones.",

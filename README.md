@@ -2,7 +2,7 @@
   <img src="./public/logo.png" height="80" alt="Logo" />
 </div>
 
-<h1 align="center"><a href="https://twitter-followers-video.vercel.app/" target="_blank">Twitter Followers Video</a></h1>
+<h1 align="center"><a href="https://followers.video/" target="_blank">Twitter Followers Video</a></h1>
 
 <p align="center">
   <strong>Generate animated videos to celebrate and share your Twitter/X follower milestones.</strong>
