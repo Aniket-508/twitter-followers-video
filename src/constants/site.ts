@@ -1,4 +1,4 @@
-import { urlToName } from "./lib/url";
+import { urlToName } from "../lib/url";
 
 export const SOURCE_CODE_GITHUB_REPO = "Aniket-508/twitter-followers-video";
 

@@ -2,12 +2,12 @@ import { Composition } from "remotion";
 import { FollowerAccumulation } from "./follower-accumulation";
 import {
   COMP_NAME,
-  defaultMyCompProps,
   DURATION_IN_FRAMES,
   VIDEO_FPS,
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
-} from "../types/constants";
+} from "@/constants/remotion";
+import { defaultMyCompProps } from "../types/schemas";
 
 export const RemotionRoot: React.FC = () => {
   return (

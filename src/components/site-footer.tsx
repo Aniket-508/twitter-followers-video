@@ -1,5 +1,5 @@
 import { Icons } from "./icons";
-import { SITE } from "@/constants";
+import { SITE } from "@/constants/site";
 
 export function SiteFooter() {
   return (

@@ -1,7 +1,8 @@
 import React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { THEMES, TIMING } from "../constants";
-import type { Follower, XTheme } from "../../../types/constants";
+import { SCALE } from "@/constants/remotion";
+import type { Follower, XTheme } from "../../../types/schemas";
 import type { Milestone } from "../types";
 import {
   getCelebrationFrame,
@@ -97,26 +98,34 @@ export const TextLabel: React.FC<TextLabelProps> = ({
   const displayName = currentFollower?.name || name;
   const isVerified = currentFollower?.verified ?? false;
 
+  const fontSize = 24 * SCALE;
+  const marginSmall = 4 * SCALE;
+  const marginMedium = 8 * SCALE;
+
   return (
     <div
       style={{
         display: "flex",
         alignItems: "center",
-        marginTop: 10,
+        marginTop: 10 * SCALE,
         whiteSpace: "nowrap",
       }}
     >
-      <span style={{ fontSize: 24, fontWeight: 600, color: colors.text }}>
+      <span style={{ fontSize, fontWeight: 600, color: colors.text }}>
         {displayName}
       </span>
       {isVerified && (
-        <span style={{ marginLeft: 4, display: "inline-flex" }}>
-          <VerifiedBadge size={24} />
+        <span style={{ marginLeft: marginSmall, display: "inline-flex" }}>
+          <VerifiedBadge size={fontSize} />
         </span>
       )}
       {displayCount > 0 ? (
         <span
-          style={{ fontSize: 24, color: colors.textSecondary, marginLeft: 8 }}
+          style={{
+            fontSize,
+            color: colors.textSecondary,
+            marginLeft: marginMedium,
+          }}
         >
           and{" "}
           <span style={{ fontWeight: 600, color: colors.text }}>
@@ -126,7 +135,11 @@ export const TextLabel: React.FC<TextLabelProps> = ({
         </span>
       ) : (
         <span
-          style={{ fontSize: 24, color: colors.textSecondary, marginLeft: 8 }}
+          style={{
+            fontSize,
+            color: colors.textSecondary,
+            marginLeft: marginMedium,
+          }}
         >
           followed you
         </span>

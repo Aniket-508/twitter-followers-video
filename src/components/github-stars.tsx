@@ -4,7 +4,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { Button } from "@/components/ui/button";
-import { UTM_PARAMS } from "@/constants";
+import { UTM_PARAMS } from "@/constants/site";
 import { addQueryParams } from "@/lib/url";
 import { Icons } from "./icons";
 

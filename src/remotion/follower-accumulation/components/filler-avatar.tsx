@@ -1,7 +1,8 @@
 import React from "react";
 import { Img } from "remotion";
 import { AVATAR, AVATAR_COLORS, THEMES } from "../constants";
-import type { XTheme } from "../../../types/constants";
+import { SCALE } from "@/constants/remotion";
+import type { XTheme } from "../../../types/schemas";
 import { getDicebearUrl } from "../utils";
 
 export interface FillerAvatarProps {
@@ -28,7 +29,7 @@ export const FillerAvatar: React.FC<FillerAvatarProps> = ({ index, theme }) => {
           width: AVATAR.SIZE,
           height: AVATAR.SIZE,
           borderRadius: "50%",
-          border: `2px solid ${colors.avatarBorder}`,
+          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
           overflow: "hidden",
           boxShadow: colors.shadow,
           backgroundColor: avatarColor,

@@ -7,7 +7,7 @@ import {
   VIDEO_FPS,
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
-} from "@/types/constants";
+} from "@/constants/remotion";
 import { memo } from "react";
 import dynamic from "next/dynamic";
 import { RenderButton } from "./render-button";

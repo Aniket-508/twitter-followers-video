@@ -3,7 +3,7 @@
 import { useConfig } from "@/contexts/config-context";
 import { Label } from "@/components/ui/label";
 import { Button } from "@/components/ui/button";
-import { XTheme } from "@/types/constants";
+import { XTheme } from "@/types/schema";
 import { memo } from "react";
 
 const THEME_OPTIONS: { value: XTheme; label: string; description: string }[] = [

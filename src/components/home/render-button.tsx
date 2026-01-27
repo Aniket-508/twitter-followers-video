@@ -2,7 +2,7 @@
 
 import { useRendering } from "@/helpers/use-rendering";
 import { useConfig } from "@/contexts/config-context";
-import { COMP_NAME } from "@/types/constants";
+import { COMP_NAME } from "@/constants/remotion";
 import { Button } from "@/components/ui/button";
 import { Alert, AlertDescription } from "@/components/ui/alert";
 import {

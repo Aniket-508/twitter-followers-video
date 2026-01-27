@@ -1,4 +1,4 @@
-import type { Follower } from "@/types/constants";
+import type { Follower } from "@/types/schema";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,

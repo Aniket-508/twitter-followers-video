@@ -1,19 +1,20 @@
-import type { XTheme } from "../../types/constants";
+import { SCALE } from "@/constants/remotion";
+import type { XTheme } from "../../types/schemas";
 import type { ThemeColors } from "./types";
 
-/** Avatar dimensions and layout */
+/** Avatar dimensions and layout (auto-scaled based on SCALE) */
 export const AVATAR = {
-  SIZE: 36,
-  OVERLAP: 16,
+  SIZE: 36 * SCALE,
+  OVERLAP: 16 * SCALE,
   FIRST_COLOR: "#3b82f6",
 } as const;
 
-/** Layout constants */
+/** Layout constants (auto-scaled based on SCALE) */
 export const LAYOUT = {
   ZOOM: 1.15,
-  GRADIENT_WIDTH: 60,
-  CELEBRATION_HEIGHT: 80,
-  SCROLL_DISTANCE: 100,
+  GRADIENT_WIDTH: 60 * SCALE,
+  CELEBRATION_HEIGHT: 80 * SCALE,
+  SCROLL_DISTANCE: 100 * SCALE,
 } as const;
 
 /** Theme color configurations for X's display modes */

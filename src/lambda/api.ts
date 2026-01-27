@@ -5,7 +5,7 @@ import {
   ProgressResponse,
   RenderRequest,
 } from "../types/schema";
-import { CompositionProps } from "../types/constants";
+import { CompositionProps } from "../types/schemas";
 import { ApiResponse } from "../helpers/api-response";
 
 const makeRequest = async <Res>(

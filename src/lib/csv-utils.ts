@@ -1,4 +1,4 @@
-import type { Follower } from "@/types/constants";
+import type { Follower } from "@/types/schema";
 import { getDicebearUrl } from "@/remotion/follower-accumulation/utils";
 import Papa from "papaparse";
 

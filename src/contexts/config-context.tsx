@@ -15,13 +15,13 @@ import {
   CompositionProps,
   XTheme,
   Follower,
-} from "@/types/constants";
+} from "@/types/schema";
 import { parseFollowersCSV } from "@/lib/csv-utils";
 import {
   getDicebearUrl,
   shuffle,
 } from "@/remotion/follower-accumulation/utils";
-import { RANDOM_NAMES } from "@/constants";
+import { RANDOM_NAMES } from "@/constants/site";
 
 export type DataSource = "manual" | "csv";
 

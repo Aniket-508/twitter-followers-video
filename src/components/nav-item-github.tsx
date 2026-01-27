@@ -1,7 +1,7 @@
 import { unstable_cache } from "next/cache";
 
 import { GitHubStars } from "@/components/github-stars";
-import { SOURCE_CODE_GITHUB_REPO } from "@/constants";
+import { SOURCE_CODE_GITHUB_REPO } from "@/constants/site";
 
 const getStargazerCount = unstable_cache(
   async () => {

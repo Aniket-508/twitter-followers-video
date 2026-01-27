@@ -1,7 +1,8 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../constants";
-import type { XTheme } from "../../../types/constants";
+import { SCALE } from "@/constants/remotion";
+import type { XTheme } from "../../../types/schemas";
 import type { Milestone } from "../types";
 import { getCelebrationFrame } from "../utils";
 
@@ -35,9 +36,12 @@ export const Celebration: React.FC<CelebrationProps> = ({
       ? 0
       : interpolate(slideProgress, [0, 1], [0, LAYOUT.CELEBRATION_HEIGHT]);
 
-  // Slide up from 30px below
+  // Slide up from below (auto-scaled)
+  const slideDistance = 30 * SCALE;
   const translateY =
-    frame < celebrationStart ? 30 : interpolate(slideProgress, [0, 1], [30, 0]);
+    frame < celebrationStart
+      ? slideDistance
+      : interpolate(slideProgress, [0, 1], [slideDistance, 0]);
 
   // Fade in
   const opacity = interpolate(
@@ -58,12 +62,12 @@ export const Celebration: React.FC<CelebrationProps> = ({
         display: "flex",
         justifyContent: "center",
         alignItems: "flex-end",
-        marginBottom: height > 0 ? 16 : 0,
+        marginBottom: height > 0 ? 16 * SCALE : 0,
       }}
     >
       <h1
         style={{
-          fontSize: 60,
+          fontSize: 60 * SCALE,
           fontWeight: 700,
           color: colors.text,
           whiteSpace: "nowrap",

@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import type { Follower, XTheme } from "../../../types/constants";
+import type { Follower, XTheme } from "../../../types/schemas";
 import type { Milestone } from "../types";
 import { Avatar } from "./avatar";
 import { FillerAvatar } from "./filler-avatar";

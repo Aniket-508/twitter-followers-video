@@ -1,5 +1,25 @@
 import { z } from "zod";
-import { CompositionProps } from "./constants";
+
+export const XThemeSchema = z.enum(["light", "dim", "lightsOut"]);
+export type XTheme = z.infer<typeof XThemeSchema>;
+
+export const FollowerSchema = z.object({
+  name: z.string(),
+  image: z.string().optional(),
+  verified: z.boolean().optional(),
+});
+export type Follower = z.infer<typeof FollowerSchema>;
+
+export const CompositionProps = z.object({
+  followerCount: z.number(),
+  theme: XThemeSchema,
+  followers: z.array(FollowerSchema).optional(),
+});
+
+export const defaultMyCompProps: z.infer<typeof CompositionProps> = {
+  followerCount: 1000,
+  theme: "light",
+};
 
 export const RenderRequest = z.object({
   id: z.string(),

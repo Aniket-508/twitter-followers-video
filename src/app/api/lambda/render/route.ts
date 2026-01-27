@@ -13,7 +13,7 @@ import {
 import { RenderRequest } from "@/types/schema";
 import { executeApi } from "@/helpers/api-response";
 import { cookies } from "next/headers";
-import { COOKIE_NAME, COOLDOWN_SECONDS } from "@/types/constants";
+import { COOKIE_NAME, COOLDOWN_SECONDS } from "@/constants/remotion";
 
 export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
   RenderRequest,

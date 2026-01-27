@@ -9,7 +9,7 @@ import {
 } from "remotion";
 import { loadFont, fontFamily } from "@remotion/google-fonts/PublicSans";
 import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "./constants";
-import { CompositionProps, Follower, XTheme } from "../../types/constants";
+import { CompositionProps, Follower, XTheme } from "../../types/schemas";
 import {
   calculateMaxAvatars,
   generateMilestones,
@@ -29,7 +29,7 @@ loadFont("normal", {
 });
 
 // Re-export types for external use
-export type { Follower, XTheme } from "../../types/constants";
+export type { Follower, XTheme } from "../../types/schemas";
 export type { Milestone, ThemeColors } from "./types";
 
 export interface FollowerAccumulationProps {

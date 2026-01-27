@@ -1,7 +1,8 @@
 import React from "react";
 import { spring, useCurrentFrame, useVideoConfig, Img } from "remotion";
 import { AVATAR, AVATAR_COLORS, SPRING_CONFIGS, THEMES } from "../constants";
-import type { Follower, XTheme } from "../../../types/constants";
+import { SCALE } from "@/constants/remotion";
+import type { Follower, XTheme } from "../../../types/schemas";
 import type { Milestone } from "../types";
 import { getDicebearUrl, getAvatarAppearFrame } from "../utils";
 
@@ -59,7 +60,7 @@ export const Avatar: React.FC<AvatarProps> = ({
             width: AVATAR.SIZE,
             height: AVATAR.SIZE,
             borderRadius: "50%",
-            border: `2px solid ${colors.avatarBorder}`,
+            border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
             overflow: "hidden",
             boxShadow: colors.shadow,
             backgroundColor: AVATAR.FIRST_COLOR,
@@ -99,7 +100,7 @@ export const Avatar: React.FC<AvatarProps> = ({
           width: AVATAR.SIZE,
           height: AVATAR.SIZE,
           borderRadius: "50%",
-          border: `2px solid ${colors.avatarBorder}`,
+          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
           overflow: "hidden",
           boxShadow: colors.shadow,
           backgroundColor: isFirst ? AVATAR.FIRST_COLOR : avatarColor,

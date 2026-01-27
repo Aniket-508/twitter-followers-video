@@ -1,5 +1,5 @@
 import { AVATAR, LAYOUT, TIMING } from "./constants";
-import type { Follower } from "../../types/constants";
+import type { Follower } from "../../types/schemas";
 import type { Milestone } from "./types";
 import { random } from "remotion";
 

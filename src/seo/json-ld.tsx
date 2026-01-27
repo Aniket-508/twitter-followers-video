@@ -1,4 +1,4 @@
-import { LINK, SITE } from "@/constants";
+import { LINK, SITE } from "@/constants/site";
 
 const WebsiteJsonLd = () => {
   const jsonLd = {
