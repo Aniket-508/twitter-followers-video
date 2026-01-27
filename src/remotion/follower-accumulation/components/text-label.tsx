@@ -3,7 +3,11 @@ import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { THEMES, TIMING } from "../constants";
 import type { Follower, XTheme } from "../../../types/constants";
 import type { Milestone } from "../types";
-import { getCelebrationFrame, getCurrentMilestone, getPreviousMilestone } from "../utils";
+import {
+  getCelebrationFrame,
+  getCurrentMilestone,
+  getPreviousMilestone,
+} from "../utils";
 import { VerifiedBadge } from "./verified-badge";
 
 export interface TextLabelProps {
@@ -47,7 +51,10 @@ export const TextLabel: React.FC<TextLabelProps> = ({
     const isFinalMilestone = currentMilestone.frame === celebrationFrame;
 
     // Calculate animation duration
-    const newAvatars = Math.max(0, currentMilestone.totalAvatars - previousAvatars);
+    const newAvatars = Math.max(
+      0,
+      currentMilestone.totalAvatars - previousAvatars,
+    );
     const staggerTime = isFinalMilestone ? fastStagger : normalStagger;
     const animationDuration = Math.max(1, newAvatars * staggerTime);
 
@@ -58,13 +65,20 @@ export const TextLabel: React.FC<TextLabelProps> = ({
       const targetCount = isFinalMilestone
         ? Math.max(0, finalCount - 1)
         : Math.max(0, currentMilestone.totalAvatars - 1);
-      const startCount = previousMilestone ? Math.max(0, previousMilestone.totalAvatars - 1) : 0;
+      const startCount = previousMilestone
+        ? Math.max(0, previousMilestone.totalAvatars - 1)
+        : 0;
 
       displayCount = Math.round(
-        interpolate(frame, [delayedStart, delayedStart + animationDuration], [startCount, targetCount], {
-          extrapolateLeft: "clamp",
-          extrapolateRight: "clamp",
-        })
+        interpolate(
+          frame,
+          [delayedStart, delayedStart + animationDuration],
+          [startCount, targetCount],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+          },
+        ),
       );
     }
   }
@@ -72,7 +86,10 @@ export const TextLabel: React.FC<TextLabelProps> = ({
   // Ensure displayCount is within bounds
   displayCount = Math.max(0, displayCount);
 
-  const formattedCount = displayCount >= 1000 ? displayCount.toLocaleString() : displayCount.toString();
+  const formattedCount =
+    displayCount >= 1000
+      ? displayCount.toLocaleString()
+      : displayCount.toString();
 
   // Safe access to followers array with bounds checking
   const displayIndex = Math.min(displayCount, (followers?.length ?? 1) - 1);
@@ -89,18 +106,30 @@ export const TextLabel: React.FC<TextLabelProps> = ({
         whiteSpace: "nowrap",
       }}
     >
-      <span style={{ fontSize: 24, fontWeight: 600, color: colors.text }}>{displayName}</span>
+      <span style={{ fontSize: 24, fontWeight: 600, color: colors.text }}>
+        {displayName}
+      </span>
       {isVerified && (
         <span style={{ marginLeft: 4, display: "inline-flex" }}>
           <VerifiedBadge size={24} />
         </span>
       )}
       {displayCount > 0 ? (
-        <span style={{ fontSize: 24, color: colors.textSecondary, marginLeft: 8 }}>
-          and <span style={{ fontWeight: 600, color: colors.text }}>{formattedCount}</span> others followed you
+        <span
+          style={{ fontSize: 24, color: colors.textSecondary, marginLeft: 8 }}
+        >
+          and{" "}
+          <span style={{ fontWeight: 600, color: colors.text }}>
+            {formattedCount}
+          </span>{" "}
+          others followed you
         </span>
       ) : (
-        <span style={{ fontSize: 24, color: colors.textSecondary, marginLeft: 8 }}>followed you</span>
+        <span
+          style={{ fontSize: 24, color: colors.textSecondary, marginLeft: 8 }}
+        >
+          followed you
+        </span>
       )}
     </div>
   );

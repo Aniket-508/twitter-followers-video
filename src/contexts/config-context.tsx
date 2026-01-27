@@ -17,7 +17,10 @@ import {
   Follower,
 } from "@/types/constants";
 import { parseFollowersCSV } from "@/lib/csv-utils";
-import { getDicebearUrl, shuffle } from "@/remotion/follower-accumulation/utils";
+import {
+  getDicebearUrl,
+  shuffle,
+} from "@/remotion/follower-accumulation/utils";
 import { RANDOM_NAMES } from "@/constants";
 
 export type DataSource = "manual" | "csv";
@@ -57,7 +60,10 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const activeFollowers = useMemo(() => {
-    if ((dataSource === "csv" && !csvFollowers.length) || dataSource === "manual") {
+    if (
+      (dataSource === "csv" && !csvFollowers.length) ||
+      dataSource === "manual"
+    ) {
       return generateRandomFollowers(followerCount);
     }
 

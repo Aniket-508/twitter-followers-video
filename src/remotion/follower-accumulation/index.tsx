@@ -1,5 +1,12 @@
 import { useMemo } from "react";
-import { AbsoluteFill, Easing, interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
+import {
+  AbsoluteFill,
+  Easing,
+  interpolate,
+  spring,
+  useCurrentFrame,
+  useVideoConfig,
+} from "remotion";
 import { loadFont, fontFamily } from "@remotion/google-fonts/PublicSans";
 import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "./constants";
 import { CompositionProps, Follower, XTheme } from "../../types/constants";
@@ -50,7 +57,7 @@ export const FollowerAccumulation = ({
   // Memoize milestones
   const milestones = useMemo(
     () => generateMilestones(safeFollowerCount, width, fps, followers),
-    [safeFollowerCount, width, fps, followers]
+    [safeFollowerCount, width, fps, followers],
   );
 
   // Memoize timing calculations
@@ -60,7 +67,7 @@ export const FollowerAccumulation = ({
       fastStagger: Math.max(1, Math.round(TIMING.AVATAR_STAGGER_FAST * fps)),
       springSettleTime: Math.round(TIMING.SPRING_SETTLE * fps),
     }),
-    [milestones, fps]
+    [milestones, fps],
   );
 
   const currentMilestone = getCurrentMilestone(frame, milestones);
@@ -68,11 +75,16 @@ export const FollowerAccumulation = ({
   // Container scale animation
   const containerScale = useMemo(() => {
     if (frame < celebrationStart) {
-      return interpolate(frame, [0, Math.max(1, celebrationStart - 1)], [LAYOUT.ZOOM, 1.0], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: Easing.out(Easing.cubic),
-      });
+      return interpolate(
+        frame,
+        [0, Math.max(1, celebrationStart - 1)],
+        [LAYOUT.ZOOM, 1.0],
+        {
+          extrapolateLeft: "clamp",
+          extrapolateRight: "clamp",
+          easing: Easing.out(Easing.cubic),
+        },
+      );
     } else {
       const springBack = spring({
         frame: frame - celebrationStart,
@@ -84,25 +96,38 @@ export const FollowerAccumulation = ({
   }, [frame, celebrationStart, fps]);
 
   // Calculate scroll timing
-  const previousMilestoneAvatars = milestones[milestones.length - 2]?.totalAvatars || 0;
-  const newAvatarsInCelebration = Math.max(0, currentMilestone.totalAvatars - previousMilestoneAvatars);
-  const lastAvatarAppearFrame = celebrationStart + newAvatarsInCelebration * fastStagger;
+  const previousMilestoneAvatars =
+    milestones[milestones.length - 2]?.totalAvatars || 0;
+  const newAvatarsInCelebration = Math.max(
+    0,
+    currentMilestone.totalAvatars - previousMilestoneAvatars,
+  );
+  const lastAvatarAppearFrame =
+    celebrationStart + newAvatarsInCelebration * fastStagger;
   const allAvatarsVisibleFrame = lastAvatarAppearFrame + springSettleTime;
 
   // Marquee scroll offset
   const marqueeOffset =
     frame >= allAvatarsVisibleFrame
-      ? interpolate(frame, [allAvatarsVisibleFrame, durationInFrames], [0, -LAYOUT.SCROLL_DISTANCE], {
-        extrapolateLeft: "clamp",
-        extrapolateRight: "clamp",
-        easing: Easing.out(Easing.quad),
-      })
+      ? interpolate(
+          frame,
+          [allAvatarsVisibleFrame, durationInFrames],
+          [0, -LAYOUT.SCROLL_DISTANCE],
+          {
+            extrapolateLeft: "clamp",
+            extrapolateRight: "clamp",
+            easing: Easing.out(Easing.quad),
+          },
+        )
       : 0;
 
   // Calculate filler avatars needed
   const maxNeeded = calculateMaxAvatars(width + LAYOUT.SCROLL_DISTANCE);
   const currentTotal = currentMilestone.totalAvatars;
-  const fillerCount = frame >= allAvatarsVisibleFrame && currentTotal < maxNeeded ? maxNeeded - currentTotal + 2 : 0;
+  const fillerCount =
+    frame >= allAvatarsVisibleFrame && currentTotal < maxNeeded
+      ? maxNeeded - currentTotal + 2
+      : 0;
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.background }}>

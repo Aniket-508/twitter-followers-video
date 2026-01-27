@@ -30,7 +30,12 @@ export const Avatar: React.FC<AvatarProps> = ({
   const { fps } = useVideoConfig();
   const colors = THEMES[theme];
 
-  const appearFrame = getAvatarAppearFrame(index, milestones, celebrationStart, fps);
+  const appearFrame = getAvatarAppearFrame(
+    index,
+    milestones,
+    celebrationStart,
+    fps,
+  );
   const animationFrame = frame - appearFrame;
   const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
 

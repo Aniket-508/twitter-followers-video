@@ -27,12 +27,15 @@ export const AvatarStack: React.FC<AvatarStackProps> = ({
   // Memoize avatar indices to avoid array creation every frame
   const avatarIndices = useMemo(
     () => Array.from({ length: Math.max(0, limit) }, (_, i) => i),
-    [limit]
+    [limit],
   );
 
   const fillerIndices = useMemo(
-    () => (fillerCount > 0 ? Array.from({ length: fillerCount }, (_, i) => limit + i) : []),
-    [fillerCount, limit]
+    () =>
+      fillerCount > 0
+        ? Array.from({ length: fillerCount }, (_, i) => limit + i)
+        : [],
+    [fillerCount, limit],
   );
 
   return (
