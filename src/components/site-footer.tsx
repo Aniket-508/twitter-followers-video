@@ -3,7 +3,7 @@ import { SITE } from "@/constants/site";
 
 export function SiteFooter() {
   return (
-    <footer className="border-t">
+    <footer className="border-t mt-auto">
       <div className="px-4 flex items-center justify-between py-4 text-xs text-muted-foreground">
         <p>Not endorsed or affiliated by X</p>
         <a

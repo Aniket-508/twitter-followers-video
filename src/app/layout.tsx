@@ -49,7 +49,7 @@ export default function RootLayout({
         <Providers>
           <div className="relative view-container">
             <div className="bg-stripes absolute bottom-0 left-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
-            <div className="border-x">
+            <div className="border-x flex flex-col min-h-screen">
               <SiteHeader />
               {children}
               <SiteFooter />
