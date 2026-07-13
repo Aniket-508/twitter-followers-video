@@ -48,7 +48,18 @@ export const useRendering = (
       status: "invoking",
     });
     try {
-      const { renderId, bucketName } = await renderVideo({ id, inputProps });
+      const result = await renderVideo({ id, inputProps });
+
+      if (result.type === "done") {
+        setState({
+          size: result.size,
+          url: result.url,
+          status: "done",
+        });
+        return;
+      }
+
+      const { renderId, bucketName } = result;
       setState({
         status: "rendering",
         progress: 0,

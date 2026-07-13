@@ -2,7 +2,7 @@ import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../constants";
 import { SCALE } from "@/constants/remotion";
-import type { XTheme } from "../../../types/schemas";
+import type { XTheme } from "../../../types/schema";
 import type { Milestone } from "../types";
 import { getCelebrationFrame } from "../utils";
 

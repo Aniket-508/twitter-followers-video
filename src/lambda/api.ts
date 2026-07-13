@@ -1,11 +1,11 @@
 import { z } from "zod";
-import type { RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
 import {
   ProgressRequest,
   ProgressResponse,
+  RenderResponse,
   RenderRequest,
 } from "../types/schema";
-import { CompositionProps } from "../types/schemas";
+import { CompositionProps } from "../types/schema";
 import { ApiResponse } from "../helpers/api-response";
 
 const makeRequest = async <Res>(
@@ -39,7 +39,7 @@ export const renderVideo = async ({
     inputProps,
   };
 
-  return makeRequest<RenderMediaOnLambdaOutput>("/api/lambda/render", body);
+  return makeRequest<RenderResponse>("/api/lambda/render", body);
 };
 
 export const getProgress = async ({

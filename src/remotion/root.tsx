@@ -7,7 +7,7 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
 } from "@/constants/remotion";
-import { defaultMyCompProps } from "../types/schemas";
+import { defaultMyCompProps } from "../types/schema";
 
 export const RemotionRoot: React.FC = () => {
   return (

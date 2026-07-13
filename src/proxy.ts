@@ -6,17 +6,27 @@ import {
   NextResponse,
 } from "next/server";
 
-const ratelimit = new Ratelimit({
-  redis: Redis.fromEnv(),
-  limiter: Ratelimit.fixedWindow(10, "1m"), // 10 requests per minute
-  prefix: "@followers-video/ratelimit",
-  analytics: true,
-});
+const hasRedisEnv =
+  Boolean(process.env.UPSTASH_REDIS_REST_URL) &&
+  Boolean(process.env.UPSTASH_REDIS_REST_TOKEN);
+
+const ratelimit = hasRedisEnv
+  ? new Ratelimit({
+      redis: Redis.fromEnv(),
+      limiter: Ratelimit.fixedWindow(10, "1m"), // 10 requests per minute
+      prefix: "@followers-video/ratelimit",
+      analytics: true,
+    })
+  : null;
 
 export default async function middleware(
   request: NextRequest,
   context: NextFetchEvent,
 ): Promise<Response | undefined> {
+  if (process.env.NODE_ENV === "development" || !ratelimit) {
+    return NextResponse.next();
+  }
+
   const ip = request.headers.get("x-forwarded-for") ?? "127.0.0.1";
 
   const { success, pending, limit, remaining } = await ratelimit.limit(ip);

@@ -2,7 +2,7 @@ import React from "react";
 import { spring, useCurrentFrame, useVideoConfig, Img } from "remotion";
 import { AVATAR, AVATAR_COLORS, SPRING_CONFIGS, THEMES } from "../constants";
 import { SCALE } from "@/constants/remotion";
-import type { Follower, XTheme } from "../../../types/schemas";
+import type { Follower, XTheme } from "../../../types/schema";
 import type { Milestone } from "../types";
 import { getDicebearUrl, getAvatarAppearFrame } from "../utils";
 

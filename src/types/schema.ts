@@ -26,6 +26,18 @@ export const RenderRequest = z.object({
   inputProps: CompositionProps,
 });
 
+export type RenderResponse =
+  | {
+      type: "lambda";
+      renderId: string;
+      bucketName: string;
+    }
+  | {
+      type: "done";
+      url: string;
+      size: number;
+    };
+
 export const ProgressRequest = z.object({
   bucketName: z.string(),
   id: z.string(),

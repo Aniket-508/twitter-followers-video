@@ -2,7 +2,7 @@ import React from "react";
 import { Img } from "remotion";
 import { AVATAR, AVATAR_COLORS, THEMES } from "../constants";
 import { SCALE } from "@/constants/remotion";
-import type { XTheme } from "../../../types/schemas";
+import type { XTheme } from "../../../types/schema";
 import { getDicebearUrl } from "../utils";
 
 export interface FillerAvatarProps {

@@ -2,7 +2,7 @@ import React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 import { THEMES, TIMING } from "../constants";
 import { SCALE } from "@/constants/remotion";
-import type { Follower, XTheme } from "../../../types/schemas";
+import type { Follower, XTheme } from "../../../types/schema";
 import type { Milestone } from "../types";
 import {
   getCelebrationFrame,

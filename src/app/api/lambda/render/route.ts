@@ -1,4 +1,10 @@
-import { AwsRegion, RenderMediaOnLambdaOutput } from "@remotion/lambda/client";
+import { execFile } from "node:child_process";
+import { mkdir, stat } from "node:fs/promises";
+import { join } from "node:path";
+import { randomUUID } from "node:crypto";
+import { promisify } from "node:util";
+import type { z } from "zod";
+import { AwsRegion } from "@remotion/lambda/client";
 import {
   renderMediaOnLambda,
   speculateFunctionName,
@@ -10,14 +16,59 @@ import {
   SITE_NAME,
   TIMEOUT,
 } from "../../../../../config.mjs";
-import { RenderRequest } from "@/types/schema";
+import { RenderRequest, RenderResponse } from "@/types/schema";
 import { executeApi } from "@/helpers/api-response";
 import { cookies } from "next/headers";
 import { COOKIE_NAME, COOLDOWN_SECONDS } from "@/constants/remotion";
 
-export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
+const execFileAsync = promisify(execFile);
+
+const renderLocally = async (
+  body: z.infer<typeof RenderRequest>,
+): Promise<RenderResponse> => {
+  const rendersDir = join(process.cwd(), "public", "renders");
+  await mkdir(rendersDir, { recursive: true });
+
+  const safeCompositionId = body.id.replace(/[^a-z0-9_-]/gi, "-");
+  const fileName = `${safeCompositionId}-${Date.now()}-${randomUUID()}.mp4`;
+  const outputLocation = join(rendersDir, fileName);
+
+  try {
+    await execFileAsync(
+      join(process.cwd(), "node_modules", ".bin", "remotionb"),
+      [
+        "render",
+        join(process.cwd(), "src/remotion/index.ts"),
+        body.id,
+        outputLocation,
+        `--props=${JSON.stringify(body.inputProps)}`,
+      ],
+      {
+        cwd: process.cwd(),
+        maxBuffer: 1024 * 1024 * 20,
+      },
+    );
+  } catch (err) {
+    const error = err as Error & { stderr?: string; stdout?: string };
+    throw new Error(error.stderr || error.stdout || error.message);
+  }
+
+  const output = await stat(outputLocation);
+
+  return {
+    type: "done",
+    url: `/renders/${fileName}`,
+    size: output.size,
+  };
+};
+
+export const POST = executeApi<RenderResponse, typeof RenderRequest>(
   RenderRequest,
   async (req, body) => {
+    if (process.env.NODE_ENV === "development") {
+      return renderLocally(body);
+    }
+
     if (
       !process.env.AWS_ACCESS_KEY_ID &&
       !process.env.REMOTION_AWS_ACCESS_KEY_ID
@@ -68,6 +119,10 @@ export const POST = executeApi<RenderMediaOnLambdaOutput, typeof RenderRequest>(
       sameSite: "strict",
     });
 
-    return result;
+    return {
+      type: "lambda",
+      renderId: result.renderId,
+      bucketName: result.bucketName,
+    };
   },
 );
