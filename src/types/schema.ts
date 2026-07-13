@@ -26,24 +26,7 @@ export const RenderRequest = z.object({
   inputProps: CompositionProps,
 });
 
-export type RenderResponse =
-  | {
-      type: "lambda";
-      renderId: string;
-      bucketName: string;
-    }
-  | {
-      type: "done";
-      url: string;
-      size: number;
-    };
-
-export const ProgressRequest = z.object({
-  bucketName: z.string(),
-  id: z.string(),
-});
-
-export type ProgressResponse =
+export type RenderProgress =
   | {
       type: "error";
       message: string;
@@ -56,4 +39,10 @@ export type ProgressResponse =
       type: "done";
       url: string;
       size: number;
+    }
+  | {
+      type: "phase";
+      phase: string;
+      progress: number;
+      subtitle?: string;
     };

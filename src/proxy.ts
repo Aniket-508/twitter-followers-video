@@ -44,5 +44,5 @@ export default async function middleware(
 }
 
 export const config = {
-  matcher: ["/api/lambda/render"],
+  matcher: ["/api/render"],
 };

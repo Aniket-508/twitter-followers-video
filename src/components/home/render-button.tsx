@@ -21,7 +21,7 @@ export const RenderButton = () => {
   const isLoading = state.status === "invoking" || isRendering;
   const isDone = state.status === "done";
   const downloadFileName = isDone
-    ? `milestone-video-${state.url.split("/").pop() || "render.mp4"}`
+    ? `milestone-video-${state.url.split("/").at(-1) || "render.mp4"}`
     : undefined;
 
   return (
@@ -54,7 +54,7 @@ export const RenderButton = () => {
             <Loader2Icon className="animate-spin" />
             <span className="font-semibold">
               {isRendering
-                ? `Rendering ${Math.round(state.progress * 100)}%`
+                ? `${state.phase} ${Math.round(state.progress * 100)}%`
                 : "Preparing Render..."}
             </span>
           </>

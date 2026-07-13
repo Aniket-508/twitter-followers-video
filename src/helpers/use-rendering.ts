@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { useCallback, useMemo, useState } from "react";
 import type { z } from "zod";
 
+import { renderVideo } from "@/render/api";
 import type { CompositionProps } from "@/types/schema";
-
-import { getProgress, renderVideo } from "../lambda/api";
 
 export type State =
   | {
@@ -13,13 +12,11 @@ export type State =
       status: "invoking";
     }
   | {
-      renderId: string;
-      bucketName: string;
       progress: number;
+      phase: string;
       status: "rendering";
     }
   | {
-      renderId: string | null;
       status: "error";
       error: Error;
     }
@@ -36,95 +33,55 @@ export const useRendering = (
   const [state, setState] = useState<State>({
     status: "init",
   });
-  const pollProgressRef = useRef<
-    ((params: { bucketName: string; renderId: string }) => Promise<void>) | null
-  >(null);
-
-  const pollProgress = useCallback(
-    async ({
-      bucketName,
-      renderId,
-    }: {
-      bucketName: string;
-      renderId: string;
-    }): Promise<void> => {
-      const progressResult = await getProgress({
-        bucketName,
-        id: renderId,
-      });
-      switch (progressResult.type) {
-        case "error": {
-          setState({
-            error: new Error(progressResult.message),
-            renderId,
-            status: "error",
-          });
-          break;
-        }
-        case "done": {
-          setState({
-            size: progressResult.size,
-            status: "done",
-            url: progressResult.url,
-          });
-          break;
-        }
-        case "progress": {
-          setState({
-            bucketName,
-            progress: progressResult.progress,
-            renderId,
-            status: "rendering",
-          });
-          window.setTimeout(() => {
-            void pollProgressRef.current?.({ bucketName, renderId });
-          }, 1000);
-          break;
-        }
-        default: {
-          break;
-        }
-      }
-    },
-    []
-  );
-  useEffect(() => {
-    pollProgressRef.current = pollProgress;
-  }, [pollProgress]);
 
   const renderMedia = useCallback(async () => {
     setState({
       status: "invoking",
     });
     try {
-      const result = await renderVideo({ id, inputProps });
-
-      if (result.type === "done") {
-        setState({
-          size: result.size,
-          status: "done",
-          url: result.url,
-        });
-        return;
-      }
-
-      const { renderId, bucketName } = result;
-      setState({
-        bucketName,
-        progress: 0,
-        renderId,
-        status: "rendering",
+      await renderVideo({
+        id,
+        inputProps,
+        onProgress: (result) => {
+          switch (result.type) {
+            case "error": {
+              setState({
+                error: new Error(result.message),
+                status: "error",
+              });
+              break;
+            }
+            case "done": {
+              setState({
+                size: result.size,
+                status: "done",
+                url: result.url,
+              });
+              break;
+            }
+            case "phase":
+            case "progress": {
+              setState({
+                phase:
+                  result.type === "phase" ? result.phase : "Rendering video...",
+                progress: result.progress,
+                status: "rendering",
+              });
+              break;
+            }
+            default: {
+              break;
+            }
+          }
+        },
       });
-
-      await pollProgress({ bucketName, renderId });
     } catch (error) {
       setState({
         error: error as Error,
-        renderId: null,
         status: "error",
       });
     }
-  }, [id, inputProps, pollProgress]);
+  }, [id, inputProps]);
 
   const undo = useCallback(() => {
     setState({ status: "init" });

@@ -20,7 +20,8 @@ https://github.com/user-attachments/assets/0840d4b8-1fd0-4dfd-bf75-0a0287a734ec
 
 ## Stack
 
-- [Remotion](https://www.remotion.dev/) to create the video (and [Remotion Lambda](https://www.remotion.dev/docs/lambda/api) to generate it in AWS)
+- [Remotion](https://www.remotion.dev/) to create the video
+- [Vercel Sandbox](https://vercel.com/docs/sandbox) and [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) for production rendering and storage
 - [Next.js](https://nextjs.org) for the web application
 - [TailwindCSS](https://tailwindcss.com) for the styling
 - [Vercel](https://vercel.com) for hosting
@@ -30,7 +31,7 @@ https://github.com/user-attachments/assets/0840d4b8-1fd0-4dfd-bf75-0a0287a734ec
 ### Prerequisites
 
 - Node.js 22+ or Bun
-- AWS account (for Lambda rendering)
+- Vercel Blob store attached to the Vercel project for production rendering
 
 ### Installation
 
@@ -59,28 +60,32 @@ bun run remotion
 # Render a video locally
 bunx remotion render
 
+# Bundle the Remotion project for Vercel Sandbox
+bun run bundle
+
+# Create a Vercel Sandbox snapshot for production renders
+bun run create-snapshot
+
 # Upgrade Remotion
 bunx remotion upgrade
 ```
 
-## AWS Lambda Setup
+## Vercel Sandbox Rendering
 
-This project supports rendering videos via [Remotion Lambda](https://remotion.dev/lambda) for serverless video generation.
+In development, the **Export as MP4** button renders locally with the Remotion CLI and saves files under `public/renders/`.
 
-1. Copy `.env.example` to `.env` and fill in your AWS credentials
-2. Complete the [Lambda setup guide](https://www.remotion.dev/docs/lambda/setup)
-3. Edit `config.mjs` with your desired Lambda settings
-4. Deploy your Lambda function:
+In production, the same endpoint renders with [Vercel Sandbox](https://github.com/remotion-dev/template-vercel), uploads the final MP4 to Vercel Blob, and returns a public download URL.
+
+1. Create a Vercel Blob store and attach it to your Vercel project.
+2. Ensure `BLOB_READ_WRITE_TOKEN` is available in the project environment.
+3. For local snapshot creation, also set `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, and `VERCEL_PROJECT_ID` if the Sandbox SDK cannot authenticate automatically.
+4. Deploy with the configured Vercel build command:
 
 ```bash
-node deploy.mjs
+bun run bundle && bun run build && bun run create-snapshot
 ```
 
-Run the deploy script after:
-
-- Changing the video template
-- Modifying `config.mjs`
-- Upgrading Remotion
+Run `bun run create-snapshot` again after changing the video template or upgrading Remotion.
 
 ## Contributing
 
