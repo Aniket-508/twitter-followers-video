@@ -1,4 +1,5 @@
 import React, { useMemo } from "react";
+
 import type { Follower, XTheme } from "../../../types/schema";
 import type { Milestone } from "../types";
 import { Avatar } from "./avatar";
@@ -27,7 +28,7 @@ export const AvatarStack: React.FC<AvatarStackProps> = ({
   // Memoize avatar indices to avoid array creation every frame
   const avatarIndices = useMemo(
     () => Array.from({ length: Math.max(0, limit) }, (_, i) => i),
-    [limit],
+    [limit]
   );
 
   const fillerIndices = useMemo(
@@ -35,14 +36,14 @@ export const AvatarStack: React.FC<AvatarStackProps> = ({
       fillerCount > 0
         ? Array.from({ length: fillerCount }, (_, i) => limit + i)
         : [],
-    [fillerCount, limit],
+    [fillerCount, limit]
   );
 
   return (
     <div
       style={{
-        display: "flex",
         alignItems: "center",
+        display: "flex",
         justifyContent: "flex-start",
         transform: `translateX(${marqueeOffset}px)`,
         width: "max-content",

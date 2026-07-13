@@ -4,16 +4,16 @@ export const XThemeSchema = z.enum(["light", "dim", "lightsOut"]);
 export type XTheme = z.infer<typeof XThemeSchema>;
 
 export const FollowerSchema = z.object({
-  name: z.string(),
   image: z.string().optional(),
+  name: z.string(),
   verified: z.boolean().optional(),
 });
 export type Follower = z.infer<typeof FollowerSchema>;
 
 export const CompositionProps = z.object({
   followerCount: z.number(),
-  theme: XThemeSchema,
   followers: z.array(FollowerSchema).optional(),
+  theme: XThemeSchema,
 });
 
 export const defaultMyCompProps: z.infer<typeof CompositionProps> = {

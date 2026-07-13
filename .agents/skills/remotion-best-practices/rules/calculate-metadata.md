@@ -48,7 +48,7 @@ const calculateMetadata: CalculateMetadataFunction<Props> = async ({
   props,
 }) => {
   const { durationInSeconds, dimensions } = await getMediaMetadata(
-    props.videoSrc,
+    props.videoSrc
   );
 
   return {
@@ -66,13 +66,13 @@ const calculateMetadata: CalculateMetadataFunction<Props> = async ({
   props,
 }) => {
   const metadataPromises = props.videos.map((video) =>
-    getMediaMetadata(video.src),
+    getMediaMetadata(video.src)
   );
   const allMetadata = await Promise.all(metadataPromises);
 
   const totalDuration = allMetadata.reduce(
     (sum, meta) => sum + meta.durationInSeconds,
-    0,
+    0
   );
 
   return {

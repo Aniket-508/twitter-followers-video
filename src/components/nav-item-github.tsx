@@ -14,7 +14,7 @@ const getStargazerCount = unstable_cache(
             Authorization: `Bearer ${process.env.GITHUB_API_TOKEN}`,
             "X-GitHub-Api-Version": "2022-11-28",
           },
-        },
+        }
       );
 
       if (!response.ok) {
@@ -28,10 +28,10 @@ const getStargazerCount = unstable_cache(
     }
   },
   ["github-stargazer-count"],
-  { revalidate: 86400 },
+  { revalidate: 86_400 }
 );
 
-export async function NavItemGitHub() {
+export const NavItemGitHub = async () => {
   const stargazersCount = await getStargazerCount();
 
   return (
@@ -40,4 +40,4 @@ export async function NavItemGitHub() {
       stargazersCount={stargazersCount}
     />
   );
-}
+};

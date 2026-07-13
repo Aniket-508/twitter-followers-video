@@ -1,7 +1,7 @@
-import { ConfigProvider } from "@/contexts/config-context";
-import { HeroSection } from "@/components/home/hero-section";
 import { ConfigurationSection } from "@/components/home/configuration-section";
+import { HeroSection } from "@/components/home/hero-section";
 import { PreviewSection } from "@/components/home/preview-section";
+import { ConfigProvider } from "@/contexts/config-context";
 
 export default function Home() {
   return (

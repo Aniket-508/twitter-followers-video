@@ -1,29 +1,31 @@
+import type { Viewport } from "next";
 import { Playfair_Display, Public_Sans } from "next/font/google";
-import Script from "next/script";
+
 import "../../styles/global.css";
-import { Viewport } from "next";
-import { Providers } from "./providers";
+import Script from "next/script";
+
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { JsonLdScripts } from "@/seo/json-ld";
-import { baseMetadata } from "@/seo/metadata";
+
+import { Providers } from "./providers";
+
+export { baseMetadata as metadata } from "@/seo/metadata";
 
 const publicSans = Public_Sans({ subsets: ["latin"], variable: "--font-sans" });
 
 const playfairDisplay = Playfair_Display({
-  variable: "--font-serif",
-  subsets: ["latin"],
   style: ["normal", "italic"],
+  subsets: ["latin"],
+  variable: "--font-serif",
 });
 
-export const metadata = baseMetadata;
-
 export const viewport: Viewport = {
-  width: "device-width",
   initialScale: 1,
-  userScalable: false,
   maximumScale: 1,
   minimumScale: 1,
+  userScalable: false,
+  width: "device-width",
 };
 
 export default function RootLayout({

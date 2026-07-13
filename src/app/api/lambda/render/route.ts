@@ -1,14 +1,22 @@
 import { execFile } from "node:child_process";
-import { mkdir, stat } from "node:fs/promises";
-import { join } from "node:path";
 import { randomUUID } from "node:crypto";
+import { mkdir, stat } from "node:fs/promises";
+import path from "node:path";
 import { promisify } from "node:util";
-import type { z } from "zod";
-import { AwsRegion } from "@remotion/lambda/client";
+
+import type { AwsRegion } from "@remotion/lambda/client";
 import {
   renderMediaOnLambda,
   speculateFunctionName,
 } from "@remotion/lambda/client";
+import { cookies } from "next/headers";
+import type { z } from "zod";
+
+import { COOKIE_NAME, COOLDOWN_SECONDS } from "@/constants/remotion";
+import { executeApi } from "@/helpers/api-response";
+import type { RenderResponse } from "@/types/schema";
+import { RenderRequest } from "@/types/schema";
+
 import {
   DISK,
   RAM,
@@ -16,29 +24,39 @@ import {
   SITE_NAME,
   TIMEOUT,
 } from "../../../../../config.mjs";
-import { RenderRequest, RenderResponse } from "@/types/schema";
-import { executeApi } from "@/helpers/api-response";
-import { cookies } from "next/headers";
-import { COOKIE_NAME, COOLDOWN_SECONDS } from "@/constants/remotion";
 
 const execFileAsync = promisify(execFile);
 
 const renderLocally = async (
-  body: z.infer<typeof RenderRequest>,
+  body: z.infer<typeof RenderRequest>
 ): Promise<RenderResponse> => {
-  const rendersDir = join(process.cwd(), "public", "renders");
+  const rendersDir = path.join(process.cwd(), "public", "renders");
   await mkdir(rendersDir, { recursive: true });
 
-  const safeCompositionId = body.id.replace(/[^a-z0-9_-]/gi, "-");
+  const safeCompositionId = [...body.id]
+    .map((char) => {
+      const code = char.codePointAt(0) ?? 0;
+      const isNumber = code >= 48 && code <= 57;
+      const isUppercaseLetter = code >= 65 && code <= 90;
+      const isLowercaseLetter = code >= 97 && code <= 122;
+      return isNumber ||
+        isUppercaseLetter ||
+        isLowercaseLetter ||
+        char === "_" ||
+        char === "-"
+        ? char
+        : "-";
+    })
+    .join("");
   const fileName = `${safeCompositionId}-${Date.now()}-${randomUUID()}.mp4`;
-  const outputLocation = join(rendersDir, fileName);
+  const outputLocation = path.join(rendersDir, fileName);
 
   try {
     await execFileAsync(
-      join(process.cwd(), "node_modules", ".bin", "remotionb"),
+      path.join(process.cwd(), "node_modules", ".bin", "remotionb"),
       [
         "render",
-        join(process.cwd(), "src/remotion/index.ts"),
+        path.join(process.cwd(), "src/remotion/index.ts"),
         body.id,
         outputLocation,
         `--props=${JSON.stringify(body.inputProps)}`,
@@ -46,19 +64,22 @@ const renderLocally = async (
       {
         cwd: process.cwd(),
         maxBuffer: 1024 * 1024 * 20,
-      },
+      }
     );
-  } catch (err) {
-    const error = err as Error & { stderr?: string; stdout?: string };
-    throw new Error(error.stderr || error.stdout || error.message);
+  } catch (error) {
+    const commandError = error as Error & { stderr?: string; stdout?: string };
+    throw new Error(
+      commandError.stderr || commandError.stdout || commandError.message,
+      { cause: error }
+    );
   }
 
   const output = await stat(outputLocation);
 
   return {
+    size: output.size,
     type: "done",
     url: `/renders/${fileName}`,
-    size: output.size,
   };
 };
 
@@ -74,7 +95,7 @@ export const POST = executeApi<RenderResponse, typeof RenderRequest>(
       !process.env.REMOTION_AWS_ACCESS_KEY_ID
     ) {
       throw new TypeError(
-        "Set up Remotion Lambda to render videos. See the README.md for how to do so.",
+        "Set up Remotion Lambda to render videos. See the README.md for how to do so."
       );
     }
     if (
@@ -82,7 +103,7 @@ export const POST = executeApi<RenderResponse, typeof RenderRequest>(
       !process.env.REMOTION_AWS_SECRET_ACCESS_KEY
     ) {
       throw new TypeError(
-        "The environment variable REMOTION_AWS_SECRET_ACCESS_KEY is missing. Add it to your .env file.",
+        "The environment variable REMOTION_AWS_SECRET_ACCESS_KEY is missing. Add it to your .env file."
       );
     }
 
@@ -90,39 +111,39 @@ export const POST = executeApi<RenderResponse, typeof RenderRequest>(
     const cooldownCookie = cookieStore.get(COOKIE_NAME);
     if (cooldownCookie) {
       throw new Error(
-        "You recently rendered a video. Please wait a few minutes before rendering another one.",
+        "You recently rendered a video. Please wait a few minutes before rendering another one."
       );
     }
 
     const result = await renderMediaOnLambda({
       codec: "h264",
+      composition: body.id,
+      downloadBehavior: {
+        fileName: "video.mp4",
+        type: "download",
+      },
+      framesPerLambda: 10,
       functionName: speculateFunctionName({
         diskSizeInMb: DISK,
         memorySizeInMb: RAM,
         timeoutInSeconds: TIMEOUT,
       }),
+      inputProps: body.inputProps,
       region: REGION as AwsRegion,
       serveUrl: SITE_NAME,
-      composition: body.id,
-      inputProps: body.inputProps,
-      framesPerLambda: 10,
-      downloadBehavior: {
-        type: "download",
-        fileName: "video.mp4",
-      },
     });
 
     cookieStore.set(COOKIE_NAME, "true", {
+      httpOnly: true,
       maxAge: COOLDOWN_SECONDS,
       path: "/",
-      httpOnly: true,
       sameSite: "strict",
     });
 
     return {
-      type: "lambda",
-      renderId: result.renderId,
       bucketName: result.bucketName,
+      renderId: result.renderId,
+      type: "lambda",
     };
-  },
+  }
 );

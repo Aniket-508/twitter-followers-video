@@ -1,5 +1,5 @@
 import { Composition } from "remotion";
-import { FollowerAccumulation } from "./follower-accumulation";
+
 import {
   COMP_NAME,
   DURATION_IN_FRAMES,
@@ -7,20 +7,18 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
 } from "@/constants/remotion";
-import { defaultMyCompProps } from "../types/schema";
 
-export const RemotionRoot: React.FC = () => {
-  return (
-    <>
-      <Composition
-        id={COMP_NAME}
-        component={FollowerAccumulation}
-        durationInFrames={DURATION_IN_FRAMES}
-        fps={VIDEO_FPS}
-        width={VIDEO_WIDTH}
-        height={VIDEO_HEIGHT}
-        defaultProps={defaultMyCompProps}
-      />
-    </>
-  );
-};
+import { defaultMyCompProps } from "../types/schema";
+import { FollowerAccumulation } from "./follower-accumulation";
+
+export const RemotionRoot: React.FC = () => (
+  <Composition
+    id={COMP_NAME}
+    component={FollowerAccumulation}
+    durationInFrames={DURATION_IN_FRAMES}
+    fps={VIDEO_FPS}
+    width={VIDEO_WIDTH}
+    height={VIDEO_HEIGHT}
+    defaultProps={defaultMyCompProps}
+  />
+);

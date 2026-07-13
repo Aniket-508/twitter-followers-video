@@ -15,5 +15,6 @@ export const SCALE = VIDEO_WIDTH / BASE_WIDTH;
 
 export const COMP_NAME = "MyComp";
 
-export const COOLDOWN_SECONDS = 60; // 1 minute
+/** 1 minute */
+export const COOLDOWN_SECONDS = 60;
 export const COOKIE_NAME = "render-cooldown";

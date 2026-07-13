@@ -1,22 +1,23 @@
 "use client";
 
-import { useConfig } from "@/contexts/config-context";
-import { Label } from "@/components/ui/label";
-import { Button } from "@/components/ui/button";
-import { XTheme } from "@/types/schema";
 import { memo } from "react";
 
+import { Button } from "@/components/ui/button";
+import { Label } from "@/components/ui/label";
+import { useConfig } from "@/contexts/config-context";
+import type { XTheme } from "@/types/schema";
+
 const THEME_OPTIONS: { value: XTheme; label: string; description: string }[] = [
-  { value: "light", label: "Light", description: "White background" },
-  { value: "dim", label: "Dim", description: "Dark blue background" },
+  { description: "White background", label: "Light", value: "light" },
+  { description: "Dark blue background", label: "Dim", value: "dim" },
   {
-    value: "lightsOut",
-    label: "Lights Out",
     description: "Pure black background",
+    label: "Lights Out",
+    value: "lightsOut",
   },
 ];
 
-export const ThemeSelector = memo(function ThemeSelector() {
+export const ThemeSelector = memo(() => {
   const { theme, setTheme } = useConfig();
 
   return (
@@ -36,3 +37,5 @@ export const ThemeSelector = memo(function ThemeSelector() {
     </div>
   );
 });
+
+ThemeSelector.displayName = "ThemeSelector";

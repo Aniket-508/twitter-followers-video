@@ -1,27 +1,23 @@
 "use client";
 
+import type { ChangeEvent, ReactNode } from "react";
 import {
   createContext,
   useContext,
   useMemo,
   useState,
-  ChangeEvent,
-  ReactNode,
   useCallback,
 } from "react";
-import { z } from "zod";
-import {
-  defaultMyCompProps,
-  CompositionProps,
-  XTheme,
-  Follower,
-} from "@/types/schema";
+import type { z } from "zod";
+
+import { RANDOM_NAMES } from "@/constants/site";
 import { parseFollowersCSV } from "@/lib/csv-utils";
 import {
   getDicebearUrl,
   shuffle,
 } from "@/remotion/follower-accumulation/utils";
-import { RANDOM_NAMES } from "@/constants/site";
+import type { CompositionProps, XTheme, Follower } from "@/types/schema";
+import { defaultMyCompProps } from "@/types/schema";
 
 export type DataSource = "manual" | "csv";
 
@@ -33,6 +29,7 @@ interface ConfigContextType {
   dataSource: DataSource;
   setDataSource: (source: DataSource) => void;
   csvFollowers: Follower[];
+  csvError: string | null;
   isRandomizeEnabled: boolean;
   setIsRandomizeEnabled: (enabled: boolean) => void;
   handleFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
@@ -43,18 +40,19 @@ const ConfigContext = createContext<ConfigContextType | undefined>(undefined);
 
 export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [followerCount, setFollowerCount] = useState<number>(
-    defaultMyCompProps.followerCount,
+    defaultMyCompProps.followerCount
   );
   const [theme, setTheme] = useState<XTheme>(defaultMyCompProps.theme);
   const [dataSource, setDataSource] = useState<DataSource>("csv");
   const [csvFollowers, setCsvFollowers] = useState<Follower[]>([]);
+  const [csvError, setCsvError] = useState<string | null>(null);
   const [isRandomizeEnabled, setIsRandomizeEnabled] = useState(false);
 
   const generateRandomFollowers = useCallback((count: number) => {
     const shuffledNames = shuffle(RANDOM_NAMES);
     return Array.from({ length: Math.min(count, 50) }).map((_, i) => ({
-      name: shuffledNames[i % shuffledNames.length],
       image: getDicebearUrl(`${i}-${Math.random()}`),
+      name: shuffledNames[i % shuffledNames.length],
       verified: true,
     }));
   }, []);
@@ -88,56 +86,63 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const inputProps = useMemo(
     () => ({
       followerCount,
-      theme,
       followers: activeFollowers,
+      theme,
     }),
-    [followerCount, theme, activeFollowers],
+    [followerCount, theme, activeFollowers]
   );
 
   const handleFileUpload = useCallback(
     async (e: ChangeEvent<HTMLInputElement>) => {
       const file = e.target.files?.[0];
-      if (!file) return;
-
-      const text = await file.text();
-      if (!text) return;
-
-      const { followers, error } = await parseFollowersCSV(text);
-
-      if (error) {
-        alert(error);
+      if (!file) {
         return;
       }
 
+      const text = await file.text();
+      if (!text) {
+        return;
+      }
+
+      const { followers, error } = parseFollowersCSV(text);
+
+      if (error) {
+        setCsvError(error);
+        return;
+      }
+
+      setCsvError(null);
       setCsvFollowers(followers);
       setFollowerCount(followers.length);
     },
-    [],
+    []
   );
 
   const value = useMemo(
     () => ({
-      followerCount,
-      setFollowerCount,
-      theme,
-      setTheme,
-      dataSource,
-      setDataSource,
+      csvError,
       csvFollowers,
-      isRandomizeEnabled,
-      setIsRandomizeEnabled,
+      dataSource,
+      followerCount,
       handleFileUpload,
       inputProps,
+      isRandomizeEnabled,
+      setDataSource,
+      setFollowerCount,
+      setIsRandomizeEnabled,
+      setTheme,
+      theme,
     }),
     [
       followerCount,
       theme,
       dataSource,
       csvFollowers,
+      csvError,
       isRandomizeEnabled,
       handleFileUpload,
       inputProps,
-    ],
+    ]
   );
 
   return (

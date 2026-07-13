@@ -1,11 +1,12 @@
 "use client";
 
-import { useConfig } from "@/contexts/config-context";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
 import { memo } from "react";
 
-export const ManualConfig = memo(function ManualConfig() {
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useConfig } from "@/contexts/config-context";
+
+export const ManualConfig = memo(() => {
   const { followerCount, setFollowerCount } = useConfig();
 
   return (
@@ -25,3 +26,5 @@ export const ManualConfig = memo(function ManualConfig() {
     </div>
   );
 });
+
+ManualConfig.displayName = "ManualConfig";

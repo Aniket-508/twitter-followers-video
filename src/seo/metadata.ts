@@ -1,14 +1,15 @@
 import type { Metadata } from "next";
+
 import { SITE } from "@/constants/site";
 
-type CreateMetadataOptions = {
+interface CreateMetadataOptions {
   title?: string;
   description?: string;
   canonical?: string;
   ogTitle?: string;
   ogDescription?: string;
   noIndex?: boolean;
-};
+}
 
 const createMetadata = (options: CreateMetadataOptions = {}): Metadata => {
   const {
@@ -29,76 +30,76 @@ const createMetadata = (options: CreateMetadataOptions = {}): Metadata => {
       },
     }),
     openGraph: {
-      title: ogTitle || title || SITE.NAME,
       description: ogDescription || description,
-      url: canonical ? `${SITE.URL}${canonical}` : SITE.URL,
+      title: ogTitle || title || SITE.NAME,
       type: "website",
+      url: canonical ? `${SITE.URL}${canonical}` : SITE.URL,
     },
     twitter: {
-      title: ogTitle || title || SITE.NAME,
       description: ogDescription || description,
+      title: ogTitle || title || SITE.NAME,
     },
     ...(noIndex && {
       robots: {
-        index: false,
         follow: false,
+        index: false,
       },
     }),
   };
 };
 
 const baseMetadata: Metadata = {
-  metadataBase: new URL(SITE.URL),
   alternates: {
     canonical: "/",
   },
-  openGraph: {
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: "default",
     title: SITE.NAME,
-    description: SITE.DESCRIPTION,
-    siteName: SITE.NAME,
-    type: "website",
-    locale: "en_US",
-    url: SITE.URL,
-    images: [
-      {
-        url: SITE.OG_IMAGE,
-        width: 1200,
-        height: 630,
-        alt: `${SITE.NAME} - Generate animated videos for your X follower milestones`,
-      },
-    ],
   },
   applicationName: SITE.NAME,
-  appleWebApp: {
+  authors: [{ name: SITE.AUTHOR.NAME, url: SITE.AUTHOR.URL }],
+  category: "technology",
+  creator: SITE.AUTHOR.NAME,
+  description: SITE.DESCRIPTION,
+  keywords: [...SITE.KEYWORDS],
+  metadataBase: new URL(SITE.URL),
+  openGraph: {
+    description: SITE.DESCRIPTION,
+    images: [
+      {
+        alt: `${SITE.NAME} - Generate animated videos for your X follower milestones`,
+        height: 630,
+        url: SITE.OG_IMAGE,
+        width: 1200,
+      },
+    ],
+    locale: "en_US",
+    siteName: SITE.NAME,
     title: SITE.NAME,
-    statusBarStyle: "default",
-    capable: true,
+    type: "website",
+    url: SITE.URL,
   },
+  publisher: SITE.AUTHOR.NAME,
   title: {
     default: SITE.NAME,
     template: `%s | ${SITE.NAME}`,
   },
-  description: SITE.DESCRIPTION,
-  keywords: [...SITE.KEYWORDS],
-  authors: [{ name: SITE.AUTHOR.NAME, url: SITE.AUTHOR.URL }],
-  creator: SITE.AUTHOR.NAME,
-  publisher: SITE.AUTHOR.NAME,
   twitter: {
     card: "summary_large_image",
-    title: SITE.NAME,
-    description: SITE.DESCRIPTION,
     creator: SITE.AUTHOR.TWITTER,
-    site: SITE.AUTHOR.TWITTER,
+    description: SITE.DESCRIPTION,
     images: [
       {
+        alt: `${SITE.NAME} - Generate animated videos for your X follower milestones`,
+        height: 630,
         url: SITE.OG_IMAGE,
         width: 1200,
-        height: 630,
-        alt: `${SITE.NAME} - Generate animated videos for your X follower milestones`,
       },
     ],
+    site: SITE.AUTHOR.TWITTER,
+    title: SITE.NAME,
   },
-  category: "technology",
 };
 
 export { baseMetadata, createMetadata };

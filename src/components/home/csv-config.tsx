@@ -1,16 +1,19 @@
 "use client";
 
-import { useConfig } from "@/contexts/config-context";
-import { Label } from "@/components/ui/label";
-import { Input } from "@/components/ui/input";
-import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
 import { Info } from "lucide-react";
-import { FollowersListDialog } from "./followers-list-dialog";
 import { memo } from "react";
-import { Checkbox } from "../ui/checkbox";
 
-export const CSVConfig = memo(function CSVConfig() {
+import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useConfig } from "@/contexts/config-context";
+
+import { Checkbox } from "../ui/checkbox";
+import { FollowersListDialog } from "./followers-list-dialog";
+
+export const CSVConfig = memo(() => {
   const {
+    csvError,
     csvFollowers,
     isRandomizeEnabled,
     setIsRandomizeEnabled,
@@ -22,6 +25,12 @@ export const CSVConfig = memo(function CSVConfig() {
       <div className="space-y-2">
         <Label>Upload CSV File</Label>
         <Input type="file" accept=".csv" onChange={handleFileUpload} />
+        {csvError ? (
+          <Alert variant="destructive">
+            <AlertTitle>Invalid CSV</AlertTitle>
+            <AlertDescription>{csvError}</AlertDescription>
+          </Alert>
+        ) : null}
         <Alert variant="info">
           <Info className="h-4 w-4" />
           <AlertTitle>Followers CSV Export</AlertTitle>
@@ -84,3 +93,5 @@ export const CSVConfig = memo(function CSVConfig() {
     </div>
   );
 });
+
+CSVConfig.displayName = "CSVConfig";

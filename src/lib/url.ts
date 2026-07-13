@@ -1,11 +1,16 @@
-export function urlToName(url: string) {
-  return url.replace(/(^\w+:|^)\/\//, "");
-}
+export const urlToName = (url: string) => {
+  if (url.startsWith("//")) {
+    return url.slice(2);
+  }
 
-export function addQueryParams(
+  const protocolIndex = url.indexOf("://");
+  return protocolIndex === -1 ? url : url.slice(protocolIndex + 3);
+};
+
+export const addQueryParams = (
   urlString: string,
-  query: Record<string, string>,
-): string {
+  query: Record<string, string>
+): string => {
   try {
     const url = new URL(urlString);
 
@@ -17,4 +22,4 @@ export function addQueryParams(
   } catch {
     return urlString;
   }
-}
+};

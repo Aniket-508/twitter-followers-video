@@ -1,3 +1,4 @@
+import { loadFont, fontFamily } from "@remotion/google-fonts/PublicSans";
 import { useMemo } from "react";
 import {
   AbsoluteFill,
@@ -7,9 +8,13 @@ import {
   useCurrentFrame,
   useVideoConfig,
 } from "remotion";
-import { loadFont, fontFamily } from "@remotion/google-fonts/PublicSans";
+import type { z } from "zod";
+
+import type { CompositionProps, Follower, XTheme } from "../../types/schema";
+import { AvatarStack } from "./components/avatar-stack";
+import { Celebration } from "./components/celebration";
+import { TextLabel } from "./components/text-label";
 import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "./constants";
-import { CompositionProps, Follower, XTheme } from "../../types/schema";
 import {
   calculateMaxAvatars,
   generateMilestones,
@@ -17,10 +22,6 @@ import {
   getCurrentMilestone,
   sanitizeFollowerCount,
 } from "./utils";
-import { AvatarStack } from "./components/avatar-stack";
-import { Celebration } from "./components/celebration";
-import { TextLabel } from "./components/text-label";
-import { z } from "zod";
 
 // Load font on module initialization
 loadFont("normal", {
@@ -57,7 +58,7 @@ export const FollowerAccumulation = ({
   // Memoize milestones
   const milestones = useMemo(
     () => generateMilestones(safeFollowerCount, width, fps, followers),
-    [safeFollowerCount, width, fps, followers],
+    [safeFollowerCount, width, fps, followers]
   );
 
   // Memoize timing calculations
@@ -67,7 +68,7 @@ export const FollowerAccumulation = ({
       fastStagger: Math.max(1, Math.round(TIMING.AVATAR_STAGGER_FAST * fps)),
       springSettleTime: Math.round(TIMING.SPRING_SETTLE * fps),
     }),
-    [milestones, fps],
+    [milestones, fps]
   );
 
   const currentMilestone = getCurrentMilestone(frame, milestones);
@@ -78,29 +79,27 @@ export const FollowerAccumulation = ({
       return interpolate(
         frame,
         [0, Math.max(1, celebrationStart - 1)],
-        [LAYOUT.ZOOM, 1.0],
+        [LAYOUT.ZOOM, 1],
         {
+          easing: Easing.out(Easing.cubic),
           extrapolateLeft: "clamp",
           extrapolateRight: "clamp",
-          easing: Easing.out(Easing.cubic),
-        },
+        }
       );
-    } else {
-      const springBack = spring({
-        frame: frame - celebrationStart,
-        fps,
-        config: SPRING_CONFIGS.heavy,
-      });
-      return interpolate(springBack, [0, 1], [1.0, LAYOUT.ZOOM]);
     }
+    const springBack = spring({
+      config: SPRING_CONFIGS.heavy,
+      fps,
+      frame: frame - celebrationStart,
+    });
+    return interpolate(springBack, [0, 1], [1, LAYOUT.ZOOM]);
   }, [frame, celebrationStart, fps]);
 
   // Calculate scroll timing
-  const previousMilestoneAvatars =
-    milestones[milestones.length - 2]?.totalAvatars || 0;
+  const previousMilestoneAvatars = milestones.at(-2)?.totalAvatars || 0;
   const newAvatarsInCelebration = Math.max(
     0,
-    currentMilestone.totalAvatars - previousMilestoneAvatars,
+    currentMilestone.totalAvatars - previousMilestoneAvatars
   );
   const lastAvatarAppearFrame =
     celebrationStart + newAvatarsInCelebration * fastStagger;
@@ -114,10 +113,10 @@ export const FollowerAccumulation = ({
           [allAvatarsVisibleFrame, durationInFrames],
           [0, -LAYOUT.SCROLL_DISTANCE],
           {
+            easing: Easing.out(Easing.quad),
             extrapolateLeft: "clamp",
             extrapolateRight: "clamp",
-            easing: Easing.out(Easing.quad),
-          },
+          }
         )
       : 0;
 
@@ -134,37 +133,37 @@ export const FollowerAccumulation = ({
       {/* Edge fade gradients */}
       <div
         style={{
-          position: "absolute",
-          top: 0,
+          background: `linear-gradient(to right, ${colors.gradient}, transparent)`,
           bottom: 0,
           left: 0,
-          width: LAYOUT.GRADIENT_WIDTH,
-          background: `linear-gradient(to right, ${colors.gradient}, transparent)`,
-          zIndex: 10,
           pointerEvents: "none",
+          position: "absolute",
+          top: 0,
+          width: LAYOUT.GRADIENT_WIDTH,
+          zIndex: 10,
         }}
       />
       <div
         style={{
-          position: "absolute",
-          top: 0,
-          bottom: 0,
-          right: 0,
-          width: LAYOUT.GRADIENT_WIDTH,
           background: `linear-gradient(to left, ${colors.gradient}, transparent)`,
-          zIndex: 10,
+          bottom: 0,
           pointerEvents: "none",
+          position: "absolute",
+          right: 0,
+          top: 0,
+          width: LAYOUT.GRADIENT_WIDTH,
+          zIndex: 10,
         }}
       />
 
       <AbsoluteFill className="justify-center items-center">
         <div
           style={{
-            position: "relative",
+            alignItems: "center",
             display: "flex",
             flexDirection: "column",
-            alignItems: "center",
             fontFamily,
+            position: "relative",
             transform: `scale(${containerScale})`,
           }}
         >
@@ -180,7 +179,6 @@ export const FollowerAccumulation = ({
           />
           <TextLabel
             name={currentMilestone.name}
-            count={currentMilestone.count}
             finalCount={safeFollowerCount}
             milestones={milestones}
             theme={theme}

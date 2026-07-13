@@ -17,7 +17,7 @@ const COLOR_AXIS = "#333333";
 // Ideal composition size: 1280x720
 
 const Title: React.FC<{ children: React.ReactNode }> = ({ children }) => (
-  <div style={{ textAlign: "center", marginBottom: 40 }}>
+  <div style={{ marginBottom: 40, textAlign: "center" }}>
     <div style={{ color: COLOR_TEXT, fontSize: 48, fontWeight: 600 }}>
       {children}
     </div>
@@ -32,26 +32,23 @@ const YAxis: React.FC<{ steps: number[]; height: number }> = ({
     style={{
       display: "flex",
       flexDirection: "column",
-      justifyContent: "space-between",
       height,
+      justifyContent: "space-between",
       paddingRight: 16,
     }}
   >
-    {steps
-      .slice()
-      .reverse()
-      .map((step) => (
-        <div
-          key={step}
-          style={{
-            color: COLOR_MUTED,
-            fontSize: 20,
-            textAlign: "right",
-          }}
-        >
-          {step.toLocaleString()}
-        </div>
-      ))}
+    {[...steps].toReversed().map((step) => (
+      <div
+        key={step}
+        style={{
+          color: COLOR_MUTED,
+          fontSize: 20,
+          textAlign: "right",
+        }}
+      >
+        {step.toLocaleString()}
+      </div>
+    ))}
   </div>
 );
 
@@ -61,19 +58,19 @@ const Bar: React.FC<{
 }> = ({ height, progress }) => (
   <div
     style={{
-      flex: 1,
       display: "flex",
+      flex: 1,
       flexDirection: "column",
       justifyContent: "flex-end",
     }}
   >
     <div
       style={{
-        width: "100%",
-        height,
         backgroundColor: COLOR_BAR,
         borderRadius: "8px 8px 0 0",
+        height,
         opacity: progress,
+        width: "100%",
       }}
     />
   </div>
@@ -84,15 +81,15 @@ const XAxis: React.FC<{
   labels: string[];
   height: number;
 }> = ({ children, labels, height }) => (
-  <div style={{ flex: 1, display: "flex", flexDirection: "column" }}>
+  <div style={{ display: "flex", flex: 1, flexDirection: "column" }}>
     <div
       style={{
-        display: "flex",
         alignItems: "flex-end",
+        borderBottom: `2px solid ${COLOR_AXIS}`,
+        borderLeft: `2px solid ${COLOR_AXIS}`,
+        display: "flex",
         gap: 16,
         height,
-        borderLeft: `2px solid ${COLOR_AXIS}`,
-        borderBottom: `2px solid ${COLOR_AXIS}`,
         paddingLeft: 16,
       }}
     >
@@ -102,18 +99,18 @@ const XAxis: React.FC<{
       style={{
         display: "flex",
         gap: 16,
-        paddingLeft: 16,
         marginTop: 12,
+        paddingLeft: 16,
       }}
     >
       {labels.map((label) => (
         <div
           key={label}
           style={{
-            flex: 1,
-            textAlign: "center",
             color: COLOR_MUTED,
+            flex: 1,
             fontSize: 20,
+            textAlign: "center",
           }}
         >
           {label}
@@ -146,10 +143,10 @@ export const MyAnimation = () => {
     <AbsoluteFill
       style={{
         backgroundColor: COLOR_BG,
-        padding: 60,
         display: "flex",
         flexDirection: "column",
         fontFamily,
+        padding: 60,
       }}
     >
       <Title>Gold Price 2024</Title>
@@ -159,9 +156,9 @@ export const MyAnimation = () => {
         <XAxis height={chartHeight} labels={data.map((d) => d.month)}>
           {data.map((item, i) => {
             const progress = spring({
-              frame: frame - i * 5 - 10,
-              fps,
               config: { damping: 18, stiffness: 80 },
+              fps,
+              frame: frame - i * 5 - 10,
             });
 
             const barHeight =

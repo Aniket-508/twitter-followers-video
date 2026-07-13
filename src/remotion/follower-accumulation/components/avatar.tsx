@@ -1,8 +1,10 @@
 import React from "react";
 import { spring, useCurrentFrame, useVideoConfig, Img } from "remotion";
-import { AVATAR, AVATAR_COLORS, SPRING_CONFIGS, THEMES } from "../constants";
+
 import { SCALE } from "@/constants/remotion";
+
 import type { Follower, XTheme } from "../../../types/schema";
+import { AVATAR, AVATAR_COLORS, SPRING_CONFIGS, THEMES } from "../constants";
 import type { Milestone } from "../types";
 import { getDicebearUrl, getAvatarAppearFrame } from "../utils";
 
@@ -35,7 +37,7 @@ export const Avatar: React.FC<AvatarProps> = ({
     index,
     milestones,
     celebrationStart,
-    fps,
+    fps
   );
   const animationFrame = frame - appearFrame;
   const avatarColor = AVATAR_COLORS[index % AVATAR_COLORS.length];
@@ -49,26 +51,26 @@ export const Avatar: React.FC<AvatarProps> = ({
     return (
       <div
         style={{
-          position: "relative",
           flexShrink: 0,
           marginLeft: 0,
+          position: "relative",
           zIndex: 100,
         }}
       >
         <div
           style={{
-            width: AVATAR.SIZE,
-            height: AVATAR.SIZE,
-            borderRadius: "50%",
-            border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
-            overflow: "hidden",
-            boxShadow: colors.shadow,
             backgroundColor: AVATAR.FIRST_COLOR,
+            border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
+            borderRadius: "50%",
+            boxShadow: colors.shadow,
+            height: AVATAR.SIZE,
+            overflow: "hidden",
+            width: AVATAR.SIZE,
           }}
         >
           <Img
             src={avatarUrl}
-            style={{ width: "100%", height: "100%", objectFit: "cover" }}
+            style={{ height: "100%", objectFit: "cover", width: "100%" }}
           />
         </div>
       </div>
@@ -81,34 +83,34 @@ export const Avatar: React.FC<AvatarProps> = ({
     ? { ...SPRING_CONFIGS.snappy, stiffness: 300 }
     : SPRING_CONFIGS.snappy;
 
-  const scale = spring({ frame: animationFrame, fps, config: springConfig });
+  const scale = spring({ config: springConfig, fps, frame: animationFrame });
   const clampedScale = animationFrame < 0 ? 0 : Math.min(Math.max(0, scale), 1);
 
   return (
     <div
       style={{
-        position: "relative",
         flexShrink: 0,
         marginLeft: -AVATAR.OVERLAP,
-        zIndex: 100 - index,
-        transform: `scale(${clampedScale})`,
         opacity: clampedScale,
+        position: "relative",
+        transform: `scale(${clampedScale})`,
+        zIndex: 100 - index,
       }}
     >
       <div
         style={{
-          width: AVATAR.SIZE,
-          height: AVATAR.SIZE,
-          borderRadius: "50%",
-          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
-          overflow: "hidden",
-          boxShadow: colors.shadow,
           backgroundColor: isFirst ? AVATAR.FIRST_COLOR : avatarColor,
+          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
+          borderRadius: "50%",
+          boxShadow: colors.shadow,
+          height: AVATAR.SIZE,
+          overflow: "hidden",
+          width: AVATAR.SIZE,
         }}
       >
         <Img
           src={avatarUrl}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          style={{ height: "100%", objectFit: "cover", width: "100%" }}
         />
       </div>
     </div>

@@ -1,23 +1,24 @@
-import { z } from "zod";
-import {
+import type { z } from "zod";
+
+import type { ApiResponse } from "../helpers/api-response";
+import type {
+  CompositionProps,
   ProgressRequest,
   ProgressResponse,
   RenderResponse,
   RenderRequest,
 } from "../types/schema";
-import { CompositionProps } from "../types/schema";
-import { ApiResponse } from "../helpers/api-response";
 
 const makeRequest = async <Res>(
   endpoint: string,
-  body: unknown,
+  body: unknown
 ): Promise<Res> => {
   const result = await fetch(endpoint, {
-    method: "post",
     body: JSON.stringify(body),
     headers: {
       "content-type": "application/json",
     },
+    method: "post",
   });
   const json = (await result.json()) as ApiResponse<Res>;
   if (json.type === "error") {
@@ -27,7 +28,7 @@ const makeRequest = async <Res>(
   return json.data;
 };
 
-export const renderVideo = async ({
+export const renderVideo = ({
   id,
   inputProps,
 }: {
@@ -42,7 +43,7 @@ export const renderVideo = async ({
   return makeRequest<RenderResponse>("/api/lambda/render", body);
 };
 
-export const getProgress = async ({
+export const getProgress = ({
   id,
   bucketName,
 }: {
@@ -50,8 +51,8 @@ export const getProgress = async ({
   bucketName: string;
 }) => {
   const body: z.infer<typeof ProgressRequest> = {
-    id,
     bucketName,
+    id,
   };
 
   return makeRequest<ProgressResponse>("/api/lambda/progress", body);

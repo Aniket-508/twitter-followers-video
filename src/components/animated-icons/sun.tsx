@@ -17,11 +17,11 @@ interface SunIconProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const pathVariants: Variants = {
-  normal: { opacity: 1 },
   animate: (i: number) => ({
     opacity: [0, 1],
     transition: { delay: i * 0.1, duration: 0.3 },
   }),
+  normal: { opacity: 1 },
 };
 
 const SunIcon = forwardRef<SunIconHandle, SunIconProps>(
@@ -40,24 +40,24 @@ const SunIcon = forwardRef<SunIconHandle, SunIconProps>(
 
     const handleMouseEnter = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!isControlledRef.current) {
-          controls.start("animate");
-        } else {
+        if (isControlledRef.current) {
           onMouseEnter?.(e);
+        } else {
+          controls.start("animate");
         }
       },
-      [controls, onMouseEnter],
+      [controls, onMouseEnter]
     );
 
     const handleMouseLeave = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!isControlledRef.current) {
-          controls.start("normal");
-        } else {
+        if (isControlledRef.current) {
           onMouseLeave?.(e);
+        } else {
+          controls.start("normal");
         }
       },
-      [controls, onMouseLeave],
+      [controls, onMouseLeave]
     );
 
     return (
@@ -100,7 +100,7 @@ const SunIcon = forwardRef<SunIconHandle, SunIconProps>(
         </svg>
       </div>
     );
-  },
+  }
 );
 
 SunIcon.displayName = "SunIcon";

@@ -11,8 +11,7 @@ If you have an existing `.srt` subtitle file, you can import it into Remotion us
 
 ## Prerequisites
 
-First, the @remotion/captions package needs to be installed.
-If it is not installed, use the following command:
+First, the @remotion/captions package needs to be installed. If it is not installed, use the following command:
 
 ```bash
 npx remotion add @remotion/captions # If project uses npm

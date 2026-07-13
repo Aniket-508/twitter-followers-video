@@ -1,8 +1,10 @@
 import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
-import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../constants";
+
 import { SCALE } from "@/constants/remotion";
+
 import type { XTheme } from "../../../types/schema";
+import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../constants";
 import type { Milestone } from "../types";
 import { getCelebrationFrame } from "../utils";
 
@@ -25,9 +27,9 @@ export const Celebration: React.FC<CelebrationProps> = ({
 
   // Slide up animation with heavy spring for dramatic effect
   const slideProgress = spring({
-    frame: Math.max(0, frame - celebrationStart),
-    fps,
     config: SPRING_CONFIGS.heavy,
+    fps,
+    frame: Math.max(0, frame - celebrationStart),
   });
 
   // Animate height from 0 to full height
@@ -51,29 +53,29 @@ export const Celebration: React.FC<CelebrationProps> = ({
     {
       extrapolateLeft: "clamp",
       extrapolateRight: "clamp",
-    },
+    }
   );
 
   return (
     <div
       style={{
-        height,
-        overflow: "hidden",
-        display: "flex",
-        justifyContent: "center",
         alignItems: "flex-end",
+        display: "flex",
+        height,
+        justifyContent: "center",
         marginBottom: height > 0 ? 16 * SCALE : 0,
+        overflow: "hidden",
       }}
     >
       <h1
         style={{
+          color: colors.text,
           fontSize: 60 * SCALE,
           fontWeight: 700,
-          color: colors.text,
-          whiteSpace: "nowrap",
           margin: 0,
-          transform: `translateY(${translateY}px)`,
           opacity,
+          transform: `translateY(${translateY}px)`,
+          whiteSpace: "nowrap",
         }}
       >
         Thank You!

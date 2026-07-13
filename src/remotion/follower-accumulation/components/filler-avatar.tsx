@@ -1,8 +1,10 @@
 import React from "react";
 import { Img } from "remotion";
-import { AVATAR, AVATAR_COLORS, THEMES } from "../constants";
+
 import { SCALE } from "@/constants/remotion";
+
 import type { XTheme } from "../../../types/schema";
+import { AVATAR, AVATAR_COLORS, THEMES } from "../constants";
 import { getDicebearUrl } from "../utils";
 
 export interface FillerAvatarProps {
@@ -18,26 +20,26 @@ export const FillerAvatar: React.FC<FillerAvatarProps> = ({ index, theme }) => {
   return (
     <div
       style={{
-        position: "relative",
         flexShrink: 0,
         marginLeft: -AVATAR.OVERLAP,
+        position: "relative",
         zIndex: Math.max(1, 100 - index),
       }}
     >
       <div
         style={{
-          width: AVATAR.SIZE,
-          height: AVATAR.SIZE,
-          borderRadius: "50%",
-          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
-          overflow: "hidden",
-          boxShadow: colors.shadow,
           backgroundColor: avatarColor,
+          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
+          borderRadius: "50%",
+          boxShadow: colors.shadow,
+          height: AVATAR.SIZE,
+          overflow: "hidden",
+          width: AVATAR.SIZE,
         }}
       >
         <Img
           src={getDicebearUrl(`filler-${index}`)}
-          style={{ width: "100%", height: "100%", objectFit: "cover" }}
+          style={{ height: "100%", objectFit: "cover", width: "100%" }}
         />
       </div>
     </div>

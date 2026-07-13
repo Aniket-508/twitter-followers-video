@@ -1,8 +1,10 @@
 import React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
-import { THEMES, TIMING } from "../constants";
+
 import { SCALE } from "@/constants/remotion";
+
 import type { Follower, XTheme } from "../../../types/schema";
+import { THEMES, TIMING } from "../constants";
 import type { Milestone } from "../types";
 import {
   getCelebrationFrame,
@@ -13,17 +15,73 @@ import { VerifiedBadge } from "./verified-badge";
 
 export interface TextLabelProps {
   name: string;
-  count: number;
   finalCount: number;
   milestones: Milestone[];
   theme: XTheme;
   followers?: Follower[];
 }
 
+interface DisplayCountParams {
+  celebrationFrame: number;
+  currentMilestone: Milestone;
+  finalCount: number;
+  fps: number;
+  frame: number;
+  previousMilestone: Milestone | null;
+}
+
+const getDisplayCount = ({
+  celebrationFrame,
+  currentMilestone,
+  finalCount,
+  fps,
+  frame,
+  previousMilestone,
+}: DisplayCountParams) => {
+  if (frame < currentMilestone.frame) {
+    return 0;
+  }
+
+  const normalStagger = Math.max(1, Math.round(TIMING.AVATAR_STAGGER * fps));
+  const fastStagger = Math.max(1, Math.round(TIMING.AVATAR_STAGGER_FAST * fps));
+  const springDelay = Math.round(TIMING.SPRING_DELAY * fps);
+  const previousAvatars = previousMilestone?.totalAvatars ?? 1;
+  const isFinalMilestone = currentMilestone.frame === celebrationFrame;
+  const newAvatars = Math.max(
+    0,
+    currentMilestone.totalAvatars - previousAvatars
+  );
+
+  if (newAvatars === 0) {
+    return Math.max(0, currentMilestone.totalAvatars - 1);
+  }
+
+  const staggerTime = isFinalMilestone ? fastStagger : normalStagger;
+  const animationDuration = Math.max(1, newAvatars * staggerTime);
+  const delayedStart = currentMilestone.frame + springDelay;
+  const targetCount = isFinalMilestone
+    ? Math.max(0, finalCount - 1)
+    : Math.max(0, currentMilestone.totalAvatars - 1);
+  const startCount = previousMilestone
+    ? Math.max(0, previousMilestone.totalAvatars - 1)
+    : 0;
+
+  return Math.round(
+    interpolate(
+      frame,
+      [delayedStart, delayedStart + animationDuration],
+      [startCount, targetCount],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }
+    )
+  );
+};
+
 /** Text label showing "[Name] and X others followed you" */
 export const TextLabel: React.FC<TextLabelProps> = ({
   name,
-  count,
   finalCount,
   milestones,
   theme,
@@ -37,55 +95,15 @@ export const TextLabel: React.FC<TextLabelProps> = ({
   const previousMilestone = getPreviousMilestone(frame, milestones);
 
   const celebrationFrame = getCelebrationFrame(milestones);
-  const normalStagger = Math.max(1, Math.round(TIMING.AVATAR_STAGGER * fps));
-  const fastStagger = Math.max(1, Math.round(TIMING.AVATAR_STAGGER_FAST * fps));
-  const springDelay = Math.round(TIMING.SPRING_DELAY * fps);
-
-  // Default to 0 if before first milestone
-  const firstMilestoneFrame = milestones[0]?.frame ?? 0;
-  let displayCount = frame < firstMilestoneFrame ? 0 : count;
-
-  // Animate count for ALL milestones, matching avatar appearance speed
-  if (currentMilestone && frame >= currentMilestone.frame) {
-    const milestoneStart = currentMilestone.frame;
-    const previousAvatars = previousMilestone?.totalAvatars ?? 1;
-    const isFinalMilestone = currentMilestone.frame === celebrationFrame;
-
-    // Calculate animation duration
-    const newAvatars = Math.max(
-      0,
-      currentMilestone.totalAvatars - previousAvatars,
-    );
-    const staggerTime = isFinalMilestone ? fastStagger : normalStagger;
-    const animationDuration = Math.max(1, newAvatars * staggerTime);
-
-    if (newAvatars === 0) {
-      displayCount = Math.max(0, currentMilestone.totalAvatars - 1);
-    } else {
-      const delayedStart = milestoneStart + springDelay;
-      const targetCount = isFinalMilestone
-        ? Math.max(0, finalCount - 1)
-        : Math.max(0, currentMilestone.totalAvatars - 1);
-      const startCount = previousMilestone
-        ? Math.max(0, previousMilestone.totalAvatars - 1)
-        : 0;
-
-      displayCount = Math.round(
-        interpolate(
-          frame,
-          [delayedStart, delayedStart + animationDuration],
-          [startCount, targetCount],
-          {
-            extrapolateLeft: "clamp",
-            extrapolateRight: "clamp",
-          },
-        ),
-      );
-    }
-  }
-
-  // Ensure displayCount is within bounds
-  displayCount = Math.max(0, displayCount);
+  const rawDisplayCount = getDisplayCount({
+    celebrationFrame,
+    currentMilestone,
+    finalCount,
+    fps,
+    frame,
+    previousMilestone,
+  });
+  const displayCount = Math.max(0, rawDisplayCount);
 
   const formattedCount =
     displayCount >= 1000
@@ -105,30 +123,30 @@ export const TextLabel: React.FC<TextLabelProps> = ({
   return (
     <div
       style={{
-        display: "flex",
         alignItems: "center",
+        display: "flex",
         marginTop: 10 * SCALE,
         whiteSpace: "nowrap",
       }}
     >
-      <span style={{ fontSize, fontWeight: 600, color: colors.text }}>
+      <span style={{ color: colors.text, fontSize, fontWeight: 600 }}>
         {displayName}
       </span>
       {isVerified && (
-        <span style={{ marginLeft: marginSmall, display: "inline-flex" }}>
+        <span style={{ display: "inline-flex", marginLeft: marginSmall }}>
           <VerifiedBadge size={fontSize} />
         </span>
       )}
       {displayCount > 0 ? (
         <span
           style={{
-            fontSize,
             color: colors.textSecondary,
+            fontSize,
             marginLeft: marginMedium,
           }}
         >
           and{" "}
-          <span style={{ fontWeight: 600, color: colors.text }}>
+          <span style={{ color: colors.text, fontWeight: 600 }}>
             {formattedCount}
           </span>{" "}
           others followed you
@@ -136,8 +154,8 @@ export const TextLabel: React.FC<TextLabelProps> = ({
       ) : (
         <span
           style={{
-            fontSize,
             color: colors.textSecondary,
+            fontSize,
             marginLeft: marginMedium,
           }}
         >

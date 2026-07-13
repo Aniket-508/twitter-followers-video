@@ -1,13 +1,16 @@
 "use client";
 
-import { useConfig, DataSource } from "@/contexts/config-context";
-import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { ManualConfig } from "./manual-config";
-import { CSVConfig } from "./csv-config";
-import { ThemeSelector } from "./theme-selector";
 import { memo } from "react";
 
-export const ConfigurationSection = memo(function ConfigurationSection() {
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import type { DataSource } from "@/contexts/config-context";
+import { useConfig } from "@/contexts/config-context";
+
+import { CSVConfig } from "./csv-config";
+import { ManualConfig } from "./manual-config";
+import { ThemeSelector } from "./theme-selector";
+
+export const ConfigurationSection = memo(() => {
   const { dataSource, setDataSource } = useConfig();
 
   return (
@@ -43,3 +46,5 @@ export const ConfigurationSection = memo(function ConfigurationSection() {
     </div>
   );
 });
+
+ConfigurationSection.displayName = "ConfigurationSection";

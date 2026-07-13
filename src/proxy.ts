@@ -1,10 +1,7 @@
 import { Ratelimit } from "@upstash/ratelimit";
 import { Redis } from "@upstash/redis";
-import {
-  type NextFetchEvent,
-  type NextRequest,
-  NextResponse,
-} from "next/server";
+import { NextResponse } from "next/server";
+import type { NextFetchEvent, NextRequest } from "next/server";
 
 const hasRedisEnv =
   Boolean(process.env.UPSTASH_REDIS_REST_URL) &&
@@ -12,16 +9,17 @@ const hasRedisEnv =
 
 const ratelimit = hasRedisEnv
   ? new Ratelimit({
-      redis: Redis.fromEnv(),
-      limiter: Ratelimit.fixedWindow(10, "1m"), // 10 requests per minute
-      prefix: "@followers-video/ratelimit",
       analytics: true,
+      // 10 requests per minute
+      limiter: Ratelimit.fixedWindow(10, "1m"),
+      prefix: "@followers-video/ratelimit",
+      redis: Redis.fromEnv(),
     })
   : null;
 
 export default async function middleware(
   request: NextRequest,
-  context: NextFetchEvent,
+  context: NextFetchEvent
 ): Promise<Response | undefined> {
   if (process.env.NODE_ENV === "development" || !ratelimit) {
     return NextResponse.next();

@@ -35,27 +35,27 @@ const Highlight: React.FC<{
   const { fps } = useVideoConfig();
 
   const highlightProgress = spring({
-    fps,
-    frame,
     config: { damping: 200 },
     delay,
     durationInFrames,
+    fps,
+    frame,
   });
   const scaleX = Math.max(0, Math.min(1, highlightProgress));
 
   return (
-    <span style={{ position: "relative", display: "inline-block" }}>
+    <span style={{ display: "inline-block", position: "relative" }}>
       <span
         style={{
-          position: "absolute",
-          left: 0,
-          right: 0,
-          top: "50%",
-          height: "1.05em",
-          transform: `translateY(-50%) scaleX(${scaleX})`,
-          transformOrigin: "left center",
           backgroundColor: color,
           borderRadius: "0.18em",
+          height: "1.05em",
+          left: 0,
+          position: "absolute",
+          right: 0,
+          top: "50%",
+          transform: `translateY(-50%) scaleX(${scaleX})`,
+          transformOrigin: "left center",
           zIndex: 0,
         }}
       />
@@ -66,7 +66,7 @@ const Highlight: React.FC<{
 
 export const MyAnimation = () => {
   const highlightIndex = FULL_TEXT.indexOf(HIGHLIGHT_WORD);
-  const hasHighlight = highlightIndex >= 0;
+  const hasHighlight = highlightIndex !== -1;
   const preText = hasHighlight ? FULL_TEXT.slice(0, highlightIndex) : FULL_TEXT;
   const postText = hasHighlight
     ? FULL_TEXT.slice(highlightIndex + HIGHLIGHT_WORD.length)
@@ -75,10 +75,10 @@ export const MyAnimation = () => {
   return (
     <AbsoluteFill
       style={{
-        backgroundColor: COLOR_BG,
         alignItems: "center",
-        justifyContent: "center",
+        backgroundColor: COLOR_BG,
         fontFamily,
+        justifyContent: "center",
       }}
     >
       <div

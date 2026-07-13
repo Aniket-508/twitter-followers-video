@@ -11,8 +11,7 @@ This guide explains how to display captions in Remotion, assuming you already ha
 
 ## Prerequisites
 
-First, the @remotion/captions package needs to be installed.
-If it is not installed, use the following command:
+First, the @remotion/captions package needs to be installed. If it is not installed, use the following command:
 
 ```bash
 npx remotion add @remotion/captions # If project uses npm
@@ -61,7 +60,7 @@ const CaptionedContent: React.FC = () => {
         const startFrame = (page.startMs / 1000) * fps;
         const endFrame = Math.min(
           nextPage ? (nextPage.startMs / 1000) * fps : Infinity,
-          startFrame + (SWITCH_CAPTIONS_EVERY_MS / 1000) * fps,
+          startFrame + (SWITCH_CAPTIONS_EVERY_MS / 1000) * fps
         );
         const durationInFrames = endFrame - startFrame;
 

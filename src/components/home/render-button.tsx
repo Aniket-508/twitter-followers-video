@@ -1,10 +1,5 @@
 "use client";
 
-import { useRendering } from "@/helpers/use-rendering";
-import { useConfig } from "@/contexts/config-context";
-import { COMP_NAME } from "@/constants/remotion";
-import { Button } from "@/components/ui/button";
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import {
   DownloadIcon,
   Loader2Icon,
@@ -12,13 +7,22 @@ import {
   CircleCheckIcon,
 } from "lucide-react";
 
-export function RenderButton() {
+import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Button } from "@/components/ui/button";
+import { COMP_NAME } from "@/constants/remotion";
+import { useConfig } from "@/contexts/config-context";
+import { useRendering } from "@/helpers/use-rendering";
+
+export const RenderButton = () => {
   const { inputProps } = useConfig();
   const { renderMedia, state } = useRendering(COMP_NAME, inputProps);
 
   const isRendering = state.status === "rendering";
   const isLoading = state.status === "invoking" || isRendering;
   const isDone = state.status === "done";
+  const downloadFileName = isDone
+    ? `milestone-video-${state.url.split("/").pop() || "render.mp4"}`
+    : undefined;
 
   return (
     <div className="relative z-[1] space-y-2">
@@ -29,8 +33,11 @@ export function RenderButton() {
           isDone ? (
             <a
               href={state.url}
-              download={`milestone-video-${Date.now()}.mp4`}
-            />
+              download={downloadFileName}
+              aria-label="Download rendered video"
+            >
+              Download rendered video
+            </a>
           ) : undefined
         }
         size="lg"
@@ -85,4 +92,4 @@ export function RenderButton() {
       )}
     </div>
   );
-}
+};

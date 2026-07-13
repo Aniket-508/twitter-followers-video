@@ -3,17 +3,14 @@ import { urlToName } from "../lib/url";
 export const SOURCE_CODE_GITHUB_REPO = "Aniket-508/twitter-followers-video";
 
 export const SITE = {
-  NAME: "Twitter Followers Video",
-  URL: "https://followers.video",
-  OG_IMAGE: "/og.png",
+  AUTHOR: {
+    EMAIL: "pawaraniket508@gmail.com",
+    NAME: "Aniket Pawar",
+    TWITTER: "@alaymanguy",
+    URL: "https://www.aniketpawar.com",
+  },
   DESCRIPTION:
     "Generate animated videos to celebrate & share your Twitter/X follower milestones.",
-  AUTHOR: {
-    NAME: "Aniket Pawar",
-    URL: "https://www.aniketpawar.com",
-    EMAIL: "pawaraniket508@gmail.com",
-    TWITTER: "@alaymanguy",
-  },
   KEYWORDS: [
     "twitter",
     "x",
@@ -25,13 +22,16 @@ export const SITE = {
     "milestone",
     "celebration",
   ],
+  NAME: "Twitter Followers Video",
+  OG_IMAGE: "/og.png",
+  URL: "https://followers.video",
 } as const;
 
 export const LINK = {
-  TWITTER: "https://x.com/@alaymanguy",
   GITHUB: "https://github.com/Aniket-508",
-  SPONSOR: "https://github.com/sponsors/Aniket-508",
   LICENSE: `https://github.com/${SOURCE_CODE_GITHUB_REPO}/blob/main/LICENSE`,
+  SPONSOR: "https://github.com/sponsors/Aniket-508",
+  TWITTER: "https://x.com/@alaymanguy",
 } as const;
 
 export const UTM_PARAMS = {

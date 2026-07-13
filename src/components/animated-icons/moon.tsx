@@ -17,11 +17,11 @@ interface MoonIconProps extends HTMLAttributes<HTMLDivElement> {
 }
 
 const svgVariants: Variants = {
-  normal: {
-    rotate: 0,
-  },
   animate: {
     rotate: [0, -10, 10, -5, 5, 0],
+  },
+  normal: {
+    rotate: 0,
   },
 };
 
@@ -46,24 +46,24 @@ const MoonIcon = forwardRef<MoonIconHandle, MoonIconProps>(
 
     const handleMouseEnter = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!isControlledRef.current) {
-          controls.start("animate");
-        } else {
+        if (isControlledRef.current) {
           onMouseEnter?.(e);
+        } else {
+          controls.start("animate");
         }
       },
-      [controls, onMouseEnter],
+      [controls, onMouseEnter]
     );
 
     const handleMouseLeave = useCallback(
       (e: React.MouseEvent<HTMLDivElement>) => {
-        if (!isControlledRef.current) {
-          controls.start("normal");
-        } else {
+        if (isControlledRef.current) {
           onMouseLeave?.(e);
+        } else {
+          controls.start("normal");
         }
       },
-      [controls, onMouseLeave],
+      [controls, onMouseLeave]
     );
     return (
       <div
@@ -90,7 +90,7 @@ const MoonIcon = forwardRef<MoonIconHandle, MoonIconProps>(
         </motion.svg>
       </div>
     );
-  },
+  }
 );
 
 MoonIcon.displayName = "MoonIcon";

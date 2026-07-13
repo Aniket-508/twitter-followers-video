@@ -10,9 +10,7 @@
 
 <div align="center">
 
-[![Stars](https://img.shields.io/github/stars/Aniket-508/twitter-followers-video?color=yellow&style=flat&label=%E2%AD%90%20Stars)](https://github.com/Aniket-508/twitter-followers-video/stargazers)
-[![License](https://img.shields.io/:license-MIT-green.svg?style=flat&label=License)](https://github.com/Aniket-508/twitter-followers-video/blob/main/LICENSE)
-[![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=❤&logo=GitHub&color=#fe8e86)](https://github.com/sponsors/Aniket-508)
+[![Stars](https://img.shields.io/github/stars/Aniket-508/twitter-followers-video?color=yellow&style=flat&label=%E2%AD%90%20Stars)](https://github.com/Aniket-508/twitter-followers-video/stargazers) [![License](https://img.shields.io/:license-MIT-green.svg?style=flat&label=License)](https://github.com/Aniket-508/twitter-followers-video/blob/main/LICENSE) [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=❤&logo=GitHub&color=#fe8e86)](https://github.com/sponsors/Aniket-508)
 
 </div>
 

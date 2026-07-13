@@ -1,33 +1,36 @@
 "use client";
 
-import { useConfig } from "@/contexts/config-context";
-import { FollowerAccumulation } from "@/remotion/follower-accumulation";
+import dynamic from "next/dynamic";
+import { memo } from "react";
+
 import {
   DURATION_IN_FRAMES,
   VIDEO_FPS,
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
 } from "@/constants/remotion";
-import { memo } from "react";
-import dynamic from "next/dynamic";
+import { useConfig } from "@/contexts/config-context";
+import { FollowerAccumulation } from "@/remotion/follower-accumulation";
+
 import { RenderButton } from "./render-button";
 
-// Dynamic import for Player to optimize bundle size (Vercel Best Practices: bundle-dynamic-imports)
-const Player = dynamic(
-  () => import("@remotion/player").then((mod) => mod.Player),
-  {
-    ssr: false,
-    loading: () => (
-      <div className="aspect-video w-full flex items-center justify-center bg-muted/20 animate-pulse rounded-2xl">
-        <div className="text-muted-foreground text-sm font-medium">
-          Loading player...
-        </div>
-      </div>
-    ),
-  },
-);
+const loadPlayer = async () => {
+  const mod = await import("@remotion/player");
+  return mod.Player;
+};
 
-export const PreviewSection = memo(function PreviewSection() {
+const Player = dynamic(loadPlayer, {
+  loading: () => (
+    <div className="aspect-video w-full flex items-center justify-center bg-muted/20 animate-pulse rounded-2xl">
+      <div className="text-muted-foreground text-sm font-medium">
+        Loading player...
+      </div>
+    </div>
+  ),
+  ssr: false,
+});
+
+export const PreviewSection = memo(() => {
   const { inputProps } = useConfig();
 
   return (
@@ -47,8 +50,8 @@ export const PreviewSection = memo(function PreviewSection() {
             compositionHeight={VIDEO_HEIGHT}
             compositionWidth={VIDEO_WIDTH}
             style={{
-              width: "100%",
               height: "100%",
+              width: "100%",
             }}
             controls
             autoPlay
@@ -61,3 +64,5 @@ export const PreviewSection = memo(function PreviewSection() {
     </div>
   );
 });
+
+PreviewSection.displayName = "PreviewSection";

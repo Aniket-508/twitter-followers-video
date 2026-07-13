@@ -9,7 +9,7 @@ import { useCallback, useEffect, useRef } from "react";
  * @param url - The URL of the audio file to load and play.
  * @returns A function that, when called, plays the loaded sound.
  *
- * @remarks
+ * Notes:
  * - If the Web Audio API is not supported in the browser, a warning is logged and playback is disabled.
  * - The audio context and buffer are managed internally using React refs.
  * - Errors during fetching or decoding the audio are logged to the console.
@@ -21,7 +21,7 @@ import { useCallback, useEffect, useRef } from "react";
  * playClick();
  * ```
  */
-export function useSound(url: string) {
+export const useSound = (url: string) => {
   const audioCtxRef = useRef<AudioContext | null>(null);
   const bufferRef = useRef<AudioBuffer | null>(null);
 
@@ -39,18 +39,21 @@ export function useSound(url: string) {
     const audioCtx = new AudioContextClass();
     audioCtxRef.current = audioCtx;
 
-    fetch(url)
-      .then((res) => res.arrayBuffer())
-      .then((data) => audioCtx.decodeAudioData(data))
-      .then((decoded) => {
+    const loadAudio = async () => {
+      try {
+        const res = await fetch(url);
+        const data = await res.arrayBuffer();
+        const decoded = await audioCtx.decodeAudioData(data);
         bufferRef.current = decoded;
-      })
-      .catch((err) => {
-        console.log(`Failed to load click sound from ${url}:`, err);
-      });
+      } catch (error) {
+        console.log(`Failed to load click sound from ${url}:`, error);
+      }
+    };
+
+    void loadAudio();
   }, [url]);
 
-  const play = useCallback((volume: number = 1) => {
+  const play = useCallback((volume = 1) => {
     if (audioCtxRef.current && bufferRef.current) {
       const source = audioCtxRef.current.createBufferSource();
       const gainNode = audioCtxRef.current.createGain();
@@ -65,4 +68,4 @@ export function useSound(url: string) {
   }, []);
 
   return play;
-}
+};

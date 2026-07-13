@@ -1,4 +1,7 @@
-import type { Follower } from "@/types/schema";
+import { ExternalLink } from "lucide-react";
+import Image from "next/image";
+import { memo } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
@@ -8,17 +11,14 @@ import {
   DialogTrigger,
   DialogDescription,
 } from "@/components/ui/dialog";
-import { ExternalLink } from "lucide-react";
-import { memo } from "react";
+import type { Follower } from "@/types/schema";
 
 interface FollowersListDialogProps {
   followers: Follower[];
 }
 
-export const FollowersListDialog = memo(function FollowersListDialog({
-  followers,
-}: FollowersListDialogProps) {
-  return (
+export const FollowersListDialog = memo(
+  ({ followers }: FollowersListDialogProps) => (
     <Dialog>
       <DialogTrigger
         render={
@@ -53,10 +53,12 @@ export const FollowersListDialog = memo(function FollowersListDialog({
                   <td className="py-2 pr-4">
                     <div className="h-8 w-8 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
                       {f.image ? (
-                        // eslint-disable-next-line @next/next/no-img-element
-                        <img
+                        <Image
                           src={f.image}
                           alt={f.name}
+                          width={32}
+                          height={32}
+                          unoptimized
                           className="h-full w-full object-cover"
                         />
                       ) : (
@@ -82,5 +84,7 @@ export const FollowersListDialog = memo(function FollowersListDialog({
         </div>
       </DialogContent>
     </Dialog>
-  );
-});
+  )
+);
+
+FollowersListDialog.displayName = "FollowersListDialog";

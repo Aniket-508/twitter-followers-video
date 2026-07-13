@@ -1,40 +1,41 @@
-import { AVATAR, LAYOUT, TIMING } from "./constants";
-import type { Follower } from "../../types/schema";
-import type { Milestone } from "./types";
 import { random } from "remotion";
+
+import type { Follower } from "../../types/schema";
+import { AVATAR, LAYOUT, TIMING } from "./constants";
+import type { Milestone } from "./types";
 
 /**
  * Generates a safe URL for Dicebear avatar API.
  * Handles special characters in names by encoding them.
  */
-export function getDicebearUrl(seed: string | number): string {
+export const getDicebearUrl = (seed: string | number): string => {
   const safeSeed = encodeURIComponent(String(seed));
   return `https://api.dicebear.com/7.x/avataaars/svg?seed=${safeSeed}`;
-}
+};
 
 /**
  * Fisher-Yates shuffle algorithm to randomize an array.
  * Returns a new shuffled array without mutating the original.
  */
-export function shuffle<T>(array: T[]): T[] {
+export const shuffle = <T>(array: T[]): T[] => {
   const shuffled = [...array];
-  for (let i = shuffled.length - 1; i > 0; i--) {
+  for (let i = shuffled.length - 1; i > 0; i -= 1) {
     const j = Math.floor(random(null) * (i + 1));
     [shuffled[i], shuffled[j]] = [shuffled[j], shuffled[i]];
   }
   return shuffled;
-}
+};
 
 /**
  * Validates and sanitizes follower count input.
  * Ensures the value is a positive integer >= 1.
  */
-export function sanitizeFollowerCount(count: number): number {
+export const sanitizeFollowerCount = (count: number): number => {
   if (!Number.isFinite(count) || count < 1) {
     return 1;
   }
   return Math.floor(count);
-}
+};
 
 /**
  * Calculate max avatars that fit in a given width.
@@ -42,16 +43,18 @@ export function sanitizeFollowerCount(count: number): number {
  * Accounts for zoom effect (LAYOUT.ZOOM) which reduces visible area.
  */
 
-export function calculateMaxAvatars(width: number): number {
-  if (width <= 0) return 1;
+export const calculateMaxAvatars = (width: number): number => {
+  if (width <= 0) {
+    return 1;
+  }
   const visibleWidth = width / LAYOUT.ZOOM;
   const totalWidth = visibleWidth + LAYOUT.SCROLL_DISTANCE;
   const remaining = totalWidth - AVATAR.SIZE;
   const additionalAvatars = Math.floor(
-    remaining / (AVATAR.SIZE - AVATAR.OVERLAP),
+    remaining / (AVATAR.SIZE - AVATAR.OVERLAP)
   );
   return Math.max(1, 1 + additionalAvatars);
-}
+};
 
 /**
  * Generates milestone configuration for the animation.
@@ -63,18 +66,18 @@ export function calculateMaxAvatars(width: number): number {
  * @param followers - Optional array of follower data for names
  * @returns Array of milestone objects defining animation keyframes
  */
-export function generateMilestones(
+export const generateMilestones = (
   finalCount: number,
   frameWidth: number,
   fps: number,
-  followers?: Follower[],
-): Milestone[] {
+  followers?: Follower[]
+): Milestone[] => {
   // Sanitize input
   const safeCount = sanitizeFollowerCount(finalCount);
 
   // Calculate max avatars with scroll distance
   const maxAvatarsWithScroll = calculateMaxAvatars(
-    frameWidth + LAYOUT.SCROLL_DISTANCE,
+    frameWidth + LAYOUT.SCROLL_DISTANCE
   );
 
   // Determine the final visual target count (clamped by available space)
@@ -106,7 +109,7 @@ export function generateMilestones(
       Math.max(3, Math.floor(celebrationCount * 0.75)),
     ];
     // Ensure strict monotonicity
-    for (let i = 1; i < avatarCounts.length; i++) {
+    for (let i = 1; i < avatarCounts.length; i += 1) {
       if (avatarCounts[i] <= avatarCounts[i - 1]) {
         avatarCounts[i] = avatarCounts[i - 1] + 1;
       }
@@ -120,12 +123,13 @@ export function generateMilestones(
   let currentFrame = Math.round(TIMING.START_DELAY * fps);
   const intervalFrames = Math.round(TIMING.MILESTONE_INTERVAL * fps);
 
-  for (let i = 0; i < 3; i++) {
+  for (let i = 0; i < 3; i += 1) {
     const avatarCount = avatarCounts[i];
     milestones.push({
+      // "X others" count
+      count: Math.max(0, avatarCount - 1),
       frame: currentFrame,
       name: names[i],
-      count: Math.max(0, avatarCount - 1), // "X others" count
       totalAvatars: avatarCount,
     });
     currentFrame += intervalFrames;
@@ -133,61 +137,62 @@ export function generateMilestones(
 
   // Final milestone (celebration)
   milestones.push({
+    count: Math.max(0, celebrationCount - 1),
     frame: currentFrame,
     name: names[3],
-    count: Math.max(0, celebrationCount - 1),
     totalAvatars: celebrationCount,
   });
 
   return milestones;
-}
+};
 
 /** Gets the celebration (final) frame from milestones array */
-export function getCelebrationFrame(milestones: Milestone[]): number {
-  if (milestones.length === 0) return 0;
-  return milestones[milestones.length - 1].frame;
-}
+export const getCelebrationFrame = (milestones: Milestone[]): number => {
+  if (milestones.length === 0) {
+    return 0;
+  }
+  return milestones.at(-1)?.frame ?? 0;
+};
 
 /** Gets the current milestone based on the current frame */
-export function getCurrentMilestone(
+export const getCurrentMilestone = (
   frame: number,
-  milestones: Milestone[],
-): Milestone {
+  milestones: Milestone[]
+): Milestone => {
   if (milestones.length === 0) {
-    return { frame: 0, name: "User", count: 0, totalAvatars: 1 };
+    return { count: 0, frame: 0, name: "User", totalAvatars: 1 };
   }
   return (
-    milestones
-      .slice()
-      .reverse()
-      .find((m) => frame >= m.frame) || milestones[0]
+    [...milestones].toReversed().find((m) => frame >= m.frame) || milestones[0]
   );
-}
+};
 
 /** Gets the previous milestone for count animation transitions */
-export function getPreviousMilestone(
+export const getPreviousMilestone = (
   frame: number,
-  milestones: Milestone[],
-): Milestone | null {
-  for (let i = milestones.length - 1; i >= 0; i--) {
+  milestones: Milestone[]
+): Milestone | null => {
+  for (let i = milestones.length - 1; i >= 0; i -= 1) {
     if (frame >= milestones[i].frame) {
       return i > 0 ? milestones[i - 1] : null;
     }
   }
   return null;
-}
+};
 
 /**
  * Calculate when each avatar should appear based on milestones.
  * During celebration, avatars appear faster in a continuous stream.
  */
-export function getAvatarAppearFrame(
+export const getAvatarAppearFrame = (
   index: number,
   milestones: Milestone[],
   celebrationStart: number,
-  fps: number,
-): number {
-  if (index < 0 || milestones.length === 0) return 0;
+  fps: number
+): number => {
+  if (index < 0 || milestones.length === 0) {
+    return 0;
+  }
 
   let previousAvatarCount = 0;
   const normalStagger = Math.max(1, Math.round(TIMING.AVATAR_STAGGER * fps));
@@ -197,15 +202,13 @@ export function getAvatarAppearFrame(
     if (index < milestone.totalAvatars) {
       const positionInMilestone = Math.max(0, index - previousAvatarCount);
 
-      // Celebration milestone: faster stagger
       if (milestone.frame >= celebrationStart) {
         return celebrationStart + positionInMilestone * fastStagger;
       }
 
-      // Normal milestones
       return milestone.frame + positionInMilestone * normalStagger;
     }
     previousAvatarCount = milestone.totalAvatars;
   }
   return 0;
-}
+};

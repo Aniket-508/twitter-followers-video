@@ -32,7 +32,7 @@ const getTypedText = ({
 }): string => {
   const pauseIndex = fullText.indexOf(pauseAfter);
   const preLen =
-    pauseIndex >= 0 ? pauseIndex + pauseAfter.length : fullText.length;
+    pauseIndex === -1 ? fullText.length : pauseIndex + pauseAfter.length;
 
   let typedChars = 0;
   if (frame < preLen * charFrames) {
@@ -43,7 +43,7 @@ const getTypedText = ({
     const postPhase = frame - preLen * charFrames - pauseFrames;
     typedChars = Math.min(
       fullText.length,
-      preLen + Math.floor(postPhase / charFrames),
+      preLen + Math.floor(postPhase / charFrames)
     );
   }
   return fullText.slice(0, typedChars);
@@ -58,7 +58,7 @@ const Cursor: React.FC<{
     frame % blinkFrames,
     [0, blinkFrames / 2, blinkFrames],
     [1, 0, 1],
-    { extrapolateLeft: "clamp", extrapolateRight: "clamp" },
+    { extrapolateLeft: "clamp", extrapolateRight: "clamp" }
   );
 
   return <span style={{ opacity }}>{symbol}</span>;
@@ -71,10 +71,10 @@ export const MyAnimation = () => {
   const pauseFrames = Math.round(fps * PAUSE_SECONDS);
 
   const typedText = getTypedText({
+    charFrames: CHAR_FRAMES,
     frame,
     fullText: FULL_TEXT,
     pauseAfter: PAUSE_AFTER,
-    charFrames: CHAR_FRAMES,
     pauseFrames,
   });
 
@@ -87,9 +87,9 @@ export const MyAnimation = () => {
       <div
         style={{
           color: COLOR_TEXT,
+          fontFamily: "sans-serif",
           fontSize: FONT_SIZE,
           fontWeight: FONT_WEIGHT,
-          fontFamily: "sans-serif",
         }}
       >
         <span>{typedText}</span>
