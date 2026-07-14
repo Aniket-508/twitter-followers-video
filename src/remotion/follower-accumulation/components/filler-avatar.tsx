@@ -1,8 +1,6 @@
 import React from "react";
 import { Img } from "remotion";
 
-import { SCALE } from "@/constants/remotion";
-
 import type { XTheme } from "../../../types/schema";
 import { AVATAR, AVATAR_COLORS, THEMES } from "../constants";
 import { getDicebearUrl } from "../utils";
@@ -20,27 +18,43 @@ export const FillerAvatar: React.FC<FillerAvatarProps> = ({ index, theme }) => {
   return (
     <div
       style={{
-        flexShrink: 0,
-        marginLeft: -AVATAR.OVERLAP,
+        height: AVATAR.SIZE,
         position: "relative",
-        zIndex: Math.max(1, 100 - index),
+        width: AVATAR.SIZE,
       }}
     >
       <div
         style={{
-          backgroundColor: avatarColor,
-          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
+          backgroundColor: colors.avatarBorder,
           borderRadius: "50%",
           boxShadow: colors.shadow,
           height: AVATAR.SIZE,
-          overflow: "hidden",
+          position: "relative",
           width: AVATAR.SIZE,
         }}
       >
-        <Img
-          src={getDicebearUrl(`filler-${index}`)}
-          style={{ height: "100%", objectFit: "cover", width: "100%" }}
-        />
+        <div
+          style={{
+            backgroundColor: avatarColor,
+            borderRadius: "50%",
+            bottom: AVATAR.BORDER_WIDTH,
+            left: AVATAR.BORDER_WIDTH,
+            overflow: "hidden",
+            position: "absolute",
+            right: AVATAR.BORDER_WIDTH,
+            top: AVATAR.BORDER_WIDTH,
+          }}
+        >
+          <Img
+            src={getDicebearUrl(`filler-${index}`)}
+            style={{
+              borderRadius: "50%",
+              height: "100%",
+              objectFit: "cover",
+              width: "100%",
+            }}
+          />
+        </div>
       </div>
     </div>
   );

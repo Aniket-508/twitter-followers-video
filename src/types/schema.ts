@@ -20,29 +20,3 @@ export const defaultMyCompProps: z.infer<typeof CompositionProps> = {
   followerCount: 1000,
   theme: "light",
 };
-
-export const RenderRequest = z.object({
-  id: z.string(),
-  inputProps: CompositionProps,
-});
-
-export type RenderProgress =
-  | {
-      type: "error";
-      message: string;
-    }
-  | {
-      type: "progress";
-      progress: number;
-    }
-  | {
-      type: "done";
-      url: string;
-      size: number;
-    }
-  | {
-      type: "phase";
-      phase: string;
-      progress: number;
-      subtitle?: string;
-    };

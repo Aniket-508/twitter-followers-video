@@ -1,3 +1,0 @@
-{
-  "buildCommand": "bun run bundle && bun run build && bun run create-snapshot"
-}

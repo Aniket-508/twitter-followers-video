@@ -21,7 +21,7 @@ https://github.com/user-attachments/assets/0840d4b8-1fd0-4dfd-bf75-0a0287a734ec
 ## Stack
 
 - [Remotion](https://www.remotion.dev/) to create the video
-- [Vercel Sandbox](https://vercel.com/docs/sandbox) and [Vercel Blob](https://vercel.com/docs/storage/vercel-blob) for production rendering and storage
+- [Remotion Web Renderer](https://www.remotion.dev/docs/client-side-rendering/) to encode MP4 videos directly in the browser
 - [Next.js](https://nextjs.org) for the web application
 - [TailwindCSS](https://tailwindcss.com) for the styling
 - [Vercel](https://vercel.com) for hosting
@@ -31,7 +31,7 @@ https://github.com/user-attachments/assets/0840d4b8-1fd0-4dfd-bf75-0a0287a734ec
 ### Prerequisites
 
 - Node.js 22+ or Bun
-- Vercel Blob store attached to the Vercel project for production rendering
+- A browser with WebCodecs support for exporting videos
 
 ### Installation
 
@@ -60,32 +60,27 @@ bun run remotion
 # Render a video locally
 bunx remotion render
 
-# Bundle the Remotion project for Vercel Sandbox
-bun run bundle
-
-# Create a Vercel Sandbox snapshot for production renders
-bun run create-snapshot
-
 # Upgrade Remotion
 bunx remotion upgrade
 ```
 
-## Vercel Sandbox Rendering
+## Browser Rendering
 
-In development, the **Export as MP4** button renders locally with the Remotion CLI and saves files under `public/renders/`.
+The **Export as MP4** button uses `@remotion/web-renderer` to render and encode the video on the visitor's device. The generated MP4 is downloaded from a local Blob URL; follower data and rendered videos are not uploaded to a rendering service.
 
-In production, the same endpoint renders with [Vercel Sandbox](https://github.com/remotion-dev/template-vercel), uploads the final MP4 to Vercel Blob, and returns a public download URL.
+Before rendering, the app checks whether the browser can encode a 1080p H.264 MP4. Remote avatar images are fetched with CORS and converted to local Blob URLs, with DiceBear avatars used as a fallback.
 
-1. Create a Vercel Blob store and attach it to your Vercel project.
-2. Ensure `BLOB_READ_WRITE_TOKEN` is available in the project environment.
-3. For local snapshot creation, also set `VERCEL_TOKEN`, `VERCEL_TEAM_ID`, and `VERCEL_PROJECT_ID` if the Sandbox SDK cannot authenticate automatically.
-4. Deploy with the configured Vercel build command:
+Client-side rendering is currently experimental in Remotion. Render speed depends on the visitor's hardware, and keeping the tab visible gives the best performance.
+
+### Remotion license
+
+Set `NEXT_PUBLIC_REMOTION_LICENSE_KEY` in your deployment environment:
 
 ```bash
-bun run bundle && bun run build && bun run create-snapshot
+NEXT_PUBLIC_REMOTION_LICENSE_KEY=free-license
 ```
 
-Run `bun run create-snapshot` again after changing the video template or upgrading Remotion.
+Use `free-license` only if you qualify for Remotion's free license. Company and Enterprise users should use the public license key from the Remotion dashboard.
 
 ## Contributing
 
