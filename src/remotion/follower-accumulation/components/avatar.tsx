@@ -1,8 +1,6 @@
 import React from "react";
 import { spring, useCurrentFrame, useVideoConfig, Img } from "remotion";
 
-import { SCALE } from "@/constants/remotion";
-
 import type { Follower, XTheme } from "../../../types/schema";
 import { AVATAR, AVATAR_COLORS, SPRING_CONFIGS, THEMES } from "../constants";
 import type { Milestone } from "../types";
@@ -51,27 +49,43 @@ export const Avatar: React.FC<AvatarProps> = ({
     return (
       <div
         style={{
-          flexShrink: 0,
-          marginLeft: 0,
+          height: AVATAR.SIZE,
           position: "relative",
-          zIndex: 100,
+          width: AVATAR.SIZE,
         }}
       >
         <div
           style={{
-            backgroundColor: AVATAR.FIRST_COLOR,
-            border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
+            backgroundColor: colors.avatarBorder,
             borderRadius: "50%",
             boxShadow: colors.shadow,
             height: AVATAR.SIZE,
-            overflow: "hidden",
+            position: "relative",
             width: AVATAR.SIZE,
           }}
         >
-          <Img
-            src={avatarUrl}
-            style={{ height: "100%", objectFit: "cover", width: "100%" }}
-          />
+          <div
+            style={{
+              backgroundColor: AVATAR.FIRST_COLOR,
+              borderRadius: "50%",
+              bottom: AVATAR.BORDER_WIDTH,
+              left: AVATAR.BORDER_WIDTH,
+              overflow: "hidden",
+              position: "absolute",
+              right: AVATAR.BORDER_WIDTH,
+              top: AVATAR.BORDER_WIDTH,
+            }}
+          >
+            <Img
+              src={avatarUrl}
+              style={{
+                borderRadius: "50%",
+                height: "100%",
+                objectFit: "cover",
+                width: "100%",
+              }}
+            />
+          </div>
         </div>
       </div>
     );
@@ -89,29 +103,45 @@ export const Avatar: React.FC<AvatarProps> = ({
   return (
     <div
       style={{
-        flexShrink: 0,
-        marginLeft: -AVATAR.OVERLAP,
+        height: AVATAR.SIZE,
         opacity: clampedScale,
         position: "relative",
         transform: `scale(${clampedScale})`,
-        zIndex: 100 - index,
+        width: AVATAR.SIZE,
       }}
     >
       <div
         style={{
-          backgroundColor: isFirst ? AVATAR.FIRST_COLOR : avatarColor,
-          border: `${2 * SCALE}px solid ${colors.avatarBorder}`,
+          backgroundColor: colors.avatarBorder,
           borderRadius: "50%",
           boxShadow: colors.shadow,
           height: AVATAR.SIZE,
-          overflow: "hidden",
+          position: "relative",
           width: AVATAR.SIZE,
         }}
       >
-        <Img
-          src={avatarUrl}
-          style={{ height: "100%", objectFit: "cover", width: "100%" }}
-        />
+        <div
+          style={{
+            backgroundColor: isFirst ? AVATAR.FIRST_COLOR : avatarColor,
+            borderRadius: "50%",
+            bottom: AVATAR.BORDER_WIDTH,
+            left: AVATAR.BORDER_WIDTH,
+            overflow: "hidden",
+            position: "absolute",
+            right: AVATAR.BORDER_WIDTH,
+            top: AVATAR.BORDER_WIDTH,
+          }}
+        >
+          <Img
+            src={avatarUrl}
+            style={{
+              borderRadius: "50%",
+              height: "100%",
+              objectFit: "cover",
+              width: "100%",
+            }}
+          />
+        </div>
       </div>
     </div>
   );

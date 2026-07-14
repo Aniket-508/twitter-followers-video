@@ -1,6 +1,7 @@
 import React, { useMemo } from "react";
 
 import type { Follower, XTheme } from "../../../types/schema";
+import { AVATAR } from "../constants";
 import type { Milestone } from "../types";
 import { Avatar } from "./avatar";
 import { FillerAvatar } from "./filler-avatar";
@@ -39,29 +40,50 @@ export const AvatarStack: React.FC<AvatarStackProps> = ({
     [fillerCount, limit]
   );
 
+  const items = useMemo(
+    () => [
+      ...avatarIndices.map((index) => ({ index, type: "avatar" as const })),
+      ...fillerIndices.map((index) => ({ index, type: "filler" as const })),
+    ],
+    [avatarIndices, fillerIndices]
+  );
+  const paintOrderedItems = useMemo(() => items.toReversed(), [items]);
+  const stackWidth =
+    items.length === 0
+      ? 0
+      : AVATAR.SIZE + (items.length - 1) * (AVATAR.SIZE - AVATAR.OVERLAP);
+
   return (
     <div
       style={{
-        alignItems: "center",
-        display: "flex",
-        justifyContent: "flex-start",
+        height: AVATAR.SIZE,
+        position: "relative",
         transform: `translateX(${marqueeOffset}px)`,
-        width: "max-content",
+        width: stackWidth,
       }}
     >
-      {avatarIndices.map((index) => (
-        <Avatar
-          key={index}
-          index={index}
-          isFirst={index === 0}
-          milestones={milestones}
-          celebrationStart={celebrationStart}
-          theme={theme}
-          follower={followers?.[index]}
-        />
-      ))}
-      {fillerIndices.map((index) => (
-        <FillerAvatar key={`filler-${index}`} index={index} theme={theme} />
+      {paintOrderedItems.map((item) => (
+        <div
+          key={`${item.type}-${item.index}`}
+          style={{
+            left: item.index * (AVATAR.SIZE - AVATAR.OVERLAP),
+            position: "absolute",
+            top: 0,
+          }}
+        >
+          {item.type === "avatar" ? (
+            <Avatar
+              index={item.index}
+              isFirst={item.index === 0}
+              milestones={milestones}
+              celebrationStart={celebrationStart}
+              theme={theme}
+              follower={followers?.[item.index]}
+            />
+          ) : (
+            <FillerAvatar index={item.index} theme={theme} />
+          )}
+        </div>
       ))}
     </div>
   );

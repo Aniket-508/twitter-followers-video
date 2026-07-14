@@ -20,7 +20,8 @@ https://github.com/user-attachments/assets/0840d4b8-1fd0-4dfd-bf75-0a0287a734ec
 
 ## Stack
 
-- [Remotion](https://www.remotion.dev/) to create the video (and [Remotion Lambda](https://www.remotion.dev/docs/lambda/api) to generate it in AWS)
+- [Remotion](https://www.remotion.dev/) to create the video
+- [Remotion Web Renderer](https://www.remotion.dev/docs/client-side-rendering/) to encode MP4 videos directly in the browser
 - [Next.js](https://nextjs.org) for the web application
 - [TailwindCSS](https://tailwindcss.com) for the styling
 - [Vercel](https://vercel.com) for hosting
@@ -30,7 +31,7 @@ https://github.com/user-attachments/assets/0840d4b8-1fd0-4dfd-bf75-0a0287a734ec
 ### Prerequisites
 
 - Node.js 22+ or Bun
-- AWS account (for Lambda rendering)
+- A browser with WebCodecs support for exporting videos
 
 ### Installation
 
@@ -63,24 +64,23 @@ bunx remotion render
 bunx remotion upgrade
 ```
 
-## AWS Lambda Setup
+## Browser Rendering
 
-This project supports rendering videos via [Remotion Lambda](https://remotion.dev/lambda) for serverless video generation.
+The **Export as MP4** button uses `@remotion/web-renderer` to render and encode the video on the visitor's device. The generated MP4 is downloaded from a local Blob URL; follower data and rendered videos are not uploaded to a rendering service.
 
-1. Copy `.env.example` to `.env` and fill in your AWS credentials
-2. Complete the [Lambda setup guide](https://www.remotion.dev/docs/lambda/setup)
-3. Edit `config.mjs` with your desired Lambda settings
-4. Deploy your Lambda function:
+Before rendering, the app checks whether the browser can encode a 1080p H.264 MP4. Remote avatar images are fetched with CORS and converted to local Blob URLs, with DiceBear avatars used as a fallback.
+
+Client-side rendering is currently experimental in Remotion. Render speed depends on the visitor's hardware, and keeping the tab visible gives the best performance.
+
+### Remotion license
+
+Set `NEXT_PUBLIC_REMOTION_LICENSE_KEY` in your deployment environment:
 
 ```bash
-node deploy.mjs
+NEXT_PUBLIC_REMOTION_LICENSE_KEY=free-license
 ```
 
-Run the deploy script after:
-
-- Changing the video template
-- Modifying `config.mjs`
-- Upgrading Remotion
+Use `free-license` only if you qualify for Remotion's free license. Company and Enterprise users should use the public license key from the Remotion dashboard.
 
 ## Contributing
 

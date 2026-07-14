@@ -130,32 +130,6 @@ export const FollowerAccumulation = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.background }}>
-      {/* Edge fade gradients */}
-      <div
-        style={{
-          background: `linear-gradient(to right, ${colors.gradient}, transparent)`,
-          bottom: 0,
-          left: 0,
-          pointerEvents: "none",
-          position: "absolute",
-          top: 0,
-          width: LAYOUT.GRADIENT_WIDTH,
-          zIndex: 10,
-        }}
-      />
-      <div
-        style={{
-          background: `linear-gradient(to left, ${colors.gradient}, transparent)`,
-          bottom: 0,
-          pointerEvents: "none",
-          position: "absolute",
-          right: 0,
-          top: 0,
-          width: LAYOUT.GRADIENT_WIDTH,
-          zIndex: 10,
-        }}
-      />
-
       <AbsoluteFill className="justify-center items-center">
         <div
           style={{
@@ -186,6 +160,30 @@ export const FollowerAccumulation = ({
           />
         </div>
       </AbsoluteFill>
+
+      {/* Paint gradients last so they overlay content in the web renderer. */}
+      <div
+        style={{
+          background: `linear-gradient(to right, ${colors.gradient}, transparent)`,
+          bottom: 0,
+          left: 0,
+          pointerEvents: "none",
+          position: "absolute",
+          top: 0,
+          width: LAYOUT.GRADIENT_WIDTH,
+        }}
+      />
+      <div
+        style={{
+          background: `linear-gradient(to left, ${colors.gradient}, transparent)`,
+          bottom: 0,
+          pointerEvents: "none",
+          position: "absolute",
+          right: 0,
+          top: 0,
+          width: LAYOUT.GRADIENT_WIDTH,
+        }}
+      />
     </AbsoluteFill>
   );
 };

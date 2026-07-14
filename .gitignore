@@ -15,6 +15,7 @@
 
 # production
 /build
+/.remotion/
 
 # misc
 .DS_Store

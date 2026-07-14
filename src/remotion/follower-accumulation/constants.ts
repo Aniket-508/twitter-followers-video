@@ -5,6 +5,7 @@ import type { ThemeColors } from "./types";
 
 /** Avatar dimensions and layout (auto-scaled based on SCALE) */
 export const AVATAR = {
+  BORDER_WIDTH: 2 * SCALE,
   FIRST_COLOR: "#3b82f6",
   OVERLAP: 16 * SCALE,
   SIZE: 36 * SCALE,
