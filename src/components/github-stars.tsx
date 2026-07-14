@@ -31,23 +31,21 @@ export const GitHubStars = ({ repo, stargazersCount }: GitHubStarsProps) => (
               rel="noopener noreferrer"
               aria-label={`View ${repo} on GitHub`}
             >
-              View {repo} on GitHub
+              <GitHubIcon />
+              <span className="text-[13px] text-muted-foreground tabular-nums">
+                {new Intl.NumberFormat("en-US", {
+                  compactDisplay: "short",
+                  notation: "compact",
+                })
+                  .format(stargazersCount)
+                  .toLowerCase()}
+              </span>
+              <span className="sr-only">GitHub stars</span>
             </a>
           }
         />
       }
-    >
-      <GitHubIcon className="-translate-y-px" />
-      <span className="text-[13px] text-muted-foreground tabular-nums">
-        {new Intl.NumberFormat("en-US", {
-          compactDisplay: "short",
-          notation: "compact",
-        })
-          .format(stargazersCount)
-          .toLowerCase()}
-      </span>
-    </TooltipTrigger>
-
+    />
     <TooltipContent className="font-sans">
       {new Intl.NumberFormat("en-US").format(stargazersCount)} stars
     </TooltipContent>
