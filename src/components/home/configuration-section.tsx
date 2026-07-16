@@ -8,6 +8,7 @@ import { useConfig } from "@/contexts/config-context";
 
 import { CSVConfig } from "./csv-config";
 import { ManualConfig } from "./manual-config";
+import { TemplateSelector } from "./template-selector";
 import { ThemeSelector } from "./theme-selector";
 
 export const ConfigurationSection = memo(() => {
@@ -40,6 +41,8 @@ export const ConfigurationSection = memo(() => {
             <CSVConfig />
           </TabsContent>
         </Tabs>
+
+        <TemplateSelector />
 
         <ThemeSelector />
       </div>
