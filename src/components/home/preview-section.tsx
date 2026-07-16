@@ -10,7 +10,7 @@ import {
   VIDEO_WIDTH,
 } from "@/constants/remotion";
 import { useConfig } from "@/contexts/config-context";
-import { FollowerAccumulation } from "@/remotion/follower-accumulation";
+import { Followers } from "@/remotion/followers";
 
 import { RenderButton } from "./render-button";
 
@@ -34,7 +34,7 @@ export const PreviewSection = memo(() => {
   const { inputProps } = useConfig();
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-2">
       <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
         Video Preview
       </h2>
@@ -42,8 +42,8 @@ export const PreviewSection = memo(() => {
       <div className="group relative rounded-3xl overflow-hidden border border-muted-foreground/10 shadow-2xl transition-all hover:border-primary/20">
         <div className="aspect-video w-full">
           <Player
-            // @ts-expect-error - Player component prop has type mismatch with dynamically imported FollowerAccumulation
-            component={FollowerAccumulation}
+            // @ts-expect-error - Player component prop has type mismatch with dynamically imported Followers
+            component={Followers}
             inputProps={inputProps}
             durationInFrames={DURATION_IN_FRAMES}
             fps={VIDEO_FPS}

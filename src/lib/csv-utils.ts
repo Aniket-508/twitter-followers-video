@@ -1,6 +1,6 @@
 import Papa from "papaparse";
 
-import { getDicebearUrl } from "@/remotion/follower-accumulation/utils";
+import { getDicebearUrl } from "@/remotion/templates/shared/utils";
 import type { Follower } from "@/types/schema";
 
 interface ParsedCSVResult {

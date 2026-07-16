@@ -1,8 +1,8 @@
 import React, { useMemo } from "react";
 
-import type { Follower, XTheme } from "../../../types/schema";
-import { AVATAR } from "../constants";
-import type { Milestone } from "../types";
+import type { Follower, XTheme } from "../../../../types/schema";
+import { AVATAR } from "../../shared/constants";
+import type { Milestone } from "../../shared/types";
 import { Avatar } from "./avatar";
 import { FillerAvatar } from "./filler-avatar";
 

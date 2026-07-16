@@ -9,12 +9,12 @@ import {
 } from "@/constants/remotion";
 
 import { defaultMyCompProps } from "../types/schema";
-import { FollowerAccumulation } from "./follower-accumulation";
+import { Followers } from "./followers";
 
 export const RemotionRoot: React.FC = () => (
   <Composition
     id={COMP_NAME}
-    component={FollowerAccumulation}
+    component={Followers}
     durationInFrames={DURATION_IN_FRAMES}
     fps={VIDEO_FPS}
     width={VIDEO_WIDTH}

@@ -3,10 +3,10 @@ import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 import { SCALE } from "@/constants/remotion";
 
-import type { XTheme } from "../../../types/schema";
-import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../constants";
-import type { Milestone } from "../types";
-import { getCelebrationFrame } from "../utils";
+import type { XTheme } from "../../../../types/schema";
+import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../../shared/constants";
+import type { Milestone } from "../../shared/types";
+import { getCelebrationFrame } from "../../shared/utils";
 
 export interface CelebrationProps {
   theme: XTheme;

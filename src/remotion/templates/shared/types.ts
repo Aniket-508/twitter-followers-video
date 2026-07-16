@@ -1,3 +1,5 @@
+import type { Follower, XTheme } from "../../../types/schema";
+
 export interface Milestone {
   frame: number;
   name: string;
@@ -12,4 +14,11 @@ export interface ThemeColors {
   avatarBorder: string;
   shadow: string;
   gradient: string;
+}
+
+export interface FollowerTemplateProps {
+  followerCount: number;
+  followers?: Follower[];
+  milestones: Milestone[];
+  theme: XTheme;
 }

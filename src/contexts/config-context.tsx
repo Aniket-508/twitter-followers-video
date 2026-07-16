@@ -12,11 +12,8 @@ import type { z } from "zod";
 
 import { RANDOM_NAMES } from "@/constants/site";
 import { parseFollowersCSV } from "@/lib/csv-utils";
-import {
-  getDicebearUrl,
-  shuffle,
-} from "@/remotion/follower-accumulation/utils";
-import type { CompositionProps, XTheme, Follower } from "@/types/schema";
+import { getDicebearUrl, shuffle } from "@/remotion/templates/shared/utils";
+import type { CompositionProps, Follower, XTheme } from "@/types/schema";
 import { defaultMyCompProps } from "@/types/schema";
 
 export type DataSource = "manual" | "csv";

@@ -7,12 +7,12 @@ import {
   VIDEO_HEIGHT,
   VIDEO_WIDTH,
 } from "@/constants/remotion";
-import { FollowerAccumulation } from "@/remotion/follower-accumulation";
-import { LAYOUT } from "@/remotion/follower-accumulation/constants";
+import { Followers } from "@/remotion/followers";
+import { LAYOUT } from "@/remotion/templates/shared/constants";
 import {
   calculateMaxAvatars,
   getDicebearUrl,
-} from "@/remotion/follower-accumulation/utils";
+} from "@/remotion/templates/shared/utils";
 import type { Follower } from "@/types/schema";
 import { CompositionProps, defaultMyCompProps } from "@/types/schema";
 
@@ -230,7 +230,7 @@ export const useRendering = (
       const licenseKey = process.env.NEXT_PUBLIC_REMOTION_LICENSE_KEY;
       const result = await renderMediaOnWeb({
         composition: {
-          component: FollowerAccumulation,
+          component: Followers,
           defaultProps: defaultMyCompProps,
           durationInFrames: DURATION_IN_FRAMES,
           fps: VIDEO_FPS,

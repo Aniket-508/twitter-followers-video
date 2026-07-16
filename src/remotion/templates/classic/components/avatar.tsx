@@ -1,10 +1,15 @@
 import React from "react";
 import { spring, useCurrentFrame, useVideoConfig, Img } from "remotion";
 
-import type { Follower, XTheme } from "../../../types/schema";
-import { AVATAR, AVATAR_COLORS, SPRING_CONFIGS, THEMES } from "../constants";
-import type { Milestone } from "../types";
-import { getDicebearUrl, getAvatarAppearFrame } from "../utils";
+import type { Follower, XTheme } from "../../../../types/schema";
+import {
+  AVATAR,
+  AVATAR_COLORS,
+  SPRING_CONFIGS,
+  THEMES,
+} from "../../shared/constants";
+import type { Milestone } from "../../shared/types";
+import { getAvatarAppearFrame, getDicebearUrl } from "../../shared/utils";
 
 export interface AvatarProps {
   index: number;

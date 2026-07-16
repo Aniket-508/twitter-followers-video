@@ -1,9 +1,9 @@
 import React from "react";
 import { Img } from "remotion";
 
-import type { XTheme } from "../../../types/schema";
-import { AVATAR, AVATAR_COLORS, THEMES } from "../constants";
-import { getDicebearUrl } from "../utils";
+import type { XTheme } from "../../../../types/schema";
+import { AVATAR, AVATAR_COLORS, THEMES } from "../../shared/constants";
+import { getDicebearUrl } from "../../shared/utils";
 
 export interface FillerAvatarProps {
   index: number;

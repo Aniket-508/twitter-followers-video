@@ -1,6 +1,6 @@
 import { random } from "remotion";
 
-import type { Follower } from "../../types/schema";
+import type { Follower } from "../../../types/schema";
 import { AVATAR, LAYOUT, TIMING } from "./constants";
 import type { Milestone } from "./types";
 

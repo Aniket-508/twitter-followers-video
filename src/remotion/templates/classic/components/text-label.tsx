@@ -3,14 +3,14 @@ import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 
 import { SCALE } from "@/constants/remotion";
 
-import type { Follower, XTheme } from "../../../types/schema";
-import { THEMES, TIMING } from "../constants";
-import type { Milestone } from "../types";
+import type { Follower, XTheme } from "../../../../types/schema";
+import { THEMES, TIMING } from "../../shared/constants";
+import type { Milestone } from "../../shared/types";
 import {
   getCelebrationFrame,
   getCurrentMilestone,
   getPreviousMilestone,
-} from "../utils";
+} from "../../shared/utils";
 import { VerifiedBadge } from "./verified-badge";
 
 export interface TextLabelProps {
