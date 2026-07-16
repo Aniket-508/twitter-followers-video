@@ -1,8 +1,15 @@
-import { random } from "remotion";
+import { interpolate, random } from "remotion";
 
 import type { Follower } from "../../../types/schema";
 import { AVATAR, LAYOUT, TIMING } from "./constants";
 import type { Milestone } from "./types";
+
+interface AnimatedFollowerCountParams {
+  finalCount: number;
+  fps: number;
+  frame: number;
+  milestones: Milestone[];
+}
 
 /**
  * Generates a safe URL for Dicebear avatar API.
@@ -164,6 +171,46 @@ export const getCurrentMilestone = (
   }
   return (
     [...milestones].toReversed().find((m) => frame >= m.frame) || milestones[0]
+  );
+};
+
+/** Animates the headline count through each milestone and into the true total. */
+export const getAnimatedFollowerCount = ({
+  finalCount,
+  fps,
+  frame,
+  milestones,
+}: AnimatedFollowerCountParams): number => {
+  if (milestones.length === 0) {
+    return sanitizeFollowerCount(finalCount);
+  }
+
+  const currentIndex = milestones.findLastIndex(
+    (milestone) => frame >= milestone.frame
+  );
+  if (currentIndex === -1) {
+    return 0;
+  }
+
+  const currentMilestone = milestones[currentIndex];
+  const previousMilestone = milestones[currentIndex - 1];
+  const isFinalMilestone = currentIndex === milestones.length - 1;
+  const startCount = previousMilestone?.totalAvatars ?? 0;
+  const targetCount = isFinalMilestone
+    ? sanitizeFollowerCount(finalCount)
+    : currentMilestone.totalAvatars;
+  const duration = Math.round((isFinalMilestone ? 1.25 : 0.55) * fps);
+
+  return Math.round(
+    interpolate(
+      frame,
+      [currentMilestone.frame, currentMilestone.frame + duration],
+      [startCount, targetCount],
+      {
+        extrapolateLeft: "clamp",
+        extrapolateRight: "clamp",
+      }
+    )
   );
 };
 

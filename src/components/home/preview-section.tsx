@@ -60,7 +60,7 @@ export const PreviewSection = memo(() => {
         </div>
       </div>
 
-      <RenderButton />
+      <RenderButton key={inputProps.template} />
     </div>
   );
 });

@@ -20,7 +20,9 @@ export const RenderButton = () => {
   const isRendering = state.status === "rendering";
   const isLoading = state.status === "invoking" || isRendering;
   const isDone = state.status === "done";
-  const downloadFileName = isDone ? "milestone-video.mp4" : undefined;
+  const downloadFileName = isDone
+    ? `${inputProps.template}-milestone-video.mp4`
+    : undefined;
 
   return (
     <div className="relative z-[1] space-y-2">

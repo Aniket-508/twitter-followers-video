@@ -13,7 +13,12 @@ import type { z } from "zod";
 import { RANDOM_NAMES } from "@/constants/site";
 import { parseFollowersCSV } from "@/lib/csv-utils";
 import { getDicebearUrl, shuffle } from "@/remotion/templates/shared/utils";
-import type { CompositionProps, Follower, XTheme } from "@/types/schema";
+import type {
+  CompositionProps,
+  Follower,
+  VideoTemplate,
+  XTheme,
+} from "@/types/schema";
 import { defaultMyCompProps } from "@/types/schema";
 
 export type DataSource = "manual" | "csv";
@@ -23,6 +28,8 @@ interface ConfigContextType {
   setFollowerCount: (count: number) => void;
   theme: XTheme;
   setTheme: (theme: XTheme) => void;
+  template: VideoTemplate;
+  setTemplate: (template: VideoTemplate) => void;
   dataSource: DataSource;
   setDataSource: (source: DataSource) => void;
   csvFollowers: Follower[];
@@ -40,6 +47,9 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     defaultMyCompProps.followerCount
   );
   const [theme, setTheme] = useState<XTheme>(defaultMyCompProps.theme);
+  const [template, setTemplate] = useState<VideoTemplate>(
+    defaultMyCompProps.template
+  );
   const [dataSource, setDataSource] = useState<DataSource>("csv");
   const [csvFollowers, setCsvFollowers] = useState<Follower[]>([]);
   const [csvError, setCsvError] = useState<string | null>(null);
@@ -84,9 +94,10 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     () => ({
       followerCount,
       followers: activeFollowers,
+      template,
       theme,
     }),
-    [followerCount, theme, activeFollowers]
+    [followerCount, theme, template, activeFollowers]
   );
 
   const handleFileUpload = useCallback(
@@ -127,12 +138,15 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       setDataSource,
       setFollowerCount,
       setIsRandomizeEnabled,
+      setTemplate,
       setTheme,
+      template,
       theme,
     }),
     [
       followerCount,
       theme,
+      template,
       dataSource,
       csvFollowers,
       csvError,
