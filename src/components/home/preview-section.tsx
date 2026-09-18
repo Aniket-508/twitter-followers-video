@@ -35,9 +35,8 @@ export const PreviewSection = memo(() => {
 
   return (
     <div className="flex flex-col h-full">
-      <div className="h-12 flex items-center justify-between gap-2 border-b px-4 py-2 shrink-0">
-        <h2 className="font-semibold">Video Preview</h2>
-        <RenderButton />
+      <div className="flex items-center gap-2 border-b px-4 py-2">
+        <h2 className="font-semibold">Preview</h2>
       </div>
 
       <div className="p-4 flex-1 flex items-center justify-center">
@@ -61,6 +60,10 @@ export const PreviewSection = memo(() => {
             />
           </div>
         </div>
+      </div>
+
+      <div className="border-t px-4 py-3 shrink-0">
+        <RenderButton />
       </div>
     </div>
   );

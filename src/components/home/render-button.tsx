@@ -1,17 +1,12 @@
 "use client";
 
-import {
-  DownloadIcon,
-  Loader2Icon,
-  AlertCircleIcon,
-  CircleCheckIcon,
-} from "lucide-react";
+import { DownloadIcon, FilePlayIcon, Loader2Icon } from "lucide-react";
 
-import { Alert, AlertDescription } from "@/components/ui/alert";
 import { Button } from "@/components/ui/button";
 import { COMP_NAME } from "@/constants/remotion";
 import { useConfig } from "@/contexts/config-context";
 import { useRendering } from "@/helpers/use-rendering";
+import { cn } from "@/lib/utils";
 
 export const RenderButton = () => {
   const { inputProps } = useConfig();
@@ -20,74 +15,62 @@ export const RenderButton = () => {
   const isRendering = state.status === "rendering";
   const isLoading = state.status === "invoking" || isRendering;
   const isDone = state.status === "done";
+  const isError = state.status === "error";
   const downloadFileName = isDone ? "milestone-video.mp4" : undefined;
 
+  const Icon = isLoading ? Loader2Icon : isDone ? DownloadIcon : FilePlayIcon;
+  const label = (() => {
+    if (isRendering) {
+      return `Rendering... ${Math.round(state.progress * 100)}%`;
+    }
+    if (isLoading) {
+      return "Preparing Render...";
+    }
+    if (isDone) {
+      return "Download Video";
+    }
+    return "Export as MP4";
+  })();
+
+  const helperText = (() => {
+    if (isError) {
+      return state.error.message;
+    }
+    if (isDone) {
+      return "Rendered on your device. Re-download anytime without re-rendering.";
+    }
+    if (isRendering) {
+      return "Encoding on your computer. Keep this tab open.";
+    }
+    if (isLoading) {
+      return "Preparing render...";
+    }
+    return "Renders on your device — keep this tab open until the download starts.";
+  })();
+
   return (
-    <div className="relative z-[1] space-y-2">
+    <div className="space-y-1">
       <Button
         onClick={isDone ? undefined : renderMedia}
         disabled={isLoading}
+        nativeButton={!isDone}
         render={
-          isDone ? (
-            <a
-              href={state.url}
-              download={downloadFileName}
-              aria-label="Download rendered video"
-            >
-              Download rendered video
-            </a>
-          ) : undefined
+          isDone ? <a href={state.url} download={downloadFileName} /> : undefined
         }
-        size="sm"
         className="w-full"
       >
-        {!isLoading && !isDone && (
-          <>
-            <DownloadIcon />
-            <span className="font-semibold">Export as MP4</span>
-          </>
-        )}
-        {isLoading && (
-          <>
-            <Loader2Icon className="animate-spin" />
-            <span className="font-semibold">
-              {isRendering
-                ? `${state.phase} ${Math.round(state.progress * 100)}%`
-                : "Preparing Render..."}
-            </span>
-          </>
-        )}
-        {isDone && (
-          <>
-            <DownloadIcon />
-            <span className="font-semibold">Download Video</span>
-          </>
-        )}
-
-        {/* Progress Bar Background */}
-        {isRendering && (
-          <div
-            className="absolute inset-0 bg-primary/20 transition-all duration-700 ease-out"
-            style={{ width: `${state.progress * 100}%` }}
-          />
-        )}
+        <Icon className={cn(isLoading && "animate-spin")} />
+        <span className="font-semibold">{label}</span>
       </Button>
 
-      {state.status === "error" && (
-        <Alert variant="destructive" className="animate-in slide-in-from-top-2">
-          <AlertCircleIcon />
-          <AlertDescription>{state.error.message}</AlertDescription>
-        </Alert>
-      )}
-
-      {isDone && (
-        <Alert variant="success" className="animate-in slide-in-from-top-2">
-          <CircleCheckIcon />
-          <AlertDescription>
-            Success! Your video is ready for download.
-          </AlertDescription>
-        </Alert>
-      )}
+      <p
+        className={cn(
+          "text-xs text-muted-foreground text-center",
+          isError && "text-destructive"
+        )}
+      >
+        {helperText}
+      </p>
     </div>
   );
 };
