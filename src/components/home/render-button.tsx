@@ -38,7 +38,7 @@ export const RenderButton = () => {
             </a>
           ) : undefined
         }
-        size="lg"
+        size="sm"
         className="w-full"
       >
         {!isLoading && !isDone && (

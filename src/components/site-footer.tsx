@@ -2,7 +2,7 @@ import { SITE } from "@/constants/site";
 
 export const SiteFooter = () => (
   <footer className="border-t mt-auto">
-    <div className="px-4 flex items-center justify-between py-4 text-xs text-muted-foreground">
+    <div className="flex items-center justify-between p-4 text-xs text-muted-foreground">
       <p>
         Built by{" "}
         <a

@@ -47,17 +47,15 @@ export default function RootLayout({
           `}
         </Script>
       </head>
-      <body className={`${playfairDisplay.variable} font-sans antialiased`}>
+      <body
+        className={`${playfairDisplay.variable} font-sans antialiased flex flex-col min-h-screen relative view-container`}
+      >
         <Providers>
-          <div className="relative view-container">
-            <div className="bg-stripes absolute bottom-0 left-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
-            <div className="border-x flex flex-col min-h-screen">
-              <SiteHeader />
-              {children}
-              <SiteFooter />
-            </div>
-            <div className="bg-stripes absolute bottom-0 right-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
-          </div>
+          <div className="bg-stripes absolute border-r bottom-0 left-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
+          <SiteHeader />
+          {children}
+          <SiteFooter />
+          <div className="bg-stripes absolute border-l bottom-0 right-0 top-0 flex h-full min-h-screen w-2 flex-col sm:w-4" />
         </Providers>
       </body>
     </html>

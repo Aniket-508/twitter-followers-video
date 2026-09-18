@@ -21,7 +21,7 @@ export const ThemeSelector = memo(() => {
   const { theme, setTheme } = useConfig();
 
   return (
-    <div className="space-y-2">
+    <div className="space-y-2 mt-4">
       <Label>Theme</Label>
       <div className="flex flex-wrap gap-2">
         {THEME_OPTIONS.map((option) => (

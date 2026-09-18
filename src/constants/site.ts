@@ -31,7 +31,7 @@ export const LINK = {
   GITHUB: "https://github.com/Aniket-508",
   LICENSE: `https://github.com/${SOURCE_CODE_GITHUB_REPO}/blob/main/LICENSE`,
   SPONSOR: "https://github.com/sponsors/Aniket-508",
-  TWITTER: `https://x.com/${SITE.AUTHOR.TWITTER}`,
+  TWITTER: `https://x.com/intent/follow?screen_name=${SITE.AUTHOR.TWITTER.slice(1)}`,
 } as const;
 
 export const UTM_PARAMS = {

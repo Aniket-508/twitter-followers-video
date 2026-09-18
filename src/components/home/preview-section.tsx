@@ -34,33 +34,34 @@ export const PreviewSection = memo(() => {
   const { inputProps } = useConfig();
 
   return (
-    <div className="space-y-2">
-      <h2 className="text-sm font-semibold text-foreground uppercase tracking-wider">
-        Video Preview
-      </h2>
-
-      <div className="group relative rounded-3xl overflow-hidden border border-muted-foreground/10 shadow-2xl transition-all hover:border-primary/20">
-        <div className="aspect-video w-full">
-          <Player
-            // @ts-expect-error - Player component prop has type mismatch with dynamically imported Followers
-            component={Followers}
-            inputProps={inputProps}
-            durationInFrames={DURATION_IN_FRAMES}
-            fps={VIDEO_FPS}
-            compositionHeight={VIDEO_HEIGHT}
-            compositionWidth={VIDEO_WIDTH}
-            style={{
-              height: "100%",
-              width: "100%",
-            }}
-            controls
-            autoPlay
-            loop
-          />
-        </div>
+    <div className="flex flex-col h-full">
+      <div className="h-12 flex items-center justify-between gap-2 border-b px-4 py-2 shrink-0">
+        <h2 className="font-semibold">Video Preview</h2>
+        <RenderButton />
       </div>
 
-      <RenderButton />
+      <div className="p-4 flex-1 flex items-center justify-center">
+        <div className="group relative rounded-3xl overflow-hidden border border-muted-foreground/10 shadow-2xl w-full">
+          <div className="aspect-video w-full">
+            <Player
+              // @ts-expect-error - Player component prop has type mismatch with dynamically imported Followers
+              component={Followers}
+              inputProps={inputProps}
+              durationInFrames={DURATION_IN_FRAMES}
+              fps={VIDEO_FPS}
+              compositionHeight={VIDEO_HEIGHT}
+              compositionWidth={VIDEO_WIDTH}
+              style={{
+                height: "100%",
+                width: "100%",
+              }}
+              controls
+              autoPlay
+              loop
+            />
+          </div>
+        </div>
+      </div>
     </div>
   );
 });
