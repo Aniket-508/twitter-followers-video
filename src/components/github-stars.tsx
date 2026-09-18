@@ -1,3 +1,4 @@
+import { Icons } from "@/components/icons";
 import { Button } from "@/components/ui/button";
 import {
   Tooltip,
@@ -6,8 +7,6 @@ import {
 } from "@/components/ui/tooltip";
 import { UTM_PARAMS } from "@/constants/site";
 import { addQueryParams } from "@/lib/url";
-
-import { Icons } from "./icons";
 
 interface GitHubStarsProps {
   repo: string;

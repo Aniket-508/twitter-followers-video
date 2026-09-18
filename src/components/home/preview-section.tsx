@@ -3,6 +3,7 @@
 import dynamic from "next/dynamic";
 import { memo } from "react";
 
+import { RenderButton } from "@/components/home/render-button";
 import {
   DURATION_IN_FRAMES,
   VIDEO_FPS,
@@ -11,8 +12,6 @@ import {
 } from "@/constants/remotion";
 import { useConfig } from "@/contexts/config-context";
 import { Followers } from "@/remotion/followers";
-
-import { RenderButton } from "./render-button";
 
 const loadPlayer = async () => {
   const mod = await import("@remotion/player");

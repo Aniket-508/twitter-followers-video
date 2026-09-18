@@ -3,22 +3,34 @@
 import { DownloadIcon, FilePlayIcon, Loader2Icon } from "lucide-react";
 
 import { Button } from "@/components/ui/button";
+import { EXPORT_FORMATS } from "@/constants/export";
 import { COMP_NAME } from "@/constants/remotion";
 import { useConfig } from "@/contexts/config-context";
 import { useRendering } from "@/helpers/use-rendering";
 import { cn } from "@/lib/utils";
 
 export const RenderButton = () => {
-  const { inputProps } = useConfig();
-  const { renderMedia, state } = useRendering(COMP_NAME, inputProps);
+  const { inputProps, exportFormat, exportQuality } = useConfig();
+  const { renderMedia, state } = useRendering(COMP_NAME, inputProps, {
+    format: exportFormat,
+    quality: exportQuality,
+  });
 
   const isRendering = state.status === "rendering";
   const isLoading = state.status === "invoking" || isRendering;
   const isDone = state.status === "done";
   const isError = state.status === "error";
-  const downloadFileName = isDone ? "milestone-video.mp4" : undefined;
+  const downloadFileName = state.status === "done" ? state.fileName : undefined;
 
-  const Icon = isLoading ? Loader2Icon : isDone ? DownloadIcon : FilePlayIcon;
+  const Icon = (() => {
+    if (isLoading) {
+      return Loader2Icon;
+    }
+    if (isDone) {
+      return DownloadIcon;
+    }
+    return FilePlayIcon;
+  })();
   const label = (() => {
     if (isRendering) {
       return `Rendering... ${Math.round(state.progress * 100)}%`;
@@ -29,7 +41,7 @@ export const RenderButton = () => {
     if (isDone) {
       return "Download Video";
     }
-    return "Export as MP4";
+    return `Export as ${EXPORT_FORMATS[exportFormat].label}`;
   })();
 
   const helperText = (() => {
@@ -55,7 +67,13 @@ export const RenderButton = () => {
         disabled={isLoading}
         nativeButton={!isDone}
         render={
-          isDone ? <a href={state.url} download={downloadFileName} /> : undefined
+          isDone ? (
+            <a
+              aria-label={label}
+              download={downloadFileName}
+              href={state.status === "done" ? state.url : undefined}
+            />
+          ) : undefined
         }
         className="w-full"
       >

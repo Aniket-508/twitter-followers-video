@@ -3,13 +3,12 @@
 import { Info } from "lucide-react";
 import { memo } from "react";
 
+import { FollowersListDialog } from "@/components/home/followers-list-dialog";
 import { Alert, AlertTitle, AlertDescription } from "@/components/ui/alert";
+import { Checkbox } from "@/components/ui/checkbox";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { useConfig } from "@/contexts/config-context";
-
-import { Checkbox } from "../ui/checkbox";
-import { FollowersListDialog } from "./followers-list-dialog";
 
 export const CSVConfig = memo(() => {
   const {

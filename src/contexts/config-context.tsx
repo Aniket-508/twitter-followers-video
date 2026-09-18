@@ -10,6 +10,11 @@ import {
 } from "react";
 import type { z } from "zod";
 
+import type { ExportFormat, ExportQuality } from "@/constants/export";
+import {
+  DEFAULT_EXPORT_FORMAT,
+  DEFAULT_EXPORT_QUALITY,
+} from "@/constants/export";
 import { RANDOM_NAMES } from "@/constants/site";
 import { parseFollowersCSV } from "@/lib/csv-utils";
 import { getDicebearUrl, shuffle } from "@/remotion/templates/shared/utils";
@@ -29,6 +34,10 @@ interface ConfigContextType {
   csvError: string | null;
   isRandomizeEnabled: boolean;
   setIsRandomizeEnabled: (enabled: boolean) => void;
+  exportFormat: ExportFormat;
+  setExportFormat: (format: ExportFormat) => void;
+  exportQuality: ExportQuality;
+  setExportQuality: (quality: ExportQuality) => void;
   handleFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
   inputProps: z.infer<typeof CompositionProps>;
 }
@@ -44,6 +53,12 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   const [csvFollowers, setCsvFollowers] = useState<Follower[]>([]);
   const [csvError, setCsvError] = useState<string | null>(null);
   const [isRandomizeEnabled, setIsRandomizeEnabled] = useState(false);
+  const [exportFormat, setExportFormat] = useState<ExportFormat>(
+    DEFAULT_EXPORT_FORMAT
+  );
+  const [exportQuality, setExportQuality] = useState<ExportQuality>(
+    DEFAULT_EXPORT_QUALITY
+  );
 
   const generateRandomFollowers = useCallback((count: number) => {
     const shuffledNames = shuffle(RANDOM_NAMES);
@@ -120,11 +135,15 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       csvError,
       csvFollowers,
       dataSource,
+      exportFormat,
+      exportQuality,
       followerCount,
       handleFileUpload,
       inputProps,
       isRandomizeEnabled,
       setDataSource,
+      setExportFormat,
+      setExportQuality,
       setFollowerCount,
       setIsRandomizeEnabled,
       setTheme,
@@ -137,6 +156,8 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
       csvFollowers,
       csvError,
       isRandomizeEnabled,
+      exportFormat,
+      exportQuality,
       handleFileUpload,
       inputProps,
     ]

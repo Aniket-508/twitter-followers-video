@@ -1,10 +1,10 @@
 import React, { useMemo } from "react";
 
-import type { Follower, XTheme } from "../../../../types/schema";
-import { AVATAR } from "../../shared/constants";
-import type { Milestone } from "../../shared/types";
-import { Avatar } from "./avatar";
-import { FillerAvatar } from "./filler-avatar";
+import { Avatar } from "@/remotion/templates/classic/components/avatar";
+import { FillerAvatar } from "@/remotion/templates/classic/components/filler-avatar";
+import { AVATAR } from "@/remotion/templates/shared/constants";
+import type { Milestone } from "@/remotion/templates/shared/types";
+import type { Follower, XTheme } from "@/types/schema";
 
 export interface AvatarStackProps {
   limit: number;

@@ -1,8 +1,8 @@
 import { random } from "remotion";
 
-import type { Follower } from "../../../types/schema";
-import { AVATAR, LAYOUT, TIMING } from "./constants";
-import type { Milestone } from "./types";
+import { AVATAR, LAYOUT, TIMING } from "@/remotion/templates/shared/constants";
+import type { Milestone } from "@/remotion/templates/shared/types";
+import type { Follower } from "@/types/schema";
 
 /**
  * Generates a safe URL for Dicebear avatar API.

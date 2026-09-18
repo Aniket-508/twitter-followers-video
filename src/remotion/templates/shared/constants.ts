@@ -1,7 +1,6 @@
 import { SCALE } from "@/constants/remotion";
-
-import type { XTheme } from "../../../types/schema";
-import type { ThemeColors } from "./types";
+import type { ThemeColors } from "@/remotion/templates/shared/types";
+import type { XTheme } from "@/types/schema";
 
 /** Avatar dimensions and layout (auto-scaled based on SCALE) */
 export const AVATAR = {

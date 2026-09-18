@@ -1,4 +1,4 @@
-import type { Follower, XTheme } from "../../../types/schema";
+import type { Follower, XTheme } from "@/types/schema";
 
 export interface Milestone {
   frame: number;

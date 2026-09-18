@@ -2,16 +2,15 @@ import React from "react";
 import { interpolate, useCurrentFrame, useVideoConfig } from "remotion";
 
 import { SCALE } from "@/constants/remotion";
-
-import type { Follower, XTheme } from "../../../../types/schema";
-import { THEMES, TIMING } from "../../shared/constants";
-import type { Milestone } from "../../shared/types";
+import { VerifiedBadge } from "@/remotion/templates/classic/components/verified-badge";
+import { THEMES, TIMING } from "@/remotion/templates/shared/constants";
+import type { Milestone } from "@/remotion/templates/shared/types";
 import {
   getCelebrationFrame,
   getCurrentMilestone,
   getPreviousMilestone,
-} from "../../shared/utils";
-import { VerifiedBadge } from "./verified-badge";
+} from "@/remotion/templates/shared/utils";
+import type { Follower, XTheme } from "@/types/schema";
 
 export interface TextLabelProps {
   name: string;

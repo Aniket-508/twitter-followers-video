@@ -2,16 +2,16 @@ import { useMemo } from "react";
 import { useVideoConfig } from "remotion";
 import type { z } from "zod";
 
-import type { CompositionProps } from "../types/schema";
-import { ClassicTemplate } from "./templates/classic/classic-template";
+import { ClassicTemplate } from "@/remotion/templates/classic/classic-template";
 import {
   generateMilestones,
   sanitizeFollowerCount,
-} from "./templates/shared/utils";
+} from "@/remotion/templates/shared/utils";
+import type { CompositionProps } from "@/types/schema";
 
 // Re-export types for external use
-export type { Follower, XTheme } from "../types/schema";
-export type { Milestone, ThemeColors } from "./templates/shared/types";
+export type { Follower, XTheme } from "@/types/schema";
+export type { Milestone, ThemeColors } from "@/remotion/templates/shared/types";
 
 export type FollowersProps = z.infer<typeof CompositionProps>;
 

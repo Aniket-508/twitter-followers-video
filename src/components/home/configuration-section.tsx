@@ -2,13 +2,13 @@
 
 import { memo } from "react";
 
+import { CSVConfig } from "@/components/home/csv-config";
+import { ExportSettings } from "@/components/home/export-settings";
+import { ManualConfig } from "@/components/home/manual-config";
+import { ThemeSelector } from "@/components/home/theme-selector";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import type { DataSource } from "@/contexts/config-context";
 import { useConfig } from "@/contexts/config-context";
-
-import { CSVConfig } from "./csv-config";
-import { ManualConfig } from "./manual-config";
-import { ThemeSelector } from "./theme-selector";
 
 export const ConfigurationSection = memo(() => {
   const { dataSource, setDataSource } = useConfig();
@@ -43,6 +43,8 @@ export const ConfigurationSection = memo(() => {
         </Tabs>
 
         <ThemeSelector />
+
+        <ExportSettings />
       </div>
     </div>
   );

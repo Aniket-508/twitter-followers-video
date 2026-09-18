@@ -4,11 +4,10 @@ import { Playfair_Display, Public_Sans } from "next/font/google";
 import "../../styles/global.css";
 import Script from "next/script";
 
+import { Providers } from "@/app/providers";
 import { SiteFooter } from "@/components/site-footer";
 import { SiteHeader } from "@/components/site-header";
 import { JsonLdScripts } from "@/seo/json-ld";
-
-import { Providers } from "./providers";
 
 export { baseMetadata as metadata } from "@/seo/metadata";
 

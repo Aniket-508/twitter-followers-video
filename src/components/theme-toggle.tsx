@@ -4,6 +4,8 @@ import { useTheme } from "next-themes";
 import { useCallback } from "react";
 import { useHotkeys } from "react-hotkeys-hook";
 
+import { MoonIcon } from "@/components/animated-icons/moon";
+import { SunIcon } from "@/components/animated-icons/sun";
 import { Button } from "@/components/ui/button";
 import { Kbd } from "@/components/ui/kbd";
 import {
@@ -12,9 +14,6 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import { useSound } from "@/hooks/use-sound";
-
-import { MoonIcon } from "./animated-icons/moon";
-import { SunIcon } from "./animated-icons/sun";
 
 export const ThemeToggle = () => {
   const { resolvedTheme, setTheme } = useTheme();

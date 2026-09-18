@@ -8,17 +8,22 @@ import {
   useVideoConfig,
 } from "remotion";
 
-import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../shared/constants";
-import { VIDEO_FONT_FAMILY } from "../shared/font";
-import type { FollowerTemplateProps } from "../shared/types";
+import { AvatarStack } from "@/remotion/templates/classic/components/avatar-stack";
+import { Celebration } from "@/remotion/templates/classic/components/celebration";
+import { TextLabel } from "@/remotion/templates/classic/components/text-label";
+import {
+  LAYOUT,
+  SPRING_CONFIGS,
+  THEMES,
+  TIMING,
+} from "@/remotion/templates/shared/constants";
+import { VIDEO_FONT_FAMILY } from "@/remotion/templates/shared/font";
+import type { FollowerTemplateProps } from "@/remotion/templates/shared/types";
 import {
   calculateMaxAvatars,
   getCelebrationFrame,
   getCurrentMilestone,
-} from "../shared/utils";
-import { AvatarStack } from "./components/avatar-stack";
-import { Celebration } from "./components/celebration";
-import { TextLabel } from "./components/text-label";
+} from "@/remotion/templates/shared/utils";
 
 export const ClassicTemplate = ({
   followerCount,

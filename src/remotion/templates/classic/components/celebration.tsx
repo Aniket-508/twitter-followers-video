@@ -2,11 +2,15 @@ import React from "react";
 import { interpolate, spring, useCurrentFrame, useVideoConfig } from "remotion";
 
 import { SCALE } from "@/constants/remotion";
-
-import type { XTheme } from "../../../../types/schema";
-import { LAYOUT, SPRING_CONFIGS, THEMES, TIMING } from "../../shared/constants";
-import type { Milestone } from "../../shared/types";
-import { getCelebrationFrame } from "../../shared/utils";
+import {
+  LAYOUT,
+  SPRING_CONFIGS,
+  THEMES,
+  TIMING,
+} from "@/remotion/templates/shared/constants";
+import type { Milestone } from "@/remotion/templates/shared/types";
+import { getCelebrationFrame } from "@/remotion/templates/shared/utils";
+import type { XTheme } from "@/types/schema";
 
 export interface CelebrationProps {
   theme: XTheme;

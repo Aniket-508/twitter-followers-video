@@ -1,6 +1,12 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type { z } from "zod";
 
+import type { ExportFormat, ExportQuality } from "@/constants/export";
+import {
+  EXPORT_FORMATS,
+  EXPORT_QUALITIES,
+  getExportDimensions,
+} from "@/constants/export";
 import {
   DURATION_IN_FRAMES,
   VIDEO_FPS,
@@ -35,8 +41,14 @@ export type State =
   | {
       url: string;
       size: number;
+      fileName: string;
       status: "done";
     };
+
+export interface RenderOptions {
+  format: ExportFormat;
+  quality: ExportQuality;
+}
 
 const MAX_RENDERED_AVATARS = calculateMaxAvatars(
   VIDEO_WIDTH + LAYOUT.SCROLL_DISTANCE
@@ -166,7 +178,8 @@ const prepareInputProps = async (
 
 export const useRendering = (
   id: string,
-  inputProps: z.infer<typeof CompositionProps>
+  inputProps: z.infer<typeof CompositionProps>,
+  { format, quality }: RenderOptions
 ) => {
   const [state, setState] = useState<State>({
     status: "init",
@@ -189,6 +202,19 @@ export const useRendering = (
     [revokeOutputUrl]
   );
 
+  const undo = useCallback(() => {
+    abortControllerRef.current?.abort();
+    revokeOutputUrl();
+    setState({ status: "init" });
+  }, [revokeOutputUrl]);
+
+  // A finished render belongs to the format/quality it was made with.
+  useEffect(() => {
+    if (outputUrlRef.current) {
+      undo();
+    }
+  }, [format, quality, undo]);
+
   const renderMedia = useCallback(async () => {
     abortControllerRef.current?.abort();
     revokeOutputUrl();
@@ -199,23 +225,29 @@ export const useRendering = (
 
     setState({ status: "invoking" });
 
+    const { container, extension, label, videoCodec } = EXPORT_FORMATS[format];
+    const { scale } = EXPORT_QUALITIES[quality];
+    const dimensions = getExportDimensions(quality);
+
     try {
       const { canRenderMediaOnWeb, renderMediaOnWeb } =
         await import("@remotion/web-renderer");
       const compatibility = await canRenderMediaOnWeb({
-        container: "mp4",
-        height: VIDEO_HEIGHT,
+        container,
+        height: dimensions.height,
         muted: true,
         videoBitrate: VIDEO_QUALITY,
-        videoCodec: "h264",
-        width: VIDEO_WIDTH,
+        videoCodec,
+        width: dimensions.width,
       });
 
       if (!compatibility.canRender) {
         const details = compatibility.issues
           .map(({ message }) => message)
           .join(" ");
-        throw new Error(`This browser cannot export an MP4. ${details}`.trim());
+        throw new Error(
+          `This browser cannot export a ${label} at ${dimensions.width}x${dimensions.height}. ${details}`.trim()
+        );
       }
 
       setState({
@@ -238,7 +270,7 @@ export const useRendering = (
           id,
           width: VIDEO_WIDTH,
         },
-        container: "mp4",
+        container,
         inputProps: prepared.inputProps,
         muted: true,
         onProgress: ({ progress }) => {
@@ -249,10 +281,11 @@ export const useRendering = (
           });
         },
         pageResponsiveness: "high",
+        scale,
         schema: CompositionProps,
         signal: controller.signal,
         videoBitrate: VIDEO_QUALITY,
-        videoCodec: "h264",
+        videoCodec,
         ...(licenseKey
           ? {
               isProduction: process.env.NODE_ENV === "production",
@@ -270,7 +303,12 @@ export const useRendering = (
       const blob = await result.getBlob();
       const url = URL.createObjectURL(blob);
       outputUrlRef.current = url;
-      setState({ size: blob.size, status: "done", url });
+      setState({
+        fileName: `milestone-video.${extension}`,
+        size: blob.size,
+        status: "done",
+        url,
+      });
     } catch (error) {
       if (!isAbortError(error)) {
         setState({ error: error as Error, status: "error" });
@@ -283,13 +321,7 @@ export const useRendering = (
         abortControllerRef.current = null;
       }
     }
-  }, [id, inputProps, revokeOutputUrl]);
-
-  const undo = useCallback(() => {
-    abortControllerRef.current?.abort();
-    revokeOutputUrl();
-    setState({ status: "init" });
-  }, [revokeOutputUrl]);
+  }, [format, id, inputProps, quality, revokeOutputUrl]);
 
   return useMemo(
     () => ({
