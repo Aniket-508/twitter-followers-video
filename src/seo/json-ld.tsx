@@ -46,7 +46,7 @@ const FAQJsonLd = () => {
       question: `What is ${SITE.NAME}?`,
     },
     {
-      answer: `Simply enter your follower count or upload a CSV with your followers' names and images, and we'll generate an animated video for you to download and share.`,
+      answer: `Simply enter your X username and we'll fetch your followers, then generate an animated video for you to download and share.`,
       question: `How do I use ${SITE.NAME}?`,
     },
     {

@@ -15,10 +15,11 @@ import type { Follower } from "@/types/schema";
 
 interface FollowersListDialogProps {
   followers: Follower[];
+  source: string;
 }
 
 export const FollowersListDialog = memo(
-  ({ followers }: FollowersListDialogProps) => (
+  ({ followers, source }: FollowersListDialogProps) => (
     <Dialog>
       <DialogTrigger
         render={
@@ -32,7 +33,7 @@ export const FollowersListDialog = memo(
         <DialogHeader>
           <DialogTitle>Followers List</DialogTitle>
           <DialogDescription>
-            Showing all {followers.length} followers from the uploaded CSV
+            Showing {followers.length} followers from {source}
           </DialogDescription>
         </DialogHeader>
         <div className="flex-1 overflow-y-auto pr-2">

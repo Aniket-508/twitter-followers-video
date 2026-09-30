@@ -1,12 +1,13 @@
 "use client";
 
-import type { ChangeEvent, ReactNode } from "react";
+import type { ReactNode } from "react";
 import {
   createContext,
   useContext,
   useMemo,
   useState,
   useCallback,
+  useRef,
 } from "react";
 import type { z } from "zod";
 
@@ -16,29 +17,37 @@ import {
   DEFAULT_EXPORT_QUALITY,
 } from "@/constants/export";
 import { RANDOM_NAMES } from "@/constants/site";
-import { parseFollowersCSV } from "@/lib/csv-utils";
+import {
+  FETCH_MAX_FOLLOWERS,
+  isValidHandle,
+  normalizeHandle,
+  requestFollowersPage,
+} from "@/lib/followers-api";
 import { getDicebearUrl, shuffle } from "@/remotion/templates/shared/utils";
 import type { CompositionProps, Follower, XTheme } from "@/types/schema";
 import { defaultMyCompProps } from "@/types/schema";
 
-export type DataSource = "manual" | "csv";
+type FetchStatus = "idle" | "loading" | "success" | "error";
 
 interface ConfigContextType {
   followerCount: number;
-  setFollowerCount: (count: number) => void;
   theme: XTheme;
   setTheme: (theme: XTheme) => void;
-  dataSource: DataSource;
-  setDataSource: (source: DataSource) => void;
-  csvFollowers: Follower[];
-  csvError: string | null;
   isRandomizeEnabled: boolean;
   setIsRandomizeEnabled: (enabled: boolean) => void;
   exportFormat: ExportFormat;
   setExportFormat: (format: ExportFormat) => void;
   exportQuality: ExportQuality;
   setExportQuality: (quality: ExportQuality) => void;
-  handleFileUpload: (e: ChangeEvent<HTMLInputElement>) => void;
+  fetchHandle: string;
+  setFetchHandle: (handle: string) => void;
+  fetchStatus: FetchStatus;
+  fetchError: string | null;
+  fetchedFollowers: Follower[];
+  fetchHasMore: boolean;
+  isLoadingMore: boolean;
+  handleFetchFollowers: () => void;
+  handleLoadMoreFollowers: () => void;
   inputProps: z.infer<typeof CompositionProps>;
 }
 
@@ -49,9 +58,13 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     defaultMyCompProps.followerCount
   );
   const [theme, setTheme] = useState<XTheme>(defaultMyCompProps.theme);
-  const [dataSource, setDataSource] = useState<DataSource>("csv");
-  const [csvFollowers, setCsvFollowers] = useState<Follower[]>([]);
-  const [csvError, setCsvError] = useState<string | null>(null);
+  const [fetchHandle, setFetchHandle] = useState("");
+  const [fetchStatus, setFetchStatus] = useState<FetchStatus>("idle");
+  const [fetchError, setFetchError] = useState<string | null>(null);
+  const [fetchedFollowers, setFetchedFollowers] = useState<Follower[]>([]);
+  const [fetchCursor, setFetchCursor] = useState<string | null>(null);
+  const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const fetchRequestIdRef = useRef(0);
   const [isRandomizeEnabled, setIsRandomizeEnabled] = useState(false);
   const [exportFormat, setExportFormat] = useState<ExportFormat>(
     DEFAULT_EXPORT_FORMAT
@@ -70,26 +83,22 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
   }, []);
 
   const activeFollowers = useMemo(() => {
-    if (
-      (dataSource === "csv" && !csvFollowers.length) ||
-      dataSource === "manual"
-    ) {
+    // Preview placeholder until an account is fetched
+    if (fetchedFollowers.length === 0) {
       return generateRandomFollowers(followerCount);
     }
 
-    // CSV mode with uploaded data
     if (isRandomizeEnabled) {
       const shuffledNames = shuffle(RANDOM_NAMES);
-      return csvFollowers.map((f, i) => ({
+      return fetchedFollowers.map((f, i) => ({
         ...f,
         name: shuffledNames[i % shuffledNames.length],
       }));
     }
 
-    return csvFollowers;
+    return fetchedFollowers;
   }, [
-    dataSource,
-    csvFollowers,
+    fetchedFollowers,
     isRandomizeEnabled,
     followerCount,
     generateRandomFollowers,
@@ -104,46 +113,117 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     [followerCount, theme, activeFollowers]
   );
 
-  const handleFileUpload = useCallback(
-    async (e: ChangeEvent<HTMLInputElement>) => {
-      const file = e.target.files?.[0];
-      if (!file) {
+  const handleFetchFollowers = useCallback(async () => {
+    const handle = normalizeHandle(fetchHandle);
+    if (fetchStatus === "loading") {
+      return;
+    }
+    if (!isValidHandle(handle)) {
+      setFetchStatus("error");
+      setFetchError(
+        "Enter a valid X username (letters, numbers or underscores)."
+      );
+      return;
+    }
+
+    const requestId = fetchRequestIdRef.current + 1;
+    fetchRequestIdRef.current = requestId;
+    const isStale = () => fetchRequestIdRef.current !== requestId;
+
+    setFetchStatus("loading");
+    setIsLoadingMore(false);
+    setFetchError(null);
+    setFetchedFollowers([]);
+    setFetchCursor(null);
+
+    try {
+      const page = await requestFollowersPage(handle);
+      if (isStale()) {
+        return;
+      }
+      if (page.followers.length === 0) {
+        throw new Error(
+          "This account has no followers available. It may be private."
+        );
+      }
+
+      const followers = page.followers.slice(0, FETCH_MAX_FOLLOWERS);
+      setFetchedFollowers(followers);
+      setFollowerCount(page.profile?.followerCount ?? followers.length);
+      setFetchCursor(page.cursor);
+      setFetchStatus("success");
+    } catch (error) {
+      if (isStale()) {
+        return;
+      }
+      setFetchedFollowers([]);
+      setFetchCursor(null);
+      setFetchError(
+        error instanceof Error
+          ? error.message
+          : "Could not fetch followers for this account."
+      );
+      setFetchStatus("error");
+    }
+  }, [fetchHandle, fetchStatus]);
+
+  const handleLoadMoreFollowers = useCallback(async () => {
+    if (!fetchCursor || isLoadingMore) {
+      return;
+    }
+
+    const handle = normalizeHandle(fetchHandle);
+    const requestId = fetchRequestIdRef.current;
+    const isStale = () => fetchRequestIdRef.current !== requestId;
+
+    setIsLoadingMore(true);
+    setFetchError(null);
+
+    try {
+      const page = await requestFollowersPage(handle, fetchCursor);
+      if (isStale()) {
         return;
       }
 
-      const text = await file.text();
-      if (!text) {
+      const merged = [...fetchedFollowers, ...page.followers];
+      const capped = merged.slice(0, FETCH_MAX_FOLLOWERS);
+      setFetchedFollowers(capped);
+      setFetchCursor(capped.length >= FETCH_MAX_FOLLOWERS ? null : page.cursor);
+      setFetchStatus("success");
+    } catch (error) {
+      if (isStale()) {
         return;
       }
-
-      const { followers, error } = parseFollowersCSV(text);
-
-      if (error) {
-        setCsvError(error);
-        return;
+      setFetchError(
+        error instanceof Error
+          ? error.message
+          : "Could not load more followers."
+      );
+    } finally {
+      if (!isStale()) {
+        setIsLoadingMore(false);
       }
-
-      setCsvError(null);
-      setCsvFollowers(followers);
-      setFollowerCount(followers.length);
-    },
-    []
-  );
+    }
+  }, [fetchCursor, fetchHandle, fetchedFollowers, isLoadingMore]);
 
   const value = useMemo(
     () => ({
-      csvError,
-      csvFollowers,
-      dataSource,
       exportFormat,
       exportQuality,
+      fetchError,
+      fetchHandle,
+      fetchHasMore: fetchCursor !== null,
+      fetchStatus,
+      fetchedFollowers,
       followerCount,
-      handleFileUpload,
+      handleFetchFollowers,
+      handleLoadMoreFollowers,
       inputProps,
+      isLoadingMore,
       isRandomizeEnabled,
-      setDataSource,
       setExportFormat,
       setExportQuality,
+      setFetchHandle,
       setFollowerCount,
       setIsRandomizeEnabled,
       setTheme,
@@ -152,13 +232,17 @@ export const ConfigProvider = ({ children }: { children: ReactNode }) => {
     [
       followerCount,
       theme,
-      dataSource,
-      csvFollowers,
-      csvError,
+      fetchError,
+      fetchHandle,
+      fetchCursor,
+      fetchStatus,
+      fetchedFollowers,
+      isLoadingMore,
       isRandomizeEnabled,
       exportFormat,
       exportQuality,
-      handleFileUpload,
+      handleFetchFollowers,
+      handleLoadMoreFollowers,
       inputProps,
     ]
   );
