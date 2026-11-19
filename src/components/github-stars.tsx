@@ -31,7 +31,7 @@ export const GitHubStars = ({ repo, stargazersCount }: GitHubStarsProps) => (
               aria-label={`View ${repo} on GitHub`}
             >
               <GitHubIcon />
-              <span className="text-[13px] text-muted-foreground tabular-nums">
+              <span className="text-muted-foreground text-[13px] tabular-nums">
                 {new Intl.NumberFormat("en-US", {
                   compactDisplay: "short",
                   notation: "compact",

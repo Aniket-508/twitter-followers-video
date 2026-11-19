@@ -54,6 +54,7 @@ const MAX_RENDERED_AVATARS = calculateMaxAvatars(
   VIDEO_WIDTH + LAYOUT.SCROLL_DISTANCE
 );
 const VIDEO_QUALITY = "very-high" as const;
+const AUDIO_QUALITY = "high" as const;
 
 const isAbortError = (error: unknown) =>
   error instanceof DOMException && error.name === "AbortError";
@@ -186,6 +187,7 @@ export const useRendering = (
   });
   const abortControllerRef = useRef<AbortController | null>(null);
   const outputUrlRef = useRef<string | null>(null);
+  const renderSettingsRef = useRef({ format, quality });
 
   const revokeOutputUrl = useCallback(() => {
     if (outputUrlRef.current) {
@@ -210,7 +212,12 @@ export const useRendering = (
 
   // A finished render belongs to the format/quality it was made with.
   useEffect(() => {
-    if (outputUrlRef.current) {
+    const previous = renderSettingsRef.current;
+    const settingsChanged =
+      previous.format !== format || previous.quality !== quality;
+    renderSettingsRef.current = { format, quality };
+
+    if (settingsChanged && outputUrlRef.current) {
       undo();
     }
   }, [format, quality, undo]);
@@ -233,9 +240,10 @@ export const useRendering = (
       const { canRenderMediaOnWeb, renderMediaOnWeb } =
         await import("@remotion/web-renderer");
       const compatibility = await canRenderMediaOnWeb({
+        audioBitrate: AUDIO_QUALITY,
         container,
         height: dimensions.height,
-        muted: true,
+        muted: false,
         videoBitrate: VIDEO_QUALITY,
         videoCodec,
         width: dimensions.width,
@@ -272,7 +280,7 @@ export const useRendering = (
         },
         container,
         inputProps: prepared.inputProps,
-        muted: true,
+        muted: false,
         onProgress: ({ progress }) => {
           setState({
             phase: "Rendering in your browser...",
@@ -284,6 +292,7 @@ export const useRendering = (
         scale,
         schema: CompositionProps,
         signal: controller.signal,
+        audioBitrate: AUDIO_QUALITY,
         videoBitrate: VIDEO_QUALITY,
         videoCodec,
         ...(licenseKey

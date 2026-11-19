@@ -29,7 +29,7 @@ export const FollowersListDialog = memo(
           </Button>
         }
       />
-      <DialogContent className="max-w-2xl max-h-[80vh] flex flex-col">
+      <DialogContent className="flex max-h-[80vh] max-w-2xl flex-col">
         <DialogHeader>
           <DialogTitle>Followers List</DialogTitle>
           <DialogDescription>
@@ -38,8 +38,8 @@ export const FollowersListDialog = memo(
         </DialogHeader>
         <div className="flex-1 overflow-y-auto pr-2">
           <table className="w-full text-sm">
-            <thead className="sticky top-0 bg-background border-b z-10">
-              <tr className="text-left text-muted-foreground">
+            <thead className="bg-background sticky top-0 z-10 border-b">
+              <tr className="text-muted-foreground text-left">
                 <th className="pb-2 font-medium">Avatar</th>
                 <th className="pb-2 font-medium">Name</th>
                 <th className="pb-2 font-medium">Image URL</th>
@@ -52,7 +52,7 @@ export const FollowersListDialog = memo(
                   className="group hover:bg-muted/50 transition-colors"
                 >
                   <td className="py-2 pr-4">
-                    <div className="h-8 w-8 rounded-full overflow-hidden border bg-muted flex items-center justify-center">
+                    <div className="bg-muted flex h-8 w-8 items-center justify-center overflow-hidden rounded-full border">
                       {f.image ? (
                         <Image
                           src={f.image}
@@ -63,7 +63,7 @@ export const FollowersListDialog = memo(
                           className="h-full w-full object-cover"
                         />
                       ) : (
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-muted-foreground text-[10px]">
                           {f.name.slice(0, 2)}
                         </span>
                       )}
@@ -72,7 +72,7 @@ export const FollowersListDialog = memo(
                   <td className="py-2 pr-4 font-medium">{f.name}</td>
                   <td className="py-2">
                     <span
-                      className="text-xs text-muted-foreground truncate max-w-[200px] block"
+                      className="text-muted-foreground block max-w-[200px] truncate text-xs"
                       title={f.image}
                     >
                       {f.image || "N/A"}

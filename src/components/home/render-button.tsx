@@ -83,7 +83,7 @@ export const RenderButton = () => {
 
       <p
         className={cn(
-          "text-xs text-muted-foreground text-center",
+          "text-muted-foreground text-center text-xs",
           isError && "text-destructive"
         )}
       >

@@ -1,5 +1,6 @@
+import { Audio } from "@remotion/media";
 import { useMemo } from "react";
-import { useVideoConfig } from "remotion";
+import { staticFile, useVideoConfig } from "remotion";
 import type { z } from "zod";
 
 import { ClassicTemplate } from "@/remotion/templates/classic/classic-template";
@@ -31,11 +32,16 @@ export const Followers = ({
     [safeFollowerCount, width, fps, followers]
   );
   return (
-    <ClassicTemplate
-      followerCount={safeFollowerCount}
-      followers={followers}
-      milestones={milestones}
-      theme={theme}
-    />
+    <>
+      {/* Crowd cheer SFX bed: hits at 0.4s/1.4s/2.4s and the big swell at
+          ~3.2s line up with the milestone reveals and the celebration. */}
+      <Audio src={staticFile("audio/cheer.wav")} volume={1} />
+      <ClassicTemplate
+        followerCount={safeFollowerCount}
+        followers={followers}
+        milestones={milestones}
+        theme={theme}
+      />
+    </>
   );
 };

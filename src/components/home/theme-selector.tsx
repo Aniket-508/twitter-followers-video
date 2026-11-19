@@ -3,7 +3,6 @@
 import { memo } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import { useConfig } from "@/contexts/config-context";
 import type { XTheme } from "@/types/schema";
 
@@ -21,8 +20,8 @@ export const ThemeSelector = memo(() => {
   const { theme, setTheme } = useConfig();
 
   return (
-    <div className="space-y-2 mt-4">
-      <Label>Theme</Label>
+    <fieldset className="mt-4 min-w-0 space-y-2">
+      <legend className="text-sm leading-none font-medium">Theme</legend>
       <div className="flex flex-wrap gap-2">
         {THEME_OPTIONS.map((option) => (
           <Button
@@ -34,7 +33,7 @@ export const ThemeSelector = memo(() => {
           </Button>
         ))}
       </div>
-    </div>
+    </fieldset>
   );
 });
 

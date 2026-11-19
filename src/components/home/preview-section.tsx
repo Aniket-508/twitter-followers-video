@@ -20,7 +20,7 @@ const loadPlayer = async () => {
 
 const Player = dynamic(loadPlayer, {
   loading: () => (
-    <div className="aspect-video w-full flex items-center justify-center bg-muted/20 animate-pulse rounded-2xl">
+    <div className="bg-muted/20 flex aspect-video w-full animate-pulse items-center justify-center rounded-2xl">
       <div className="text-muted-foreground text-sm font-medium">
         Loading player...
       </div>
@@ -33,13 +33,13 @@ export const PreviewSection = memo(() => {
   const { inputProps } = useConfig();
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex h-full flex-col">
       <div className="flex items-center gap-2 border-b px-4 py-2">
         <h2 className="font-semibold">Preview</h2>
       </div>
 
-      <div className="p-4 flex-1 flex items-center justify-center">
-        <div className="group relative rounded-3xl overflow-hidden border border-muted-foreground/10 shadow-2xl w-full">
+      <div className="flex flex-1 items-center justify-center p-4">
+        <div className="group border-muted-foreground/10 relative w-full overflow-hidden rounded-3xl border shadow-2xl">
           <div className="aspect-video w-full">
             <Player
               // @ts-expect-error - Player component prop has type mismatch with dynamically imported Followers
@@ -61,7 +61,7 @@ export const PreviewSection = memo(() => {
         </div>
       </div>
 
-      <div className="border-t px-4 py-3 shrink-0">
+      <div className="shrink-0 border-t px-4 py-3">
         <RenderButton />
       </div>
     </div>

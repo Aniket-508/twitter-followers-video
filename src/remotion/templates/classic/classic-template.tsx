@@ -98,7 +98,7 @@ export const ClassicTemplate = ({
 
   return (
     <AbsoluteFill style={{ backgroundColor: colors.background }}>
-      <AbsoluteFill className="justify-center items-center">
+      <AbsoluteFill className="items-center justify-center">
         <div
           style={{
             alignItems: "center",

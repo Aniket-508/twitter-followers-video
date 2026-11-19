@@ -132,5 +132,5 @@
 }
 
 .bg-stripes {
-  @apply [background-size:5px_5px] bg-[linear-gradient(135deg,var(--border)14.29%,var(--background)14.29%,var(--background)50%,var(--border)50%,var(--border)64.29%,var(--background)64.29%,var(--background)100%)];
+  @apply bg-[linear-gradient(135deg,var(--border)14.29%,var(--background)14.29%,var(--background)50%,var(--border)50%,var(--border)64.29%,var(--background)64.29%,var(--background)100%)] [background-size:5px_5px];
 }

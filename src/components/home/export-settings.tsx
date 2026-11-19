@@ -3,7 +3,6 @@
 import { memo } from "react";
 
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
 import type { ExportFormat, ExportQuality } from "@/constants/export";
 import {
   EXPORT_FORMATS,
@@ -21,9 +20,9 @@ export const ExportSettings = memo(() => {
   const dimensions = getExportDimensions(exportQuality);
 
   return (
-    <div className="space-y-4 mt-4">
-      <div className="space-y-2">
-        <Label>Format</Label>
+    <div className="mt-4 space-y-4">
+      <fieldset className="min-w-0 space-y-2">
+        <legend className="text-sm leading-none font-medium">Format</legend>
         <div className="flex flex-wrap gap-2">
           {FORMAT_OPTIONS.map((format) => (
             <Button
@@ -35,13 +34,13 @@ export const ExportSettings = memo(() => {
             </Button>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {EXPORT_FORMATS[exportFormat].description}
         </p>
-      </div>
+      </fieldset>
 
-      <div className="space-y-2">
-        <Label>Quality</Label>
+      <fieldset className="min-w-0 space-y-2">
+        <legend className="text-sm leading-none font-medium">Quality</legend>
         <div className="flex flex-wrap gap-2">
           {QUALITY_OPTIONS.map((quality) => (
             <Button
@@ -53,11 +52,11 @@ export const ExportSettings = memo(() => {
             </Button>
           ))}
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           {dimensions.width}x{dimensions.height} — higher quality takes longer
           to render in your browser
         </p>
-      </div>
+      </fieldset>
     </div>
   );
 });

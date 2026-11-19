@@ -14,8 +14,8 @@ import {
 import { LINK } from "@/constants/site";
 
 export const SiteHeader = () => (
-  <header className="sticky top-0 z-50 w-full border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-    <div className="px-4 flex h-12 items-center justify-between">
+  <header className="bg-background/95 supports-[backdrop-filter]:bg-background/60 sticky top-0 z-50 w-full border-b backdrop-blur">
+    <div className="flex h-12 items-center justify-between px-4">
       <Link href="/">
         <LogoMark className="h-4" />
       </Link>
@@ -44,12 +44,12 @@ export const SiteHeader = () => (
         </Tooltip>
         <Separator
           orientation="vertical"
-          className="h-4 data-[orientation=vertical]:self-center mx-2"
+          className="mx-2 h-4 data-[orientation=vertical]:self-center"
         />
         <NavItemGitHub />
         <Separator
           orientation="vertical"
-          className="h-4 data-[orientation=vertical]:self-center mx-2"
+          className="mx-2 h-4 data-[orientation=vertical]:self-center"
         />
         <ThemeToggle />
       </nav>

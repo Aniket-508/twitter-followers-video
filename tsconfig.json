@@ -1,7 +1,6 @@
 {
   "compilerOptions": {
     "target": "es2018",
-    "ignoreDeprecations": "5.0",
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
@@ -21,9 +20,8 @@
       }
     ],
     "incremental": true,
-    "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"]
+      "@/*": ["./src/*"]
     }
   },
   "include": [

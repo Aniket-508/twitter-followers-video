@@ -61,13 +61,13 @@ export const FetchConfig = memo(() => {
             {isLoading ? "Fetching..." : "Fetch"}
           </Button>
         </div>
-        <p className="text-xs text-muted-foreground">
+        <p className="text-muted-foreground text-xs">
           Pulls the account&apos;s real followers, no export needed
         </p>
       </form>
 
       {isLoading ? (
-        <p className="text-xs text-muted-foreground">Fetching followers...</p>
+        <p className="text-muted-foreground text-xs">Fetching followers...</p>
       ) : null}
 
       {showError ? (
@@ -78,7 +78,7 @@ export const FetchConfig = memo(() => {
         </Alert>
       ) : null}
 
-      <Label className="flex items-start gap-2 rounded-md border p-3 hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50">
+      <Label className="hover:bg-accent/50 has-data-checked:border-primary/48 has-data-checked:bg-accent/50 flex items-start gap-2 rounded-md border p-3">
         <Checkbox
           checked={isRandomizeEnabled}
           onCheckedChange={setIsRandomizeEnabled}
@@ -92,7 +92,7 @@ export const FetchConfig = memo(() => {
       </Label>
 
       {loadedCount > 0 ? (
-        <div className="rounded-md bg-muted p-4">
+        <div className="bg-muted rounded-md p-4">
           <div className="flex items-center justify-between gap-2">
             <p className="text-sm font-medium">
               Loaded {loadedCount.toLocaleString()} of{" "}
@@ -104,14 +104,14 @@ export const FetchConfig = memo(() => {
             />
           </div>
           {followerCount > loadedCount ? (
-            <p className="pt-2 text-xs text-muted-foreground">
+            <p className="text-muted-foreground pt-2 text-xs">
               The video counter will use the real total of{" "}
               {followerCount.toLocaleString()} followers.
             </p>
           ) : null}
           {fetchHasMore ? (
             <div className="flex items-center justify-between gap-2 pt-3">
-              <p className="text-xs text-muted-foreground">
+              <p className="text-muted-foreground text-xs">
                 Showing the first {loadedCount.toLocaleString()} - enough for
                 the video
               </p>

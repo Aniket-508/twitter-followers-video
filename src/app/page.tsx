@@ -5,8 +5,8 @@ import { ConfigProvider } from "@/contexts/config-context";
 export default function Home() {
   return (
     <ConfigProvider>
-      <main className="flex-1 grid grid-cols-1 lg:grid-cols-3 gap-0">
-        <div className="lg:col-span-1 border-b lg:border-b-0 lg:border-r">
+      <main className="grid flex-1 grid-cols-1 gap-0 lg:grid-cols-3">
+        <div className="border-b lg:col-span-1 lg:border-r lg:border-b-0">
           <ConfigurationSection />
         </div>
         <div className="lg:col-span-2">
